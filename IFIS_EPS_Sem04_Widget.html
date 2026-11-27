@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad IFIS y EPS · Semana 04</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Estilos base ---------- */
+:root {
+  --azul: #003366;
+  --celeste: #87CEEB;
+  --ejemplo: #E8F4FD;
+  --texto: #1d1d1d;
+  --fondo: #ffffff;
+  --gris: #555555;
+  --ok: #1d6b34;
+  --mal: #9a1c1c;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body {
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.05rem; line-height: 1.6; color: var(--texto); background: var(--fondo);
+}
+h1, h2, h3, h4 { font-family: Lora, Georgia, serif; color: var(--azul); line-height: 1.25; }
+h2 { font-size: 1.5rem; margin-top: 1.8rem; }
+h3 { font-size: 1.2rem; margin-top: 1.4rem; }
+p { margin: 0.8rem 0; max-width: 72ch; }
+
+/* ---------- Encabezado y menú ---------- */
+header.cabecera { background: var(--azul); color: #fff; padding: 1rem 1.1rem; }
+header.cabecera h1 { color: #fff; font-size: 1.35rem; margin: 0; }
+header.cabecera p { margin: 0.2rem 0 0; font-size: 0.95rem; max-width: none; }
+nav.menu { background: var(--celeste); overflow-x: auto; white-space: nowrap; }
+nav.menu ul { list-style: none; margin: 0; padding: 0.3rem 0.5rem; display: flex; gap: 0.25rem; }
+nav.menu button {
+  font: inherit; color: #000; background: transparent; border: 2px solid transparent;
+  border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer;
+}
+nav.menu button:hover { background: rgba(255,255,255,0.45); }
+nav.menu button[aria-selected="true"] { background: #fff; color: var(--azul); font-weight: 700; }
+nav.menu button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+main { padding: 0.6rem 1rem 3rem; max-width: 860px; margin: 0 auto; }
+section.panel[hidden] { display: none; }
+
+/* ---------- Bloques ---------- */
+.nota-lateral { border-left: 5px solid var(--azul); background: #f4f8fb; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.nota-lateral h3 { margin-top: 0; }
+.concepto { border-left: 4px solid var(--azul); padding: 0.1rem 0 0.1rem 1rem; margin: 1.1rem 0; }
+.ejemplo { background: var(--ejemplo); padding: 0.8rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.ejemplo strong { color: var(--azul); }
+.tabla-wrap { overflow-x: auto; margin: 1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.97rem; min-width: 420px; }
+caption { text-align: left; font-weight: 700; color: var(--azul); padding-bottom: 0.4rem; font-family: Lora, Georgia, serif; }
+th, td { border: 1px solid #c9d6e2; padding: 0.4rem 0.55rem; vertical-align: top; text-align: left; }
+th { background: #eaf2f9; }
+.calculo { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.9rem 1rem; margin: 1.1rem 0; }
+.calculo h4 { margin: 0 0 0.4rem; }
+.calculo ol { padding-left: 1.2rem; }
+.calculo li { margin: 0.3rem 0; }
+.formula { font-weight: 600; background: #f3f6f9; padding: 0.15rem 0.4rem; border-radius: 4px; white-space: nowrap; }
+.asiento { overflow-x: auto; }
+.asiento table { min-width: 520px; }
+
+/* ---------- Ejercicios ---------- */
+.ejercicio { border-top: 2px solid #d7e3ee; margin-top: 1.6rem; padding-top: 0.8rem; }
+.ejercicio .tiempo { color: var(--gris); font-size: 0.95rem; }
+details { margin: 0.6rem 0; border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.4rem 0.8rem; background: #fbfcfd; }
+details summary { cursor: pointer; font-weight: 700; color: var(--azul); padding: 0.3rem 0; }
+details summary:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+details[open] summary { margin-bottom: 0.4rem; }
+details > *:last-child { margin-bottom: 0.4rem; }
+.comprobacion { font-style: italic; color: var(--gris); }
+
+/* ---------- Evaluación ---------- */
+.estado-eval {
+  position: sticky; top: 0; background: #fff; border: 1px solid #c9d6e2; border-radius: 6px;
+  padding: 0.6rem 0.8rem; margin: 0.8rem 0; z-index: 2;
+}
+.progreso { height: 10px; background: #e3ebf3; border-radius: 6px; overflow: hidden; margin-top: 0.4rem; }
+.progreso div { height: 100%; width: 0; background: var(--azul); transition: width 0.3s; }
+fieldset.pregunta { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0; min-width: 0; }
+fieldset.pregunta legend { font-weight: 700; color: var(--azul); padding: 0 0.3rem; font-family: Lora, Georgia, serif; }
+.badge { display: inline-block; font-family: "Source Sans 3", system-ui, sans-serif; font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--azul); border-radius: 4px; padding: 0.05rem 0.4rem; margin-right: 0.3rem; }
+.badge.analisis { background: #3d5a80; }
+.opcion { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.45rem 0; }
+.opcion input { margin-top: 0.35rem; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+.opcion label { cursor: pointer; }
+.fb { margin-top: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.97rem; display: none; }
+.fb.visible { display: block; }
+.fb.ok { background: #e7f5ec; border-left: 4px solid var(--ok); color: #123d21; }
+.fb.mal { background: #fbeaea; border-left: 4px solid var(--mal); color: #4a1010; }
+.fb .ruta { margin-top: 0.35rem; font-size: 0.92rem; color: var(--gris); }
+.resultado { border: 2px solid var(--azul); border-radius: 6px; padding: 0.9rem 1rem; margin: 1.2rem 0; display: none; }
+.resultado.visible { display: block; }
+button.boton {
+  font: inherit; font-weight: 700; color: #fff; background: var(--azul); border: none; border-radius: 6px;
+  padding: 0.55rem 1rem; margin: 0.4rem 0.4rem 0.4rem 0; cursor: pointer;
+}
+button.boton.secundario { background: #fff; color: var(--azul); border: 2px solid var(--azul); }
+button.boton:focus-visible, input[type="radio"]:focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+
+/* ---------- Teléfono ---------- */
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  nav.menu button { padding: 0.4rem 0.6rem; font-size: 0.95rem; }
+  main { padding: 0.5rem 0.8rem 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <h1>Contabilidad IFIS y EPS · Semana 04</h1>
+  <p>Unidad 1 · Cómo se crea un banco y cómo se registra su capital</p>
+</header>
+
+<nav class="menu" aria-label="Secciones de la semana">
+  <ul role="tablist">
+    <li><button role="tab" data-tab="repaso" aria-selected="false" aria-controls="p-repaso">Repaso</button></li>
+    <li><button role="tab" data-tab="sesion" aria-selected="true" aria-controls="p-sesion">Sesión 01</button></li>
+    <li><button role="tab" data-tab="evaluacion" aria-selected="false" aria-controls="p-evaluacion">Evaluación</button></li>
+    <li><button role="tab" data-tab="reflexion" aria-selected="false" aria-controls="p-reflexion">Reflexión</button></li>
+    <li><button role="tab" data-tab="ia" aria-selected="false" aria-controls="p-ia">Actividad con IA</button></li>
+    <li><button role="tab" data-tab="bibliografia" aria-selected="false" aria-controls="p-bibliografia">Bibliografía</button></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ============ REPASO ============ -->
+<section class="panel" id="p-repaso" role="tabpanel" hidden>
+  <h2>Repaso: lo que traes de las semanas anteriores</h2>
+  <p>Tres ideas de las semanas anteriores vuelven a aparecer hoy. La primera es la ecuación contable, <span class="formula">activos = pasivos + patrimonio</span>: todo lo que una entidad controla está financiado por lo que debe a terceros o por lo que pertenece a sus dueños.</p>
+  <p>La segunda es el catálogo de cuentas. El primer dígito del código indica el elemento: 1 activo, 2 pasivo y 3 patrimonio. La tercera es la diferencia entre el dinero que el banco recibe de sus clientes, que genera una obligación, y el dinero que aportan sus dueños, que pertenece a la entidad.</p>
+  <p>Si alguna de estas ideas no te resulta clara, vuelve a la Semana 03 antes de seguir. Esta sesión las usa todas.</p>
+</section>
+
+<!-- ============ SESIÓN 01 ============ -->
+<section class="panel" id="p-sesion" role="tabpanel">
+
+  <h2>Sesión 01 · Cómo se crea un banco</h2>
+  <p class="comprobacion">Unidad 1 · Introducción a la contabilidad de instituciones financieras en el Ecuador. Duración orientativa: 120 minutos de trabajo acompañado, con cinco ejercicios y una evaluación de 15 preguntas.</p>
+
+  <div class="nota-lateral" role="note">
+    <h3>Antes de empezar</h3>
+    <p>Imagina que cuatro socios de Guayaquil deciden crear un banco. Acuerdan cuánto dinero aportará cada uno, reúnen documentos y presentan una solicitud a la Superintendencia de Bancos. Después viene un tramo largo de trámites, y el banco todavía no puede atender a ningún cliente. Antes de abrir sus puertas debe cumplir varios pasos, y uno de ellos exige demostrar que el capital está completo.</p>
+    <p>¿Por qué la ley no permite que el banco empiece a recibir depósitos apenas tiene dinero en caja? Piensa en esa pregunta mientras avanzas.</p>
+    <p>Al terminar esta sesión podrás ordenar las etapas de constitución según el Código Orgánico Monetario y Financiero (COMF), distinguir capital suscrito, pagado y pendiente de integrar, comprobar si un depósito inicial cumple el mínimo legal y registrar la constitución con débitos y créditos desde los libros del banco.</p>
+    <p>Antes de leer la explicación, escribe una respuesta corta: si los socios se comprometen a 11.000.000,00 dólares y entregan 5.500.000,00 dólares en efectivo, ¿cuánto del compromiso falta por entregar? La cifra de 11.000.000,00 dólares es el mínimo legal que revisarás en la sección 2. Anota tu respuesta y compárala después con el Cálculo 1.</p>
+  </div>
+
+  <h3>1. Qué es una institución financiera y por qué se autoriza</h3>
+  <div class="concepto">
+    <p>En esta asignatura, una <strong>institución financiera</strong> es una entidad que recibe recursos del público y los coloca en créditos o inversiones. A esa actividad se le llama <strong>intermediación financiera</strong>: el banco se ubica entre quien tiene dinero disponible y quien lo necesita.</p>
+  </div>
+  <p>Por eso el Estado no permite que cualquier grupo de personas empiece a recibir depósitos sin una revisión previa. Quien deposita su dinero no puede comprobar por sí solo si la entidad está bien constituida ni si tiene los recursos que dice tener. La supervisión aparece antes de la primera operación, y la Superintendencia de Bancos es el organismo que la ejerce sobre las entidades de los sectores público y privado.</p>
+  <p>Conviene distinguir esta entidad de las organizaciones de la economía popular y solidaria. Las cooperativas de ahorro y crédito también reciben ahorros y conceden préstamos, pero pertenecen a otro sector, tienen otra forma de propiedad y son controladas por la Superintendencia de Economía Popular y Solidaria. Ese sector se estudia en la unidad 4. En esta sesión hablamos de un banco privado.</p>
+
+  <h3>2. Las etapas de constitución según el COMF</h3>
+  <p>Crear un banco no es un trámite único. El COMF, Libro I, dedica los artículos 391 a 397 a una secuencia de etapas. Antes de leer la Tabla 1, piensa qué debería ocurrir primero: presentar documentos, obtener una aprobación o empezar a atender público. Luego compara tu orden con el de la tabla.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 1 · Etapas de constitución de un banco según los artículos 391 a 397 del COMF (texto consultado)</caption>
+      <thead>
+        <tr><th scope="col">Etapa</th><th scope="col">Qué exige o reconoce el texto consultado</th><th scope="col">Artículo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1. Solicitud y documentos de los promotores</td><td>Solicitud firmada por los promotores; documentos que acrediten identidad, idoneidad, responsabilidad y solvencia; documento de reserva de la denominación; estudio técnico; y proyecto de contrato de constitución con el estatuto social.</td><td>Art. 391</td></tr>
+        <tr><td>2. Depósito inicial de capital</td><td>Acreditar, en una cuenta de integración de capital abierta en cualquier banco y con una modalidad que devengue intereses, al menos el 50 % del capital mínimo.</td><td>Art. 391, numeral 6</td></tr>
+        <tr><td>3. Capital mínimo</td><td>Para bancos, el capital suscrito y pagado mínimo es de 11.000.000,00 dólares (numeral 1 del artículo 392, en la copia del COMF citada en la bibliografía). Los aportes deben pagarse totalmente en dinero, salvo que la Superintendencia autorice capitalizar obligaciones por compensación de créditos. La Junta puede actualizar el monto cada año según el índice de precios al consumidor. Esta sesión no cita una actualización de 2026, así que los cálculos usan 11.000.000,00 dólares como supuesto.</td><td>Art. 392</td></tr>
+        <tr><td>4. Trámite y no objeción</td><td>La Superintendencia verifica los requisitos y tramita las oposiciones de terceros en un plazo de 180 días, y requiere la no objeción de la Junta sobre el impacto de la nueva entidad en el sistema.</td><td>Art. 393</td></tr>
+        <tr><td>5. Aprobación de la constitución</td><td>El organismo de control aprueba la constitución. La entidad dispone de seis meses, contados desde esa aprobación, para iniciar actividades. Si no cumple, la aprobación queda sin valor de pleno derecho, salvo una ampliación de hasta seis meses concedida una sola vez.</td><td>Art. 395</td></tr>
+        <tr><td>6. Autorización de actividades financieras</td><td>La entidad comunica el cumplimiento de las acciones de constitución y solicita la autorización. La Superintendencia verifica el pago del 100 % del capital suscrito y pagado y extiende la autorización mediante acto administrativo motivado, que indica qué actividades podrá ejercer la entidad.</td><td>Art. 396</td></tr>
+        <tr><td>7. Permiso de funcionamiento</td><td>La entidad informa la fecha de inicio de operaciones y la Superintendencia expide el permiso, que se da para cada oficina operativa y debe exhibirse al público.</td><td>Art. 397</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Las etapas se leen de arriba hacia abajo. La solicitud abre el proceso, el capital mínimo condiciona el resto, y la aprobación de la constitución todavía no permite operar. Después hay que obtener la autorización de actividades financieras y, por último, el permiso de funcionamiento.</p>
+  <p>Hay un detalle de nombres que conviene tener claro. El plan de la asignatura habla de «autorización de constitución». El texto del COMF consultado usa «aprobación de la constitución» para el artículo 395 y reserva «autorización de actividades financieras» para el artículo 396. Usaremos los dos nombres para que los reconozcas. Cuando escribas un trabajo, cita el artículo además del nombre.</p>
+  <p>La norma también exige que una entidad financiera privada tenga, en todo tiempo, al menos dos accionistas (art. 399). Esa exigencia no aparece en la tabla porque no es una etapa, pero debes tenerla presente al leer quiénes aportan el capital.</p>
+  <p class="comprobacion">Pausa de razonamiento: el artículo 391 pide un depósito inicial de al menos el 50 % con la solicitud, y el artículo 396 pide el pago del 100 % antes de la autorización de actividades. ¿Qué crees que se protege con esa diferencia? Escribe una frase antes de seguir.</p>
+  <p>El texto consultado no explica por qué el legislador fijó esos dos porcentajes. Lo que sí puedes afirmar con el texto es la secuencia: la solicitud exige un depósito inicial, la autorización de actividades exige el capital completo y, sin esa autorización, la entidad no puede ejercer las actividades que la autorización determine. Si quieres conocer la razón de fondo, tendrías que buscarla en la exposición de motivos de la ley o en los informes de la Superintendencia. Mientras no la encuentres, la conclusión que puedes sostener es la secuencia.</p>
+
+  <h3>3. Capital suscrito, capital pagado y capital pendiente</h3>
+  <div class="concepto">
+    <p>El <strong>capital suscrito</strong> es el monto total que los accionistas se comprometen a aportar a la entidad. El <strong>capital pagado</strong> es la parte de ese compromiso que ya se ha entregado. La diferencia entre ambos es el <strong>capital pendiente de integrar</strong>: lo que los accionistas todavía deben aportar. Según el artículo 392, los aportes de capital de un banco deben pagarse totalmente en dinero, salvo que la Superintendencia autorice capitalizar obligaciones por compensación de créditos.</p>
+  </div>
+  <p>Veamos un caso. El Banco Didáctico Manglar S. A. (BDM) es una entidad ficticia que está en constitución. Supongamos que sus socios suscriben el capital mínimo de 11.000.000,00 dólares y que, con la solicitud, depositan el 50 %, es decir 5.500.000,00 dólares, en una cuenta de integración. Este escenario es independiente del caso de las semanas anteriores: sirve para practicar el proceso de creación con cifras que cumplen el texto del COMF que estamos usando.</p>
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado: el dinero de los socios.</strong> Los 5.500.000,00 dólares depositados en la cuenta de integración son recursos de la entidad en formación. El dinero está en otro banco, pero le pertenece al BDM, no a un cliente. Por eso no genera una obligación con el público: genera patrimonio, porque es un aporte de los dueños.</p>
+    <p>Compara con un depósito de cliente: el banco también recibe efectivo, pero en ese caso asume la obligación de devolverlo a quien depositó. Aquí entra efectivo y nadie puede reclamarlo como depositante. Recibir dinero no basta para clasificar la operación. Lo decisivo es quién es el dueño del dinero y si nace o no una obligación.</p>
+  </div>
+  <p class="comprobacion">Pausa de razonamiento: si el BDM recibiera 5.500.000,00 dólares de un cliente que abre una cuenta de ahorros, ¿qué cambiaría en la clasificación? Piensa en la contrapartida antes de seguir.</p>
+  <p>La contrapartida de un depósito de cliente es una obligación, que pertenece al grupo 21 Obligaciones con el público y se clasifica como pasivo. La contrapartida de un aporte de socios es patrimonio. El efectivo que entra es un activo en ambos casos. La diferencia está en el otro lado del asiento, y de ahí depende que la entidad tenga más deudas con clientes o más patrimonio.</p>
+
+  <h3>4. Cálculo 1 · ¿Cuánto está pagado y cumple el depósito inicial?</h3>
+  <div class="calculo">
+    <h4>Cálculo 1 · Porcentaje pagado y depósito inicial del BDM</h4>
+    <ol>
+      <li><strong>Situación.</strong> Los socios necesitan saber si el depósito que presentan con la solicitud alcanza el mínimo y cuánto les falta para completar el capital.</li>
+      <li><strong>Supuesto y finalidad.</strong> Supongamos que el capital suscrito es de 11.000.000,00 dólares y que se depositan 5.500.000,00 dólares en la cuenta de integración. El cálculo sirve para comprobar la regla del 50 % con cifras concretas.</li>
+      <li><strong>Qué buscamos.</strong> El porcentaje pagado del capital suscrito, el capital pendiente y si el depósito cumple el 50 % del capital mínimo.</li>
+      <li><strong>Datos y origen.</strong> Capital mínimo de 11.000.000,00 dólares según el artículo 392 del texto consultado; depósito de 5.500.000,00 dólares, que es un supuesto didáctico; exigencia de al menos el 50 % según el artículo 391, numeral 6.</li>
+      <li><strong>Por qué esta operación.</strong> El porcentaje pagado indica la parte del compromiso que ya entró a la entidad. El pendiente es lo que falta para llegar al total. El cumplimiento del depósito se compara con el 50 % del mínimo, porque la norma fija ese piso para la solicitud.</li>
+      <li><strong>Operación.</strong> Mínimo exigido: 50 % × 11.000.000,00 = 5.500.000,00 dólares. Porcentaje pagado: 5.500.000,00 ÷ 11.000.000,00 × 100 = 50 %. Pendiente: 11.000.000,00 − 5.500.000,00 = 5.500.000,00 dólares. Cumplimiento: 5.500.000,00 es igual a 5.500.000,00, así que el depósito cumple.</li>
+      <li><strong>Resultado.</strong> El depósito cumple exactamente el 50 %, y el capital pendiente es de 5.500.000,00 dólares.</li>
+      <li><strong>Comprobación.</strong> El porcentaje pagado y el pendiente deben sumar el 100 % del capital suscrito: 50 % + 50 % = 100 %. Esta comprobación revisa la coherencia de los porcentajes, no la clasificación contable.</li>
+      <li><strong>Interpretación y límites.</strong> El depósito cumple el requisito de la solicitud, pero no basta para operar, porque la autorización de actividades exige el pago del 100 %. El error que evita este cálculo es tomar el cumplimiento de una etapa por el cumplimiento de todas.</li>
+    </ol>
+  </div>
+  <p>Si el depósito fuera de 5.200.000,00 dólares, el porcentaje pagado sería de 47,27 % y no cumpliría la regla. Lo practicarás en el Ejercicio 4.</p>
+
+  <h3>5. Registrar la constitución desde los libros del banco</h3>
+  <p>Ahora llevamos los movimientos a la contabilidad. La perspectiva es la de los libros del BDM, la entidad que se constituye. Para ella, el capital suscrito es patrimonio, el dinero en la cuenta de integración es un recurso que controla y el importe pendiente es un derecho frente a los socios.</p>
+  <p>Cuando los socios suscriben 11.000.000,00 dólares, el capital suscrito aparece por el total, porque es el compromiso. Como solo se entregaron 5.500.000,00 dólares, el resto aparece como un derecho frente a los accionistas. Por eso el asiento tiene dos débitos, uno en los fondos y otro en el derecho, y un único crédito por el total suscrito. Este registro también es la apertura de fondos disponibles, porque el dinero entra al grupo 11.</p>
+  <div class="asiento">
+    <table>
+      <caption>Tabla 2 · Operación 1: suscripción e integración del 50 % (perspectiva del BDM)</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Constitución</td><td>1103</td><td>Bancos y otras instituciones financieras: cuenta de integración en otra entidad (fondos disponibles).</td><td>5.500.000,00</td><td></td></tr>
+        <tr><td>Constitución</td><td>—</td><td>Cuenta por cobrar a accionistas por el capital pendiente (activo).</td><td>5.500.000,00</td><td></td></tr>
+        <tr><td></td><td>—</td><td>Capital suscrito (patrimonio).</td><td></td><td>11.000.000,00</td></tr>
+        <tr><td></td><td></td><td>Totales</td><td>11.000.000,00</td><td>11.000.000,00</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Los totales coinciden, pero la igualdad no prueba por sí sola que el registro sea correcto. Revisa la naturaleza de cada cuenta: la cuenta de integración es un activo, el derecho frente a los socios es un activo y el capital suscrito es patrimonio. Esa combinación describe una constitución, no un depósito de clientes.</p>
+  <p>La cuenta por cobrar a los socios y el capital suscrito aparecen sin código en la tabla. Esta sesión solo asigna códigos cuando puede citarlos del catálogo, y en este caso no lo hace. Describe cada cuenta por su nombre y su naturaleza. Si en una práctica necesitas un código, búscalo en el catálogo de la Superintendencia de Bancos, lee la descripción de dinámica (qué la debita y qué la acredita) y no inventes subcuentas.</p>
+  <p><strong>Operación 2: el cobro antes de la autorización.</strong> Supongamos que, antes de que la Superintendencia verifique el capital, los socios entregan los 5.500.000,00 dólares que faltaban. El efectivo entra a la cuenta de la entidad, así que esa cuenta aumenta por débito. El derecho frente a los socios se cancela y disminuye por crédito. El capital suscrito no cambia, porque el compromiso sigue siendo de 11.000.000,00 dólares. Lo que cambia es el capital pagado, que ahora también es de 11.000.000,00 dólares.</p>
+  <p class="comprobacion">Pausa de razonamiento: si el cobro se registrara al revés, con crédito a los fondos y débito al derecho, ¿qué le pasaría al efectivo del banco? Responde antes de seguir.</p>
+  <p>El efectivo disminuiría cuando en realidad entró. Antes de elegir el lado de una cuenta, pregúntate si el efectivo entra o sale. Esa pregunta evita la mayoría de los errores de signo en esta unidad.</p>
+
+  <h3>6. Gastos de constitución y de organización</h3>
+  <p>Crear una entidad exige pagar trámites, asesorías y organización. Supongamos que los socios pagan 40.000,00 dólares por esos conceptos. Podría parecer que el pago es un gasto, o que es un activo porque su efecto dura, pero la respuesta depende de la norma contable que rige a la entidad y del catálogo aplicable. El texto del COMF consultado no fija el tratamiento de estos pagos, y el nombre del concepto tampoco lo decide.</p>
+  <p>Por eso en esta sesión no registramos esos 40.000,00 dólares ni los evaluamos. Lo que sí debes hacer es identificar qué información te falta para decidir: la norma contable aplicable a la entidad, la cuenta del catálogo y su dinámica, el documento que respalda cada pago y la naturaleza del servicio recibido. El ejercicio 5 te pide justamente esa lista.</p>
+
+  <h3>7. Errores frecuentes y cómo corregirlos</h3>
+  <p>El error más común es tratar el aporte de los socios como un depósito del público. Si lo hiciste, pregúntate quién es el dueño del dinero y si existe un cliente que pueda reclamarlo. Si la respuesta es que los dueños aportaron a la entidad, el registro va al patrimonio y no a las obligaciones con el público. Un asiento que cuadra puede tener la clasificación equivocada.</p>
+  <p>El segundo error es registrar en caja el total suscrito. Solo entra al banco lo que realmente se entregó. Si anotaste 11.000.000,00 dólares de caja cuando solo se entregaron 5.500.000,00 dólares, revisa qué importe corresponde a un derecho frente a los socios.</p>
+  <p>El tercero es confundir el 50 % con el 100 %. El 50 % es el depósito que acompaña la solicitud (art. 391); el 100 % es lo que la Superintendencia debe verificar antes de extender la autorización de actividades (art. 396). Si piensas que el 50 % basta para operar, vuelve a la Tabla 1.</p>
+  <p>El cuarto es cobrar el capital pendiente y registrarlo como ingreso. Un ingreso aumenta el resultado del período. El cobro de un aporte cancela un derecho frente a los socios, y su contrapartida está en el patrimonio.</p>
+  <p>Si el error persiste, sigue esta ruta: primero identifica quién es el dueño del dinero; después decide si la operación crea una obligación con el público o un aporte al patrimonio; por último revisa qué lado de cada cuenta aumenta o disminuye. Luego vuelve a los ejercicios 2 y 3.</p>
+
+  <h3>8. Cierre y transferencia</h3>
+  <p>Retoma la pregunta de la apertura. Si los socios se comprometieron a 11.000.000,00 dólares y entregaron 5.500.000,00 dólares, faltan 5.500.000,00 dólares. Ese monto es un derecho del banco frente a sus socios, no un depósito del público ni un ingreso. Además, el banco todavía necesita la autorización de actividades financieras y el permiso de funcionamiento antes de atender a su primer cliente.</p>
+  <p>Como tarea de transferencia, piensa en una entidad que suscribe 12.000.000,00 dólares y paga el 50 % en la solicitud. Antes de calcular, indica cuál es el depósito mínimo que exige el artículo 391 y cómo se obtiene. Después calcula el pendiente y explica qué registro corresponde al cobro del pendiente antes de la autorización.</p>
+  <div class="nota-lateral">
+    <h3>Glosario breve</h3>
+    <p><strong>Intermediación financiera:</strong> captar recursos del público y colocarlos en créditos o inversiones.</p>
+    <p><strong>Capital suscrito:</strong> monto total que los accionistas se comprometen a aportar.</p>
+    <p><strong>Capital pagado:</strong> parte del capital suscrito que ya se entregó a la entidad.</p>
+    <p><strong>Capital pendiente de integrar:</strong> diferencia entre el capital suscrito y el pagado.</p>
+    <p><strong>Cuenta de integración:</strong> cuenta donde se deposita el capital inicial, en cualquier banco, según el artículo 391, numeral 6.</p>
+    <p><strong>Aprobación de la constitución:</strong> acto del organismo de control que aprueba la creación de la entidad (art. 395).</p>
+    <p><strong>Autorización de actividades financieras:</strong> acto que define las actividades que la entidad podrá ejercer, previa verificación del 100 % del capital (art. 396).</p>
+    <p><strong>Permiso de funcionamiento:</strong> documento que expide la Superintendencia para cada oficina, antes del inicio de operaciones (art. 397).</p>
+    <p><strong>No objeción:</strong> pronunciamiento de la Junta de Política y Regulación sobre el impacto de la nueva entidad en el sistema (art. 393).</p>
+  </div>
+
+  <h2>Ejercicios guiados</h2>
+  <p>Trabaja cada ejercicio por escrito antes de abrir su solución. Las soluciones están en los desplegables.</p>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 1 · Separar lo verificable de lo pendiente</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>En esta actividad clasificarás afirmaciones sobre la constitución de un banco como verificables con el texto consultado o pendientes de confirmar.</p>
+    <p><strong>Enunciado.</strong> Clasifica cada afirmación con «V» si el texto consultado la sostiene o con «P» si requiere confirmación. (a) El artículo 392 fija 11.000.000,00 dólares como capital suscrito y pagado mínimo para un banco. (b) Ese monto permanece igual en todos los años. (c) El artículo 391 exige acreditar, con la solicitud, al menos el 50 % del capital mínimo en una cuenta de integración. (d) Los gastos de constitución son activos por el solo hecho de pagarse para crear la entidad.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Pregúntate si la afirmación aparece en el texto que tienes a la vista o si depende de una actualización, de una decisión contable o de un trámite que aún no se ha revisado.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) V: está en el artículo 392. (b) P: el mismo artículo indica que la Junta puede actualizar el monto cada año con la variación del índice de precios al consumidor; por eso la cifra de 11.000.000,00 es la del texto que citamos y no necesariamente la que rige en un año concreto. (c) V: es el numeral 6 del artículo 391, que fija el 50 % del capital mínimo y exige que la cuenta de integración devengue intereses. (d) P: el texto consultado no fija ese tratamiento; la respuesta depende de la norma contable y del catálogo.</p>
+      <p class="comprobacion">Comprobación: si una afirmación depende de una cifra o de un tratamiento que puede cambiar, no basta con que suene correcta. Hay que confirmarla en la fuente.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si marcaste (b) como V, revisa el segundo párrafo del artículo 392. Si marcaste (d) como V, recuerda que el nombre del concepto no decide su tratamiento.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio entrena una habilidad básica: separar lo que la norma dice de lo que todavía debe comprobarse. Con esa separación no afirmarás cumplimientos que nadie revisó.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 2 · Variante con otro capital</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás el porcentaje pagado y el capital pendiente de una variante, y comprobarás si el depósito cumple la regla del 50 %.</p>
+    <p><strong>Enunciado.</strong> Supongamos que una entidad suscribe 12.000.000,00 dólares de capital y que, con la solicitud, deposita 6.000.000,00 dólares en su cuenta de integración. Calcula el porcentaje pagado, el capital pendiente y si el depósito cumple el 50 % del capital mínimo. Esta es una variante: no modifica el escenario del BDM.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Calcula primero el 50 % del capital mínimo, que es el piso que exige el artículo 391. Después compara ese piso con el depósito. El capital suscrito de la variante no sirve para fijar el piso.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Porcentaje pagado: 6.000.000,00 ÷ 12.000.000,00 × 100 = 50 %. Pendiente: 12.000.000,00 − 6.000.000,00 = 6.000.000,00 dólares. Piso exigido: 50 % × 11.000.000,00 = 5.500.000,00 dólares. Como 6.000.000,00 es mayor que 5.500.000,00, el depósito cumple.</p>
+      <p class="comprobacion">Comprobación: 6.000.000,00 + 6.000.000,00 = 12.000.000,00 dólares, que es el capital suscrito de la variante.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si compraste el depósito con el 50 % de los 12.000.000,00 dólares, recuerda que la regla del artículo 391 usa el capital mínimo del artículo 392, no el capital suscrito de la variante.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>La variante muestra que el capital suscrito puede ser mayor que el mínimo. Lo que el artículo 391 controla es el depósito frente al mínimo, no frente al compromiso total.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 3 · Registrar el cobro antes de la autorización</h3>
+    <p class="tiempo">Tiempo orientativo: 15 minutos · Trabajo individual</p>
+    <p>En esta actividad registrarás desde los libros del BDM el cobro del capital pendiente y justificarás cada débito y cada crédito.</p>
+    <p><strong>Enunciado.</strong> Supongamos que, antes de la verificación de la Superintendencia, los socios del BDM entregan en efectivo los 5.500.000,00 dólares pendientes. Registra la operación con el formato de la Tabla 3, indica la razón de cada débito y de cada crédito, y explica cómo cambian el capital pagado y el pendiente.</p>
+    <div class="asiento">
+      <table>
+        <caption>Tabla 3 · Formato para la Operación 2 (ejercicio 3)</caption>
+        <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+        <tbody>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td>Totales</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Pregúntate primero si el efectivo de la entidad aumenta o disminuye. Después decide si el derecho frente a los socios aumenta o disminuye.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Debe: fondos del BDM en la cuenta de integración (1103, cuenta concreta por verificar), 5.500.000,00. Haber: cuenta por cobrar a accionistas (activo, código por verificar), 5.500.000,00. Totales: 5.500.000,00 y 5.500.000,00. Los fondos aumentan por débito porque entra efectivo. El derecho disminuye por crédito porque ya se cobró. El capital suscrito no cambia y sigue en 11.000.000,00 dólares. El capital pagado pasa de 5.500.000,00 a 11.000.000,00 dólares, y el pendiente pasa de 5.500.000,00 a cero.</p>
+      <p class="comprobacion">Comprobación: antes del cobro, el pendiente era de 5.500.000,00 dólares; después es 5.500.000,00 − 5.500.000,00 = 0. El cobro no crea ni elimina capital: solo cambia la parte del compromiso que ya está integrada.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si registraste el cobro con crédito a los fondos, revisa el sentido del efectivo: entró dinero. Si lo registraste como ingreso, recuerda que los socios cumplen un aporte que ya formaba parte del patrimonio.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este registro muestra que dos cuentas se mueven en sentido contrario mientras el capital suscrito permanece igual. Es el punto de partida para entender por qué la norma exige el 100 % antes de la autorización de actividades.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 4 · Un depósito que no alcanza</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>En esta actividad aplicarás la regla del 50 % del artículo 391 a un depósito menor y justificarás qué puede concluirse con ese dato.</p>
+    <p><strong>Enunciado.</strong> Supongamos que la cuenta de integración de otra entidad en constitución tiene 5.200.000,00 dólares. Con el capital mínimo del artículo 392, ¿cumple el depósito inicial la regla del 50 %? Calcula la diferencia y explica qué no puede concluirse con ese único dato.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Calcula el 50 % del mínimo antes de comparar. Después resta el depósito del piso.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>50 % × 11.000.000,00 = 5.500.000,00 dólares. 5.500.000,00 − 5.200.000,00 = 300.000,00 dólares. El depósito no cumple: faltan 300.000,00 dólares. Porcentaje: 5.200.000,00 ÷ 11.000.000,00 × 100 = 47,27 %. Con ese dato solo puede afirmarse que la solicitud no cumple la regla del 50 %. No puede concluirse si la entidad completará el 100 % que exige el artículo 396, porque no conocemos el monto que falta ni la fecha en que se pagará.</p>
+      <p class="comprobacion">Comprobación: si el depósito fuera de 5.500.000,00 dólares, la diferencia sería cero y el porcentaje, 50 %. La comprobación confirma el umbral.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si concluiste que la entidad cumple porque tiene más del 45 %, recuerda que la regla fija un umbral concreto, no un porcentaje cualquiera. Compara siempre el depósito con 5.500.000,00 dólares.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>El ejercicio enseña a comparar un dato con una regla y a distinguir lo que el dato permite concluir de lo que no permite.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 5 · Qué información falta para registrar los gastos</h3>
+    <p class="tiempo">Tiempo orientativo: 9 minutos · Trabajo individual</p>
+    <p>En esta actividad identificarás qué información necesitas antes de decidir cómo registrar los gastos de constitución, sin decidirlo por suposición.</p>
+    <p><strong>Enunciado.</strong> Los socios del BDM pagan 40.000,00 dólares en trámites, asesorías y organización. Explica qué necesitarías conocer antes de decidir si ese pago se registra como gasto, como activo u otra cuenta. No basta con decir «es un gasto de constitución».</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Piensa en tres preguntas: qué norma contable aplica a la entidad, qué dice el catálogo sobre esa cuenta y qué documento respalda el servicio.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Necesitarías: la norma contable aplicable a la entidad y su tratamiento de estos pagos; la cuenta del catálogo y su descripción de dinámica; los documentos de cada pago, con su fecha; y la naturaleza del servicio, es decir, si su beneficio se agota en el período o se extiende a períodos futuros. Con esa información podrías decidir. El nombre del concepto no basta, porque no indica el alcance temporal del beneficio. Por eso en esta sesión no fijamos un tratamiento.</p>
+      <p class="comprobacion">Comprobación: tu respuesta debe distinguir lo que sabes, lo que debes verificar y lo que todavía no puedes afirmar.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si afirmaste que es un activo porque se pagó en efectivo, recuerda que el efectivo que sale no decide la clasificación. Si dijiste que es un gasto porque el nombre lo sugiere, pregúntate qué documento lo confirmaría.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio te enseña a no completar un registro con una suposición. Cuando falta un dato normativo, la respuesta correcta es identificar qué bloquea la decisión y qué información la resolvería.</p>
+    </details>
+  </div>
+
+  <h3>Presupuesto de tiempo de la sesión</h3>
+  <p>La sesión se estima en 120 minutos de trabajo acompañado: apertura 5 minutos, explicación con pausas 40 minutos, cinco ejercicios 50 minutos, evaluación y revisión 20 minutos, y cierre 5 minutos. El tiempo es orientativo y no garantiza una duración igual para todos.</p>
+
+</section>
+
+<!-- ============ EVALUACIÓN ============ -->
+<section class="panel" id="p-evaluacion" role="tabpanel" hidden>
+  <h2>Evaluación de la Sesión 01</h2>
+  <p>El cuestionario tiene 15 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas como <span class="badge">Teórica</span> se responden con lo estudiado; las marcadas como <span class="badge analisis">Análisis</span> presentan un caso breve. Al elegir una opción verás de inmediato su retroalimentación.</p>
+  <p>El puntaje es de práctica y no es una nota oficial. Los reintentos no demuestran por sí solos que dominas el tema: las explicaciones, los registros y los ejercicios también son evidencia de aprendizaje.</p>
+
+  <div class="estado-eval" aria-live="polite">
+    <p id="estado-texto" style="margin:0;">Preguntas respondidas: 0 de 15 · Aciertos: 0</p>
+    <div class="progreso" aria-hidden="true"><div id="barra"></div></div>
+  </div>
+
+  <form id="quiz" onsubmit="return false;"></form>
+
+  <div class="resultado" id="resultado" role="status">
+    <h3>Resultado de práctica</h3>
+    <p id="resultado-texto"></p>
+    <button type="button" class="boton" id="btn-reintentar" hidden>Intentar nuevamente</button>
+    <button type="button" class="boton secundario" id="btn-reiniciar">Reiniciar cuestionario</button>
+  </div>
+  <p style="margin-top:0.5rem;"><button type="button" class="boton secundario" id="btn-reiniciar-fin">Reiniciar cuestionario</button></p>
+</section>
+
+<!-- ============ REFLEXIÓN ============ -->
+<section class="panel" id="p-reflexion" role="tabpanel" hidden>
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Te ayudan a pensar qué significa que un banco reciba dinero de personas que confían en él.</p>
+
+  <h3>Quién pone el dinero primero</h3>
+  <p>Antes de que un depositante entregue un dólar, los socios ya aportaron el capital que responde por la entidad. Ese aporte es un compromiso: si el negocio sale mal, los dueños pierden primero, antes que quienes depositaron.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué diferencia encuentras entre confiar en un banco porque sus socios arriesgan dinero y confiar en él solo porque tiene autorización?</p>
+
+  <h3>Capital que todavía no llega</h3>
+  <p>Un capital suscrito que aún no se ha pagado puede dar una impresión de solidez que no coincide con lo que hay en caja. Por eso el compromiso y lo entregado son cosas distintas, y conviene mirar ambos.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué información pedirías para saber cuánto del capital comprometido ya está en la entidad?</p>
+
+  <h3>Autorizar no es garantizar</h3>
+  <p>Una aprobación o una autorización indica que la entidad cumplió requisitos en un momento. No garantiza su comportamiento futuro. Por eso la supervisión continúa después de la constitución.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿por qué un control que se hace solo al inicio no protegería por sí solo a quienes depositan?</p>
+
+  <h3>Usar el nombre correcto</h3>
+  <p>Un registro mal clasificado puede cambiar la imagen de una entidad sin cambiar su caja. Por eso revisar la clasificación importa aunque los totales cuadren.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué criterio usarías para decidir si un pago de constitución merece una revisión antes de registrarse?</p>
+</section>
+
+<!-- ============ ACTIVIDAD CON IA ============ -->
+<section class="panel" id="p-ia" role="tabpanel" hidden>
+  <h2>Actividad con IA</h2>
+  <p>Esta actividad es formativa e individual. Su propósito es verificar una explicación de apoyo, no reemplazar tu trabajo.</p>
+
+  <h3>Paso 1 · Trabajo inicial propio</h3>
+  <p>Antes de consultar cualquier herramienta, escribe en un párrafo la diferencia entre el capital suscrito y el capital pagado, y explica con tus palabras qué registra el banco cuando recibe el cobro del capital pendiente.</p>
+
+  <h3>Paso 2 · Prompt</h3>
+  <p>Usa exactamente este texto: «Explica, en un párrafo y con lenguaje sencillo, la diferencia entre capital suscrito y capital pagado de un banco en constitución, con un ejemplo numérico. Indica qué cuenta de activo representa el capital que los socios todavía deben entregar y si esa cuenta tiene un código en el Catálogo Único de Cuentas.»</p>
+
+  <h3>Paso 3 · Contraste con el material</h3>
+  <p>Compara la respuesta con la sección 3 y con la Tabla 2 de esta sesión. Marca cada afirmación que coincida con el material y cada una que no aparezca en él.</p>
+
+  <h3>Paso 4 · Verificación</h3>
+  <p>Verifica al menos una afirmación en el sitio oficial de la Superintendencia de Bancos. Si la herramienta asigna un código a la cuenta por cobrar a accionistas, búscalo en el catálogo oficial y anota si lo encontraste. Si no aparece, describe la cuenta por su nombre. No aceptes el código solo porque la explicación sea coherente.</p>
+
+  <h3>Paso 5 · Justificación</h3>
+  <p>Escribe un párrafo que explique qué aceptaste, qué corregiste y qué rechazaste, y por qué. La respuesta de la herramienta no es una fuente verificada por sí sola.</p>
+
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>Escribí mi trabajo inicial antes de consultar la herramienta.</li>
+    <li>Contrasté la respuesta con la sección 3 y con la Tabla 2.</li>
+    <li>Verifiqué al menos una cuenta o código en la fuente oficial, o registré que no pude verificarlo.</li>
+    <li>Justifiqué qué acepté, corregí o rechacé.</li>
+    <li>No compartí datos personales, tributarios ni bancarios reales.</li>
+  </ul>
+</section>
+
+<!-- ============ BIBLIOGRAFÍA ============ -->
+<section class="panel" id="p-bibliografia" role="tabpanel" hidden>
+  <h2>Bibliografía</h2>
+  <p>Las referencias se ordenan alfabéticamente y siguen el formato APA 7.</p>
+  <ul>
+    <li>Código Orgánico Monetario y Financiero. (2014). Libro I, artículos 391 a 399 y 144. Segundo Suplemento del Registro Oficial No. 332, 12 de septiembre de 2014, con reformas hasta el 11 de febrero de 2022. Copia publicada por la Superintendencia de Economía Popular y Solidaria. https://www.seps.gob.ec/wp-content/uploads/CODIGO-ORGANICO-MONETARIO-Y-FINANCIERO.pdf. Antes de citarla en un trabajo, compara el artículo con el texto vigente en el Registro Oficial.</li>
+    <li>Superintendencia de Bancos. (2017). <em>Marco conceptual y Catálogo Único de Cuentas para uso de las entidades de los sectores financieros público y privado</em> (Resolución No. SB-2017-705). Consulta el documento vigente en el sitio oficial de la Superintendencia de Bancos.</li>
+    <li>Superintendencia de Bancos. (2021). <em>Catálogo Único de Cuentas: plan de cuentas</em> (actualización con la Resolución SB-2021-0403). Consulta el plan de cuentas vigente en el sitio oficial de la Superintendencia de Bancos.</li>
+  </ul>
+  <p>Te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de las normas se comprueba en el Registro Oficial y en las fuentes de los organismos de control, no en el buscador académico.</p>
+</section>
+
+</main>
+
+<script>
+/* ===== 1. Pestañas ===== */
+(function () {
+  const botones = Array.from(document.querySelectorAll('nav.menu [role="tab"]'));
+  function mostrar(id) {
+    botones.forEach(b => {
+      const activo = b.dataset.tab === id;
+      b.setAttribute('aria-selected', activo ? 'true' : 'false');
+      document.getElementById('p-' + b.dataset.tab).hidden = !activo;
+    });
+  }
+  botones.forEach((b, i) => {
+    b.addEventListener('click', () => mostrar(b.dataset.tab));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const d = e.key === 'ArrowRight' ? 1 : -1;
+        const n = botones[(i + d + botones.length) % botones.length];
+        n.focus(); mostrar(n.dataset.tab);
+      }
+    });
+  });
+  mostrar('sesion');
+})();
+
+/* ===== 2. Evaluación ===== */
+const PREGUNTAS = [
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 392 del texto consultado, ¿cuál es el capital suscrito y pagado mínimo para la constitución de un banco?",
+  "opciones": [
+   {
+    "t": "5.500.000,00 dólares",
+    "ok": false,
+    "fb": "Esa cifra es la mitad del capital mínimo. Corresponde al depósito de al menos el 50 % que exige el artículo 391 con la solicitud, no al capital mínimo. Distingue el depósito inicial del monto mínimo."
+   },
+   {
+    "t": "11.000.000,00 dólares",
+    "ok": true,
+    "fb": "El artículo 392 fija 11.000.000,00 dólares como capital suscrito y pagado mínimo para bancos en el texto consultado. La Junta puede actualizar ese monto cada año, así que debes citar el año del texto que uses. Esta sesión lo usa como supuesto del caso."
+   },
+   {
+    "t": "1.000.000,00 dólares",
+    "ok": false,
+    "fb": "Esa cifra no es el capital mínimo del artículo 392. Si la usaste, revisa de dónde sale el dato: un monto de otro ejemplo no se traslada a la norma."
+   },
+   {
+    "t": "40.000,00 dólares",
+    "ok": false,
+    "fb": "Esa cifra es el pago supuesto por gastos de constitución del ejercicio 5. No es un monto de capital ni aparece como requisito mínimo en el artículo 392."
+   }
+  ],
+  "gen": "Revise la sección 2 de la Sesión 01 y la fila del capital mínimo en la Tabla 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el numeral 6 del artículo 391, ¿qué porcentaje del capital mínimo debe acreditarse en la cuenta de integración junto con la solicitud?",
+  "opciones": [
+   {
+    "t": "El 100 %",
+    "ok": false,
+    "fb": "El 100 % se verifica en la etapa de autorización de actividades financieras (artículo 396), no con la solicitud. Confundir ambas etapas es un error de secuencia."
+   },
+   {
+    "t": "El 25 %",
+    "ok": false,
+    "fb": "Ese porcentaje no aparece en el numeral 6 del artículo 391. Si lo elegiste por intuición, vuelve al texto de ese numeral antes de responder."
+   },
+   {
+    "t": "El 10 %",
+    "ok": false,
+    "fb": "Ese porcentaje no aparece en el artículo 391. Un porcentaje que no está en la norma no debe usarse como regla, aunque suene razonable."
+   },
+   {
+    "t": "El 50 %",
+    "ok": true,
+    "fb": "El numeral 6 del artículo 391 exige acreditar por lo menos el 50 % del capital mínimo, en una cuenta de integración que devengue intereses. Esa es la condición de la solicitud, no la de la operación."
+   }
+  ],
+  "gen": "Revise la fila del depósito inicial en la Tabla 1 y el ejercicio 4."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué significa capital suscrito en la constitución de un banco?",
+  "opciones": [
+   {
+    "t": "El monto total que los accionistas se comprometen a aportar a la entidad",
+    "ok": true,
+    "fb": "El capital suscrito mide el compromiso total de los socios, sea cual sea el dinero ya entregado. Si el compromiso es de 11.000.000,00 dólares y se entregaron 5.500.000,00, el suscrito sigue siendo 11.000.000,00."
+   },
+   {
+    "t": "El dinero que ya se entregó a la entidad",
+    "ok": false,
+    "fb": "Ese concepto es el capital pagado. Confundirlo con el suscrito hace que un compromiso pendiente parezca dinero en caja. Recuerda que la diferencia entre ambos es el capital pendiente de integrar."
+   },
+   {
+    "t": "Las utilidades acumuladas del banco",
+    "ok": false,
+    "fb": "Las utilidades acumuladas forman parte del patrimonio, pero no son el capital suscrito. Mezclarlas oculta cuánto del compromiso de los socios está realmente aportado."
+   },
+   {
+    "t": "Los depósitos de los clientes",
+    "ok": false,
+    "fb": "Los depósitos de los clientes son obligaciones con el público. El capital suscrito es un aporte de los accionistas, y esa diferencia de origen es la que debes conservar."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y el glosario breve."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 396, ¿qué verifica la Superintendencia de Bancos antes de extender la autorización de actividades financieras?",
+  "opciones": [
+   {
+    "t": "Que la solicitud esté firmada por los promotores",
+    "ok": false,
+    "fb": "La solicitud pertenece a la etapa inicial del artículo 391. La autorización de actividades exige una verificación distinta, posterior a la constitución."
+   },
+   {
+    "t": "Que ya exista el permiso de funcionamiento",
+    "ok": false,
+    "fb": "El permiso de funcionamiento viene después de la autorización (artículo 397), y se expide por oficina. Pedirlo antes invierte la secuencia de la Tabla 1."
+   },
+   {
+    "t": "El pago del 100 % del capital suscrito y pagado",
+    "ok": true,
+    "fb": "El artículo 396 exige verificar la observancia de las acciones de constitución y el pago del 100 % del capital suscrito y pagado. Por eso el 50 % del artículo 391 no basta para comenzar a operar."
+   },
+   {
+    "t": "La no objeción de la Junta",
+    "ok": false,
+    "fb": "La no objeción se pide dentro del trámite del artículo 393, antes de la aprobación de la constitución. No es el requisito de la autorización de actividades."
+   }
+  ],
+  "gen": "Revise la fila de la autorización de actividades financieras en la Tabla 1 y la sección 2."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Una entidad en constitución recibe 5.500.000,00 dólares en efectivo de sus socios como parte del capital suscrito. Desde los libros de la entidad, ¿cuál es la naturaleza de la contrapartida de ese efectivo?",
+  "opciones": [
+   {
+    "t": "Una obligación con el público, porque hay dinero de terceros",
+    "ok": false,
+    "fb": "Una obligación con el público nace cuando un cliente puede reclamar el dinero. Aquí el dinero pertenece a los socios, no a un cliente. Distingue el depósito de un cliente del aporte de un socio."
+   },
+   {
+    "t": "Patrimonio: aporte de los dueños, reflejado en el capital suscrito",
+    "ok": true,
+    "fb": "El aporte de los socios es patrimonio de la entidad, porque ellos son los dueños. El efectivo recibido es un activo y su contrapartida es el capital, no una deuda con terceros."
+   },
+   {
+    "t": "Un ingreso del período",
+    "ok": false,
+    "fb": "Un ingreso aumenta el resultado del período. El aporte de capital no aumenta el resultado: su contrapartida es patrimonio. Recibir dinero no equivale a generar utilidad."
+   },
+   {
+    "t": "Un gasto de constitución",
+    "ok": false,
+    "fb": "Un gasto disminuye el patrimonio. El aporte de capital no disminuye el patrimonio; lo aumenta. Confundir ambos efectos cambia la lectura de la entidad."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y la Tabla 2, Operación 1."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Una entidad en constitución suscribe 12.000.000,00 dólares de capital y presenta con su solicitud un depósito de 5.800.000,00 dólares en la cuenta de integración. ¿Cumple la regla del 50 % del artículo 391?",
+  "opciones": [
+   {
+    "t": "Sí, porque 5.800.000,00 supera 5.500.000,00, que es el 50 % del capital mínimo de 11.000.000,00",
+    "ok": true,
+    "fb": "La regla del artículo 391 toma como base el capital mínimo del artículo 392, no el suscrito de esta entidad. El 50 % de 11.000.000,00 es 5.500.000,00, y 5.800.000,00 lo supera. Que el suscrito sea mayor no cambia el piso."
+   },
+   {
+    "t": "No, porque el 50 % debe calcularse sobre los 12.000.000,00 suscritos, es decir 6.000.000,00",
+    "ok": false,
+    "fb": "La regla usa el capital mínimo, no el suscrito. Tomar 6.000.000,00 como piso confunde el compromiso total de los socios con el mínimo legal."
+   },
+   {
+    "t": "No, porque el porcentaje pagado sobre lo suscrito es de 48,33 %",
+    "ok": false,
+    "fb": "El porcentaje sobre lo suscrito (48,33 %) no es la regla del artículo 391. Comparar con el suscrito mezcla dos bases distintas y lleva a una conclusión equivocada."
+   },
+   {
+    "t": "No puede determinarse sin conocer la fecha en que se pagará el pendiente",
+    "ok": false,
+    "fb": "La fecha del pago del pendiente corresponde a otra etapa. El cumplimiento de la solicitud se compara con el depósito frente al piso, y esos datos sí están disponibles."
+   }
+  ],
+  "gen": "Revise el Cálculo 1, en especial los pasos 5 y 6, y el ejercicio 2."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Los socios de una entidad en constitución entregan en efectivo los 5.500.000,00 dólares pendientes antes de la autorización de actividades. ¿Cuál es el asiento correcto?",
+  "opciones": [
+   {
+    "t": "Debe fondos 5.500.000,00; haber ingreso por aportes 5.500.000,00",
+    "ok": false,
+    "fb": "Un aporte de socios no es un ingreso: no aumenta el resultado del período. Su contrapartida es la cancelación del derecho frente a los socios."
+   },
+   {
+    "t": "Debe derecho frente a los socios 5.500.000,00; haber fondos 5.500.000,00",
+    "ok": false,
+    "fb": "Ese asiento haría disminuir el efectivo cuando en realidad entró. Revisa qué cuenta aumenta por débito y cuál por crédito."
+   },
+   {
+    "t": "Debe fondos 5.500.000,00; haber obligaciones con el público 5.500.000,00",
+    "ok": false,
+    "fb": "El dinero de los socios no es un depósito del público, porque nadie puede reclamarlo como depositante. No hay obligación con clientes en esta operación."
+   },
+   {
+    "t": "Debe fondos 5.500.000,00; haber cuenta por cobrar a accionistas 5.500.000,00",
+    "ok": true,
+    "fb": "El efectivo entra y aumenta por débito. El derecho frente a los socios se cancela por crédito. El capital suscrito no cambia, porque el compromiso sigue siendo de 11.000.000,00 dólares."
+   }
+  ],
+  "gen": "Revise la Operación 2 de la sección 5 y el ejercicio 3."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el texto consultado, ¿qué es la cuenta de integración del capital?",
+  "opciones": [
+   {
+    "t": "La cuenta del banco para pagar sueldos y gastos del período",
+    "ok": false,
+    "fb": "Los sueldos son gastos del período. La cuenta de integración sirve para acreditar el depósito inicial de capital; no es una cuenta de gastos."
+   },
+   {
+    "t": "La cuenta donde se guardan las utilidades del banco",
+    "ok": false,
+    "fb": "Las utilidades forman parte del patrimonio, pero la cuenta de integración se define por su función: acreditar el capital inicial en cualquier banco, bajo una modalidad que devengue intereses."
+   },
+   {
+    "t": "La cuenta en cualquier banco, con una modalidad que devengue intereses, donde se acredita el capital inicial",
+    "ok": true,
+    "fb": "El numeral 6 del artículo 391 describe la cuenta de integración así: se abre en cualquier banco, la modalidad debe devengar intereses y en ella se acredita al menos el 50 % del capital mínimo."
+   },
+   {
+    "t": "La cuenta por cobrar a los socios por el capital pendiente",
+    "ok": false,
+    "fb": "Esa es la cuenta por cobrar a accionistas, que representa el derecho frente a los socios. La cuenta de integración recibe el dinero del depósito inicial."
+   }
+  ],
+  "gen": "Revise la fila del depósito inicial en la Tabla 1 y el glosario breve."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Una entidad en constitución presenta con su solicitud un depósito de 5.200.000,00 dólares en la cuenta de integración. ¿Qué puede concluirse con ese único dato?",
+  "opciones": [
+   {
+    "t": "Cumple, porque 5.200.000,00 es casi la mitad de 11.000.000,00",
+    "ok": false,
+    "fb": "Casi la mitad no es la regla. El artículo 391 fija un piso exacto: el 50 % de 11.000.000,00, es decir 5.500.000,00 dólares. Un valor cercano no cumple."
+   },
+   {
+    "t": "No cumple la regla del 50 %: faltan 300.000,00 dólares, y no puede concluirse si después completará el 100 % del artículo 396",
+    "ok": true,
+    "fb": "La diferencia es 5.500.000,00 menos 5.200.000,00, es decir 300.000,00 dólares, y el porcentaje es 47,27 %. Con ese dato solo se concluye que no cumple la regla; el cumplimiento posterior depende de información que no tienes."
+   },
+   {
+    "t": "Cumple, porque el 47,27 % es mayor que el 45 %",
+    "ok": false,
+    "fb": "La regla no usa un umbral de 45 %. El piso es 50 % del capital mínimo, es decir 5.500.000,00 dólares. Compara siempre el depósito con ese monto."
+   },
+   {
+    "t": "No cumple, y la entidad nunca podrá operar",
+    "ok": false,
+    "fb": "Que no cumpla hoy no prueba que nunca podrá operar: la entidad podría completar el capital dentro de las etapas. Esa conclusión excede lo que el dato permite."
+   }
+  ],
+  "gen": "Revise el Cálculo 1 y el ejercicio 4."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "El plan de la asignatura habla de «autorización de constitución». ¿Qué nombre usa el texto consultado para el acto del artículo 395?",
+  "opciones": [
+   {
+    "t": "Aprobación de la constitución",
+    "ok": true,
+    "fb": "El artículo 395 habla de aprobación de la constitución, y el plazo de seis meses para iniciar actividades se cuenta desde esa fecha. El plan usa un nombre distinto para el mismo tipo de acto; los dos nombres deben reconocerse."
+   },
+   {
+    "t": "Autorización de actividades financieras",
+    "ok": false,
+    "fb": "Ese es el nombre del artículo 396, que es una etapa posterior. Verifica el 100 % del capital y determina qué actividades podrá ejercer la entidad."
+   },
+   {
+    "t": "Permiso de funcionamiento",
+    "ok": false,
+    "fb": "El permiso de funcionamiento corresponde al artículo 397 y se expide por oficina antes del inicio de operaciones. Es la última etapa, no la del artículo 395."
+   },
+   {
+    "t": "Escritura pública de constitución",
+    "ok": false,
+    "fb": "La escritura no es el acto del artículo 395. Este artículo se refiere a la aprobación que emite el organismo de control tras cumplir el trámite."
+   }
+  ],
+  "gen": "Revise la Tabla 1, fila de la aprobación de la constitución, y la nota de terminología de la sección 2."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Los socios de una entidad en constitución pagan 40.000,00 dólares en trámites de constitución y organización. ¿Cuál afirmación es correcta según lo estudiado?",
+  "opciones": [
+   {
+    "t": "Es un gasto, porque el nombre del concepto lo indica",
+    "ok": false,
+    "fb": "El nombre del concepto no decide su clasificación. Hay que conocer la norma contable aplicable, la cuenta del catálogo y la naturaleza del beneficio que se recibe."
+   },
+   {
+    "t": "Es un activo, porque se paga en efectivo",
+    "ok": false,
+    "fb": "El efectivo que sale cambia la caja, pero no determina la contrapartida. Pagar en efectivo no basta para decidir si el pago es activo o gasto."
+   },
+   {
+    "t": "Se suma al capital suscrito como aporte de los socios",
+    "ok": false,
+    "fb": "El caso no establece que el pago sea un aporte de capital. El capital suscrito proviene del compromiso de suscripción, y sumarle un pago de trámites supondría un dato que no existe."
+   },
+   {
+    "t": "Su tratamiento no puede fijarse con el texto consultado; hacen falta la norma contable aplicable, la cuenta del catálogo y los documentos del pago",
+    "ok": true,
+    "fb": "Ese es el criterio correcto: el texto consultado no fija el tratamiento de estos pagos. Antes de registrarlos hay que identificar la norma, el catálogo, el documento y la naturaleza del servicio."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y el ejercicio 5."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Después del cobro del pendiente de 5.500.000,00 dólares, ¿qué ocurre con el capital suscrito, el capital pagado y el capital pendiente de la entidad del ejemplo?",
+  "opciones": [
+   {
+    "t": "El suscrito sube a 16.500.000,00, el pagado no cambia y el pendiente se mantiene",
+    "ok": false,
+    "fb": "El cobro no crea capital nuevo; cancela parte del compromiso ya suscrito. El suscrito no puede subir por el cobro."
+   },
+   {
+    "t": "El suscrito baja a 5.500.000,00 y el pendiente llega a cero",
+    "ok": false,
+    "fb": "El suscrito no baja: el compromiso de los socios sigue siendo de 11.000.000,00. Lo que cambia es la parte pagada, no el compromiso total."
+   },
+   {
+    "t": "El suscrito sigue en 11.000.000,00, el pagado llega a 11.000.000,00 y el pendiente llega a cero",
+    "ok": true,
+    "fb": "El cobro aumenta el capital pagado y cancela el pendiente. El compromiso total no cambia, porque el cobro solo integra lo que ya estaba suscrito."
+   },
+   {
+    "t": "El suscrito y el pagado se igualan a 5.500.000,00 y el pendiente sigue vigente",
+    "ok": false,
+    "fb": "El cobro de 5.500.000,00 completa el pendiente, así que el pendiente no sigue vigente. Además, el pagado pasa a ser igual al suscrito, no a la mitad."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y el ejercicio 3."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Cuál de estas secuencias respeta el orden de las etapas de la Tabla 1?",
+  "opciones": [
+   {
+    "t": "Aprobación de la constitución, solicitud, permiso de funcionamiento",
+    "ok": false,
+    "fb": "La aprobación de la constitución no precede a la solicitud: la solicitud abre el proceso (artículo 391). El permiso de funcionamiento es lo último."
+   },
+   {
+    "t": "Solicitud, trámite con no objeción, aprobación de la constitución, autorización de actividades y permiso de funcionamiento",
+    "ok": true,
+    "fb": "Este es el orden de los artículos 391, 393, 395, 396 y 397. Cada etapa depende de la anterior, y el permiso de funcionamiento se pide al final, cuando la entidad va a iniciar operaciones."
+   },
+   {
+    "t": "Autorización de actividades, solicitud, aprobación de la constitución",
+    "ok": false,
+    "fb": "La autorización de actividades (artículo 396) requiere que la constitución esté aprobada antes. Ponerla al inicio invierte el proceso."
+   },
+   {
+    "t": "Permiso de funcionamiento, autorización de actividades, solicitud",
+    "ok": false,
+    "fb": "El permiso de funcionamiento se expide después de la autorización, no antes. Esta secuencia empieza por el final del proceso."
+   }
+  ],
+  "gen": "Revise la Tabla 1 y la sección 2 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un cliente deposita 1.000,00 dólares en una cuenta de ahorros de un banco que ya opera. ¿Cuál es la clasificación de ese depósito desde los libros del banco?",
+  "opciones": [
+   {
+    "t": "Obligación con el público, porque el banco debe devolverlo según las condiciones del producto",
+    "ok": true,
+    "fb": "El depósito del cliente genera una obligación del banco con quien depositó, que se devuelve según las condiciones del producto. Recibir dinero no lo convierte en ingreso: la contrapartida es un pasivo."
+   },
+   {
+    "t": "Ingreso del período, porque el banco recibe dinero",
+    "ok": false,
+    "fb": "Recibir dinero no es ingreso. Un ingreso aumenta el resultado del período; el depósito aumenta el efectivo y crea una obligación con el cliente."
+   },
+   {
+    "t": "Aporte al capital suscrito, porque el dinero queda en la entidad",
+    "ok": false,
+    "fb": "El capital suscrito proviene de los accionistas. El cliente no es socio, así que su depósito no aumenta el capital."
+   },
+   {
+    "t": "Cuenta por cobrar, porque el banco puede prestar ese dinero",
+    "ok": false,
+    "fb": "La posibilidad de prestar el dinero no define la clasificación del depósito. Un derecho a cobrar nace de una colocación, no de la captación."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01, el ejemplo del depósito del cliente y el glosario."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 399 del texto consultado, ¿qué exige sobre los accionistas de una entidad financiera privada?",
+  "opciones": [
+   {
+    "t": "Que un solo accionista baste si el capital es suficiente",
+    "ok": false,
+    "fb": "El artículo 399 exige que la entidad cuente, en todo tiempo, con al menos dos accionistas. El monto del capital no sustituye ese requisito."
+   },
+   {
+    "t": "Que todos los accionistas sean personas naturales",
+    "ok": false,
+    "fb": "El artículo 399 fija el número mínimo de accionistas, no su tipo. Revisa el texto del artículo antes de responder."
+   },
+   {
+    "t": "Que la entidad tenga, en todo tiempo, al menos dos accionistas",
+    "ok": true,
+    "fb": "El artículo 399 indica que las entidades financieras privadas deben contar en todo tiempo con al menos dos accionistas. Es una condición permanente, no solo de la constitución."
+   },
+   {
+    "t": "Que los accionistas paguen su aporte en cuotas mensuales",
+    "ok": false,
+    "fb": "El pago de los aportes de los bancos se rige por el artículo 392, que exige pagarlos en dinero. El artículo 399 no fija cuotas mensuales."
+   }
+  ],
+  "gen": "Revise la sección 2 de la Sesión 01 y la nota sobre los requisitos de constitución."
+ }
+];
+
+(function () {
+  const formulario = document.getElementById('quiz');
+  const textoEstado = document.getElementById('estado-texto');
+  const barra = document.getElementById('barra');
+  const resultado = document.getElementById('resultado');
+  const resultadoTexto = document.getElementById('resultado-texto');
+  const btnReintentar = document.getElementById('btn-reintentar');
+  let respuestas = [];
+
+  function actualizar() {
+    const total = PREGUNTAS.length;
+    const respondidas = respuestas.filter(r => r !== null).length;
+    const aciertos = respuestas.filter((r, i) => r !== null && PREGUNTAS[i].opciones[r].ok).length;
+    textoEstado.textContent = 'Preguntas respondidas: ' + respondidas + ' de ' + total + ' · Aciertos: ' + aciertos;
+    barra.style.width = (respondidas / total * 100) + '%';
+
+    if (respondidas === total) {
+      formulario.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+      const errores = total - aciertos;
+      const nota = (aciertos / total * 10).toFixed(1).replace('.', ',');
+      const pct = Math.round(aciertos / total * 100);
+      resultadoTexto.textContent = 'Aciertos: ' + aciertos + ' de ' + total + '. Calificación de práctica: ' + nota + ' sobre 10 (' + pct + ' %).' +
+        (errores > 0
+          ? ' Revisa las rutas indicadas en cada retroalimentación y, si lo deseas, intenta nuevamente con las mismas preguntas.'
+          : ' No hubo errores en esta práctica.');
+      btnReintentar.hidden = errores === 0;
+      resultado.classList.add('visible');
+    }
+  }
+
+  function reiniciar() {
+    respuestas = PREGUNTAS.map(() => null);
+    formulario.innerHTML = '';
+    PREGUNTAS.forEach((p, i) => {
+      const fs = document.createElement('fieldset');
+      fs.className = 'pregunta';
+      const lg = document.createElement('legend');
+      const insignia = document.createElement('span');
+      insignia.className = 'badge' + (p.tipo === 'Análisis' ? ' analisis' : '');
+      insignia.textContent = p.tipo;
+      lg.appendChild(insignia);
+      lg.appendChild(document.createTextNode(' ' + (i + 1) + '. ' + p.enunciado));
+      fs.appendChild(lg);
+
+      p.opciones.forEach((o, j) => {
+        const fila = document.createElement('div');
+        fila.className = 'opcion';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + i;
+        radio.id = 'q' + i + '-' + j;
+        radio.value = String(j);
+        const etiqueta = document.createElement('label');
+        etiqueta.htmlFor = radio.id;
+        etiqueta.textContent = String.fromCharCode(97 + j) + ') ' + o.t;
+        fila.appendChild(radio);
+        fila.appendChild(etiqueta);
+        fs.appendChild(fila);
+      });
+
+      const fb = document.createElement('div');
+      fb.className = 'fb';
+      fb.id = 'fb' + i;
+      fb.setAttribute('aria-live', 'polite');
+      fs.appendChild(fb);
+
+      fs.addEventListener('change', e => {
+        if (e.target.name !== 'q' + i) return;
+        const j = parseInt(e.target.value, 10);
+        respuestas[i] = j;
+        const op = p.opciones[j];
+        fb.className = 'fb visible ' + (op.ok ? 'ok' : 'mal');
+        fb.innerHTML = '';
+        const titulo = document.createElement('div');
+        titulo.textContent = (op.ok ? 'CORRECTO. ' : 'Incorrecto. ') + op.fb;
+        fb.appendChild(titulo);
+        if (!op.ok) {
+          const ruta = document.createElement('div');
+          ruta.className = 'ruta';
+          ruta.textContent = 'Ruta de revisión: ' + p.gen;
+          fb.appendChild(ruta);
+        }
+        actualizar();
+      });
+
+      formulario.appendChild(fs);
+    });
+    resultado.classList.remove('visible');
+    btnReintentar.hidden = true;
+    actualizar();
+  }
+
+  document.getElementById('btn-reintentar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar-fin').addEventListener('click', reiniciar);
+  reiniciar();
+})();
+</script>
+</body>
+</html>

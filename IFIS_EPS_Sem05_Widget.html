@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad IFIS y EPS · Semana 05</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Estilos base ---------- */
+:root {
+  --azul: #003366;
+  --celeste: #87CEEB;
+  --ejemplo: #E8F4FD;
+  --texto: #1d1d1d;
+  --fondo: #ffffff;
+  --gris: #555555;
+  --ok: #1d6b34;
+  --mal: #9a1c1c;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body {
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.05rem; line-height: 1.6; color: var(--texto); background: var(--fondo);
+}
+h1, h2, h3, h4 { font-family: Lora, Georgia, serif; color: var(--azul); line-height: 1.25; }
+h2 { font-size: 1.5rem; margin-top: 1.8rem; }
+h3 { font-size: 1.2rem; margin-top: 1.4rem; }
+p { margin: 0.8rem 0; max-width: 72ch; }
+
+/* ---------- Encabezado y menú ---------- */
+header.cabecera { background: var(--azul); color: #fff; padding: 1rem 1.1rem; }
+header.cabecera h1 { color: #fff; font-size: 1.35rem; margin: 0; }
+header.cabecera p { margin: 0.2rem 0 0; font-size: 0.95rem; max-width: none; }
+nav.menu { background: var(--celeste); overflow-x: auto; white-space: nowrap; }
+nav.menu ul { list-style: none; margin: 0; padding: 0.3rem 0.5rem; display: flex; gap: 0.25rem; }
+nav.menu button {
+  font: inherit; color: #000; background: transparent; border: 2px solid transparent;
+  border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer;
+}
+nav.menu button:hover { background: rgba(255,255,255,0.45); }
+nav.menu button[aria-selected="true"] { background: #fff; color: var(--azul); font-weight: 700; }
+nav.menu button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+main { padding: 0.6rem 1rem 3rem; max-width: 860px; margin: 0 auto; }
+section.panel[hidden] { display: none; }
+
+/* ---------- Bloques ---------- */
+.nota-lateral { border-left: 5px solid var(--azul); background: #f4f8fb; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.nota-lateral h3 { margin-top: 0; }
+.concepto { border-left: 4px solid var(--azul); padding: 0.1rem 0 0.1rem 1rem; margin: 1.1rem 0; }
+.ejemplo { background: var(--ejemplo); padding: 0.8rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.ejemplo strong { color: var(--azul); }
+.tabla-wrap { overflow-x: auto; margin: 1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.97rem; min-width: 420px; }
+caption { text-align: left; font-weight: 700; color: var(--azul); padding-bottom: 0.4rem; font-family: Lora, Georgia, serif; }
+th, td { border: 1px solid #c9d6e2; padding: 0.4rem 0.55rem; vertical-align: top; text-align: left; }
+th { background: #eaf2f9; }
+.calculo { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.9rem 1rem; margin: 1.1rem 0; }
+.calculo h4 { margin: 0 0 0.4rem; }
+.calculo ol { padding-left: 1.2rem; }
+.calculo li { margin: 0.3rem 0; }
+.formula { font-weight: 600; background: #f3f6f9; padding: 0.15rem 0.4rem; border-radius: 4px; white-space: nowrap; }
+
+/* ---------- Ejercicios ---------- */
+.ejercicio { border-top: 2px solid #d7e3ee; margin-top: 1.6rem; padding-top: 0.8rem; }
+.ejercicio .tiempo { color: var(--gris); font-size: 0.95rem; }
+details { margin: 0.6rem 0; border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.4rem 0.8rem; background: #fbfcfd; }
+details summary { cursor: pointer; font-weight: 700; color: var(--azul); padding: 0.3rem 0; }
+details summary:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+details[open] summary { margin-bottom: 0.4rem; }
+details > *:last-child { margin-bottom: 0.4rem; }
+.comprobacion { font-style: italic; color: var(--gris); }
+
+/* ---------- Evaluación ---------- */
+.estado-eval {
+  position: sticky; top: 0; background: #fff; border: 1px solid #c9d6e2; border-radius: 6px;
+  padding: 0.6rem 0.8rem; margin: 0.8rem 0; z-index: 2;
+}
+.progreso { height: 10px; background: #e3ebf3; border-radius: 6px; overflow: hidden; margin-top: 0.4rem; }
+.progreso div { height: 100%; width: 0; background: var(--azul); transition: width 0.3s; }
+fieldset.pregunta { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0; min-width: 0; }
+fieldset.pregunta legend { font-weight: 700; color: var(--azul); padding: 0 0.3rem; font-family: Lora, Georgia, serif; }
+.badge { display: inline-block; font-family: "Source Sans 3", system-ui, sans-serif; font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--azul); border-radius: 4px; padding: 0.05rem 0.4rem; margin-right: 0.3rem; }
+.badge.analisis { background: #3d5a80; }
+.opcion { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.45rem 0; }
+.opcion input { margin-top: 0.35rem; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+.opcion label { cursor: pointer; }
+.fb { margin-top: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.97rem; display: none; }
+.fb.visible { display: block; }
+.fb.ok { background: #e7f5ec; border-left: 4px solid var(--ok); color: #123d21; }
+.fb.mal { background: #fbeaea; border-left: 4px solid var(--mal); color: #4a1010; }
+.fb .ruta { margin-top: 0.35rem; font-size: 0.92rem; color: var(--gris); }
+.resultado { border: 2px solid var(--azul); border-radius: 6px; padding: 0.9rem 1rem; margin: 1.2rem 0; display: none; }
+.resultado.visible { display: block; }
+button.boton {
+  font: inherit; font-weight: 700; color: #fff; background: var(--azul); border: none; border-radius: 6px;
+  padding: 0.55rem 1rem; margin: 0.4rem 0.4rem 0.4rem 0; cursor: pointer;
+}
+button.boton.secundario { background: #fff; color: var(--azul); border: 2px solid var(--azul); }
+button.boton:focus-visible, input[type="radio"]:focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+
+/* ---------- Teléfono ---------- */
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  nav.menu button { padding: 0.4rem 0.6rem; font-size: 0.95rem; }
+  main { padding: 0.5rem 0.8rem 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <h1>Contabilidad IFIS y EPS · Semana 05</h1>
+  <p>Unidad 2 · Cuentas corrientes y cheques: el dinero que el cliente ordena pagar</p>
+</header>
+
+<nav class="menu" aria-label="Secciones de la semana">
+  <ul role="tablist">
+    <li><button role="tab" data-tab="repaso" aria-selected="false" aria-controls="p-repaso">Repaso</button></li>
+    <li><button role="tab" data-tab="sesion" aria-selected="true" aria-controls="p-sesion">Sesión 01</button></li>
+    <li><button role="tab" data-tab="evaluacion" aria-selected="false" aria-controls="p-evaluacion">Evaluación</button></li>
+    <li><button role="tab" data-tab="reflexion" aria-selected="false" aria-controls="p-reflexion">Reflexión</button></li>
+    <li><button role="tab" data-tab="ia" aria-selected="false" aria-controls="p-ia">Actividad con IA</button></li>
+    <li><button role="tab" data-tab="bibliografia" aria-selected="false" aria-controls="p-bibliografia">Bibliografía</button></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ============ REPASO ============ -->
+<section class="panel" id="p-repaso" role="tabpanel" hidden>
+  <h2>Repaso: lo que traes de las semanas anteriores</h2>
+  <p>Hay dos ideas de las semanas 3 y 4 que esta sesión necesita. La primera es la diferencia entre el dinero que el banco recibe de un cliente y el que aportan sus dueños. Cuando un cliente deposita, el banco asume una obligación con él, porque debe devolver ese dinero según las condiciones del producto. La segunda es la ecuación contable, <span class="formula">activos = pasivos + patrimonio</span>: el dinero que el banco mantiene en caja se explica por lo que debe a sus clientes y por lo que pertenece a sus socios.</p>
+  <p>Hoy usaremos la primera idea en un producto concreto: la cuenta corriente. Un cliente que tiene dinero en esa cuenta puede ordenar pagos a terceros con cheques. Por eso el cheque es, en el fondo, una instrucción para que el banco use el dinero que le debe al cliente.</p>
+  <p>Si la diferencia entre depósito, ingreso y aporte de socios todavía no te resulta clara, vuelve a la sección 3 de la Semana 04 antes de seguir.</p>
+</section>
+
+<!-- ============ SESIÓN 01 ============ -->
+<section class="panel" id="p-sesion" role="tabpanel">
+
+  <h2>Sesión 01 · Cuentas corrientes y cheques</h2>
+  <p class="comprobacion">Unidad 2 · Operaciones pasivas. Duración orientativa: 120 minutos de trabajo acompañado, con cinco ejercicios y una evaluación de 15 preguntas.</p>
+
+  <div class="nota-lateral" role="note">
+    <h3>Antes de empezar</h3>
+    <p>Ana Pérez es clienta del Banco Didáctico del Litoral S. A. (BDL), una entidad privada ficticia controlada por la Superintendencia de Bancos. Ana tiene una cuenta corriente con 1.000,00 dólares. Un día paga a un proveedor con un cheque de 300,00 dólares. El proveedor lo deposita en su propio banco, que lo envía al BDL, y el BDL paga el cheque con cargo a la cuenta de Ana.</p>
+    <p>Ahora imagina que Ana gira un cheque de 1.500,00 dólares con solo 1.000,00 dólares en la cuenta. ¿Qué debe hacer el banco? ¿Y qué pasa con quien recibió ese cheque? La pregunta de esta sesión es qué convierte una orden de pago escrita en un medio que el banco debe cumplir, y qué ocurre cuando no hay fondos.</p>
+    <p>Al terminar podrás identificar las partes y los requisitos de un cheque según el Código Orgánico Monetario y Financiero (COMF), calcular los plazos de presentación, distinguir el plazo de pago de la prescripción de las acciones y calcular la multa del artículo 499 cuando corresponda. Las normas que citamos son las del texto del COMF que usamos en la asignatura; más adelante te indicamos qué queda pendiente de comprobar.</p>
+    <p>Antes de leer la explicación, escribe una respuesta corta: si Ana tiene 1.000,00 dólares y gira un cheque por 300,00 dólares, ¿cuánto dinero le debe el banco después de pagarlo? Guarda tu respuesta y compárala al final de la sección 1.</p>
+  </div>
+
+  <h3>1. El dinero de la cuenta corriente: una obligación a la vista</h3>
+  <p>Piensa en el dinero que dejas en tu cuenta del banco y que puedes usar cuando quieras. El banco no es dueño de ese dinero: lo recibió de ti, y debe devolvértelo cuando lo pidas, según las condiciones del producto. Esa relación es la que estudiamos en la Semana 04 con el depósito del cliente: el banco recibe efectivo y asume una obligación con quien depositó.</p>
+  <div class="concepto">
+    <p>Una <strong>cuenta corriente</strong> es una cuenta de depósito a la vista de la que el cliente es titular. Desde ella puede ordenar pagos con cheques. El COMF define el cheque como un medio de pago que se libra «con cargo a los depósitos» que el girador mantiene en su cuenta en una entidad financiera (art. 478). La palabra clave es «cargo»: el cheque no crea dinero, solo ordena que el banco pague con el dinero que ya le debe al cliente.</p>
+  </div>
+  <p>Esta definición tiene un límite que conviene recordar. El COMF regula el cheque, pero la apertura, el contrato y las condiciones de la cuenta corriente dependen de normas de la Junta y de las condiciones pactadas con el banco. Esas normas no las hemos revisado en esta sesión, así que aquí no decimos nada sobre comisiones, requisitos de apertura ni límites de sobregiro.</p>
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado: el saldo de Ana.</strong> Antes del cheque, el BDL debe a Ana los 1.000,00 dólares que depositó. Ese saldo es una obligación del banco con su clienta, y desde los libros de Ana es un derecho frente al BDL. Cuando Ana gira un cheque de 300,00 dólares y el banco lo paga, el cheque ordena que se pague con cargo a ese depósito. La obligación del banco con Ana baja a 700,00 dólares.</p>
+    <p>Fíjate en lo que no pasa: el banco no gana 300,00 dólares por pagar el cheque. Pagar un cheque reduce una deuda que ya existía; no produce un ingreso. Recibir o entregar dinero no basta para decidir si una operación es un ingreso o un gasto.</p>
+  </div>
+  <p class="comprobacion">Pausa de razonamiento: si Ana tuviera 1.000,00 dólares y girara un cheque por 1.500,00 dólares, ¿cuánto estaría obligado a pagar el banco? Escribe una respuesta antes de seguir.</p>
+  <p>El artículo 497 responde esa pregunta: el girado está obligado a pagar el cheque hasta el total de los fondos que tenga a disposición del girador. Con 1.000,00 dólares, el banco solo puede pagar hasta 1.000,00 dólares. El resto no se paga, y el banco debe protestar el cheque, como veremos en la sección 5. Un cheque que supera el saldo no obliga al banco a pagar la diferencia.</p>
+
+  <h3>2. Las partes del cheque</h3>
+  <p>Un cheque tiene al menos cuatro personas o entidades que pueden intervenir. Conviene nombrarlas antes de estudiar sus reglas, porque cada regla se aplica a una de ellas. La Tabla 1 resume las partes del ejemplo de Ana.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 1 · Partes de un cheque en el ejemplo de Ana Pérez</caption>
+      <thead><tr><th scope="col">Parte</th><th scope="col">Quién es en el ejemplo</th><th scope="col">Qué hace según el COMF</th></tr></thead>
+      <tbody>
+        <tr><td>Girador</td><td>Ana Pérez</td><td>Titular de la cuenta corriente. Da la orden de pago y responde por el pago (art. 478 y art. 483).</td></tr>
+        <tr><td>Girado</td><td>Banco Didáctico del Litoral S. A. (BDL)</td><td>Entidad financiera que paga el cheque con cargo a los depósitos del girador (art. 478). Debe pagarlo o protestarlo cuando se presenta (art. 492).</td></tr>
+        <tr><td>Beneficiario</td><td>Proveedor</td><td>Persona a la que se ordena pagar la suma (art. 478). Es tenedor legítimo del cheque (art. 489).</td></tr>
+        <tr><td>Portador o tenedor</td><td>Quien presenta el cheque para cobrarlo</td><td>Quien tiene el cheque en su poder. Tiene las acciones que la ley le reconoce si el cheque no se paga (art. 504).</td></tr>
+        <tr><td>Endosante</td><td>Quien transfiere el cheque a otra persona</td><td>Solo existe cuando el cheque se transmite por endoso (art. 485). El endosante garantiza el pago salvo cláusula en contrario (art. 488).</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Un detalle que confunde a muchos: el beneficiario y el portador no siempre son la misma persona. El beneficiario es quien recibe la orden de pago. Si el cheque pasa a otra persona por endoso, esa persona es tenedora. Por eso el COMF habla de «portador o tenedor» en varios artículos: se refiere a quien tiene el cheque en ese momento.</p>
+
+  <h3>3. Lo que debe tener un cheque para valer como cheque</h3>
+  <p>Un cheque es una orden pura y simple: la orden de pagar no puede depender de un hecho futuro ni de una condición. Por eso el artículo 479 enumera seis requisitos. La Tabla 2 los reúne con la función que cumple cada uno.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 2 · Requisitos del cheque según el artículo 479 del COMF</caption>
+      <thead><tr><th scope="col">Requisito</th><th scope="col">Para qué sirve</th></tr></thead>
+      <tbody>
+        <tr><td>1. La denominación «cheque», dentro del texto y en el idioma del documento</td><td>Distingue el documento de otra orden de pago.</td></tr>
+        <tr><td>2. El mandato puro y simple de pagar una suma determinada de dinero</td><td>La orden debe ser clara y sin condiciones.</td></tr>
+        <tr><td>3. El nombre de quien debe pagar (el girado)</td><td>Indica qué entidad tiene que pagar.</td></tr>
+        <tr><td>4. La indicación de la fecha de pago</td><td>Permite comprobar cuándo se presenta y si el plazo se cumple.</td></tr>
+        <tr><td>5. La indicación del lugar de emisión</td><td>Indica el lugar donde se emitió el documento. Sin ese dato no puede ubicarse el cheque en el sistema que lo regula (art. 514 sobre conflicto de leyes se aplica cuando hay un elemento extranjero).</td></tr>
+        <tr><td>6. La firma de quien expide el cheque (girador)</td><td>Sin firma del girador, no hay obligación de pago de su parte.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>El último párrafo del artículo 479 es el más importante para practicar: el cheque en el que falte alguno de estos requisitos no tiene validez como cheque. Eso no significa que el dinero desaparezca ni que la persona deje de tener un reclamo; significa que el documento no cumple la función de un cheque. Antes de confiar en un cheque, revisa que cumpla los seis requisitos.</p>
+  <p>Otra regla del artículo 480 completa la imagen: el importe del cheque no genera intereses, y toda estipulación sobre intereses se considera inexistente. La tentación de pensar que un cheque «rinde» mientras espera el cobro debe descartarse por esta norma.</p>
+
+  <h3>4. Clases de cheques y su transmisión</h3>
+  <p>No todos los cheques funcionan igual. Las clases que el COMF regula en este capítulo se diferencian por la forma en que se pagan o se transmiten. La Tabla 3 compara cuatro de ellas.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 3 · Clases de cheques reguladas en el COMF y su efecto</caption>
+      <thead><tr><th scope="col">Clase</th><th scope="col">Qué establece el texto</th><th scope="col">Artículo</th></tr></thead>
+      <tbody>
+        <tr><td>Cheque pagadero a la vista</td><td>Es pagadero cuando se presenta. El girado debe pagarlo o protestarlo en ese momento.</td><td>Art. 492</td></tr>
+        <tr><td>Cheque cruzado</td><td>El girador o el portador pueden cruzarlo, de acuerdo con las normas de la Junta. El texto que usamos no define el cruce: la regla exacta debe verificarse en esas normas.</td><td>Art. 500</td></tr>
+        <tr><td>Cheque «no a la orden»</td><td>No se transfiere salvo como cesión ordinaria. El girado solo puede abonar su valor en una cuenta del beneficiario o pagarlo en moneda al propio beneficiario o al cesionario.</td><td>Art. 501</td></tr>
+        <tr><td>Cheque certificado</td><td>La palabra «certificado», escrita, fechada y firmada por el girado, obliga al girado a pagarlo a su presentación y libera al girador de la responsabilidad del pago.</td><td>Art. 503</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La transmisión por endoso tiene reglas propias. El cheque puede endosarse, pero el COMF prohíbe los endosos en blanco o al portador (art. 487), y los endosos hasta por tres ocasiones, con los montos que fije la Junta (art. 485). Un cheque transmitido por endoso lleva la firma del endosante en el reverso, y ese endosante garantiza el pago salvo cláusula en contrario (art. 488).</p>
+  <p class="comprobacion">Pausa de razonamiento: si el proveedor de Ana quiere transferir el cheque a otra empresa, ¿qué regla de la tabla debe revisar primero? Escribe la clase de cheque y el artículo que la regula.</p>
+  <p>La respuesta que buscamos es una combinación de dos reglas. Si el cheque no es «no a la orden», puede transmitirse por endoso, pero con las limitaciones del artículo 485. Si el cheque lleva la expresión «no a la orden», solo puede transferirse como cesión ordinaria (art. 501). En ambos casos debes revisar si el endoso es en blanco, porque la ley lo prohíbe.</p>
+
+  <h3>5. Plazos: presentar, pagar y prescribir</h3>
+  <p>Aquí aparecen tres plazos que se confunden con facilidad. El primero es el plazo para presentar el cheque al cobro, que en Ecuador es de veinte días desde la emisión (art. 493). El segundo es el plazo máximo en que el girado todavía puede pagar, que es de trece meses desde la emisión (art. 517). El tercero es el plazo de prescripción de las acciones de cobro, que es de seis meses contados desde que vence el plazo de presentación (art. 512). La Tabla 4 los ordena.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 4 · Plazos del cheque girado y pagadero en Ecuador</caption>
+      <thead><tr><th scope="col">Plazo</th><th scope="col">Qué regula</th><th scope="col">Artículo</th></tr></thead>
+      <tbody>
+        <tr><td>Veinte días desde la emisión</td><td>Plazo de presentación para el pago de un cheque girado y pagadero en Ecuador.</td><td>Art. 493</td></tr>
+        <tr><td>Noventa días desde la emisión</td><td>Plazo de presentación de un cheque girado en el exterior y pagadero en Ecuador.</td><td>Art. 493</td></tr>
+        <tr><td>Presentación a una cámara de compensación</td><td>Equivale a la presentación para el pago.</td><td>Art. 494</td></tr>
+        <tr><td>Día hábil</td><td>La presentación y el protesto deben hacerse en un día hábil. Si el último día del plazo no es laborable, se prorroga hasta el siguiente día hábil.</td><td>Art. 515</td></tr>
+        <tr><td>Trece meses desde la emisión</td><td>Plazo dentro del cual el girado puede pagar el cheque, incluso después del plazo de presentación.</td><td>Art. 517</td></tr>
+        <tr><td>Seis meses desde la expiración del plazo de presentación</td><td>Prescripción de las acciones del portador o tenedor contra el girador, los endosantes y los demás obligados.</td><td>Art. 512</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La diferencia entre presentar y pagar es la clave de la tabla. Presentar el cheque es llevarlo al banco para su cobro dentro de los veinte días. Pagarlo es que el banco lo haga efectivo. La ley permite que el banco pague después de vencido el plazo de presentación, siempre que sea dentro de los trece meses. Pero eso no convierte en válida cualquier acción de cobro: las acciones del tenedor prescriben a los seis meses.</p>
+  <div class="calculo">
+    <h4>Cálculo 1 · ¿Está dentro del plazo de presentación el cheque de Ana?</h4>
+    <ol>
+      <li><strong>Situación.</strong> Ana gira un cheque el 3 de noviembre de 2026 a favor de su proveedor. Queremos saber si el proveedor lo presentó dentro del plazo.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos que el cheque es girado en Ecuador y pagadero en Ecuador. El cálculo sirve para aplicar el plazo del artículo 493 con dos fechas de presentación.</li>
+      <li><strong>Qué buscamos.</strong> Los días transcurridos entre la emisión y la presentación, y si ese número es igual o menor que veinte.</li>
+      <li><strong>Datos y origen.</strong> Fecha de emisión: 3 de noviembre de 2026 (supuesto del caso). Plazo: veinte días desde la emisión (art. 493, COMF del proyecto).</li>
+      <li><strong>Por qué esta operación.</strong> El plazo se cuenta desde la emisión. La forma exacta de contar el último día se remite a las reglas del Código Civil citadas por el COMF; en los dos casos de este cálculo el resultado no depende de ese detalle, porque las fechas están lejos del límite.</li>
+      <li><strong>Operación.</strong> Presentación el 10 de noviembre de 2026: 10 − 3 = 7 días. Presentación el 30 de noviembre de 2026: 30 − 3 = 27 días.</li>
+      <li><strong>Resultado.</strong> Con 7 días, el cheque se presentó dentro del plazo de veinte días. Con 27 días, se presentó fuera de él.</li>
+      <li><strong>Comprobación.</strong> El primer resultado es menor que 20 y el segundo es mayor que 20, así que las dos conclusiones coinciden con la comparación.</li>
+      <li><strong>Interpretación y límites.</strong> La presentación tardía no significa que el banco no pueda pagar: según el artículo 517, el girado puede hacerlo hasta el 3 de diciembre de 2027, trece meses después de la emisión. Lo que sí cambia es la situación para ejercer ciertas acciones, que depende de otros artículos que revisaremos en la sección 6. El error que evita este cálculo es suponer que, pasado el plazo de presentación, el cheque deja de ser pagable.</li>
+    </ol>
+  </div>
+  <p>Hay una regla práctica que conviene llevar en la cabeza: el plazo de presentación protege la rapidez del cobro, mientras que el plazo de prescripción limita el tiempo para reclamar. Los dos se cuentan desde momentos distintos, y mezclarlos lleva a conclusiones equivocadas.</p>
+
+  <h3>6. Protesto, título ejecutivo y lo que puede reclamarse</h3>
+  <p>Cuando un cheque no se paga, el tenedor necesita una prueba formal de la falta de pago. Esa prueba se llama protesto. El artículo 504 enumera tres formas de acreditarlo: una declaración fechada y escrita del girado en el propio cheque; un requerimiento de pago hecho por un notario público cuando el girado se niega a firmar esa declaración, con el acta en la que el notario deja constancia de la negativa; o una declaración fechada de una cámara de compensación que acredite que el cheque se envió en tiempo hábil y no fue pagado.</p>
+  <p>El protesto no es el cobro. Es el documento que prueba que el cheque no se pagó a tiempo, y por eso el tenedor lo necesita para ejercer sus acciones contra el girador, los endosantes y los demás obligados. El artículo 492 añade una prohibición importante: el banco no puede poner una leyenda con o sin fecha que diga que el cheque fue presentado y no pagado en lugar del protesto. Si lo hace, la entidad puede ser sancionada con una multa por el valor del cheque.</p>
+  <p>Cuando el cheque no fue pagado por falta o insuficiencia de fondos y se protestó dentro del plazo de presentación, el artículo 516 le da al cheque la condición de título ejecutivo. Esa expresión significa que el tenedor puede iniciar un proceso de ejecución sin tener que demostrar la deuda desde cero, aunque el proceso concreto se regula en el COGEP, que no revisamos aquí.</p>
+  <p>El artículo 507 indica qué puede reclamar el tenedor: el importe del cheque no pagado, los intereses a la tasa máxima desde la fecha del protesto, y los gastos del protesto, de las notificaciones y las costas procesales. Fíjate en la expresión «tasa máxima»: el texto no fija el porcentaje, y ese valor debe comprobarse en la fuente oficial vigente a la fecha. Sin ese dato, no puedes calcular el interés.</p>
+
+  <h3>7. Multas y sanciones</h3>
+  <p>Hay tres tipos de consecuencias económicas que conviene separar. La primera es la multa que paga el girador cuando su cheque se protesta por falta de fondos. La segunda es la sanción administrativa que pueden imponer los organismos de control a la entidad o a sus responsables por incumplir el capítulo. La tercera es la responsabilidad civil del girador o de los obligados frente al tenedor, que es la que vimos en la sección anterior. Aquí nos concentramos en las dos primeras.</p>
+  <div class="concepto">
+    <p>El artículo 499 establece una multa del 10 % sobre el valor de cada cheque protestado por insuficiencia de fondos. La multa la paga el girador. La entidad financiera la debita de las cuentas del girador hasta el monto que se mantenga en depósito, y la transfiere mensualmente a la Cuenta Única del Tesoro Nacional.</p>
+  </div>
+  <p>Ten cuidado con dos errores. El primero es usar el 5 % que aparece en textos antiguos. Esa cifra venía de la Ley de Cheques, que el COMF derogó expresamente en su capítulo de derogatorias. El texto que usamos fija el 10 %, y la comprobación en el Registro Oficial sigue pendiente, como en las semanas anteriores. El segundo error es suponer que la multa siempre se cobra completa. El texto dice que se debita hasta el monto en depósito, y no aclara qué sucede con el resto. Eso es un límite del texto, y debes decirlo sin rellenarlo.</p>
+  <div class="calculo">
+    <h4>Cálculo 2 · Multa por un cheque protestado</h4>
+    <ol>
+      <li><strong>Situación.</strong> Ana gira un cheque de 1.000,00 dólares que el BDL protesta por insuficiencia de fondos. Su saldo en la cuenta corriente es de 60,00 dólares.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos que el protesto cumple los requisitos del artículo 504. El cálculo sirve para separar el monto de la multa del monto que la entidad puede debitar.</li>
+      <li><strong>Qué buscamos.</strong> El valor de la multa y el monto que el banco puede debitar hoy de la cuenta.</li>
+      <li><strong>Datos y origen.</strong> Valor del cheque protestado: 1.000,00 dólares (supuesto del caso). Porcentaje de la multa: 10 %, art. 499 del COMF del proyecto. Saldo disponible: 60,00 dólares (supuesto).</li>
+      <li><strong>Por qué esta operación.</strong> La multa se calcula sobre el valor del cheque, no sobre el saldo. Pero el artículo 499 limita el débito al monto que se mantenga en depósito.</li>
+      <li><strong>Operación.</strong> Multa: 10 % × 1.000,00 = 100,00 dólares. Monto debitable: 60,00 dólares, porque es el monto en depósito.</li>
+      <li><strong>Resultado.</strong> La multa es de 100,00 dólares, pero con el saldo actual el banco solo puede debitar 60,00 dólares. El texto no dice cómo se cobra el resto.</li>
+      <li><strong>Comprobación.</strong> La diferencia entre la multa y lo debitable es 100,00 − 60,00 = 40,00 dólares. Esa cifra no es una deuda confirmada: solo muestra que el débito y la multa no son lo mismo.</li>
+      <li><strong>Interpretación y límites.</strong> La multa no es lo mismo que el cheque. El error que evita este cálculo es tomar la multa como si se cobrara completa sin revisar el saldo. Con este texto no puede concluirse cómo se recupera el excedente. Si una pregunta depende de ese punto, la respuesta correcta es decir que falta información.</li>
+    </ol>
+  </div>
+  <p>El artículo 520 añade la potestad sancionatoria. Los organismos de control pueden sancionar los incumplimientos de este capítulo con multas comprendidas entre uno y treinta salarios básicos unificados. El salario básico unificado, o SBU, es la referencia salarial que el Estado fija cada año. Para 2026 el SBU es de 482,00 dólares, según el Acuerdo Ministerial MDT-2025-195 del Ministerio del Trabajo. Con esa cifra, el rango del artículo 520 va de 482,00 dólares (un SBU) a 14.460,00 dólares (treinta SBU). El monto exacto dentro de ese rango depende de la decisión del organismo de control en el caso concreto, y sin esa decisión no puede calcularse.</p>
+  <p class="comprobacion">Pausa de razonamiento: la multa del artículo 499 la paga el girador y se transfiere a la Cuenta Única del Tesoro Nacional. ¿Esa multa es un ingreso propio del banco? Escribe una respuesta provisional y di qué información necesitarías para decidirlo.</p>
+  <p>Aquí conviene ser honesto con lo que el texto permite concluir. El artículo dice a dónde va el dinero después: a la Cuenta Única del Tesoro Nacional. Pero cómo registra la entidad el movimiento mientras lo tiene (si como ingreso propio, como valor recaudado para terceros o de otra forma) depende del catálogo y de la disposición que regule esa clasificación. Esa decisión se estudia en la Semana 06, y exige verificar el catálogo antes de registrarla. Por ahora basta con reconocer que la pregunta existe.</p>
+
+  <h3>8. Errores frecuentes y cómo corregirlos</h3>
+  <p>El primer error es confundir la presentación con el pago. Presentar el cheque es llevarlo al cobro dentro del plazo; pagarlo es que el girado lo haga efectivo. Si piensas que un cheque presentado después de veinte días ya no puede pagarse, revisa el artículo 517.</p>
+  <p>El segundo error es usar cifras de normas que ya no están vigentes. Si encuentras un 5 % de multa o un cheque regulado por la Ley de Cheques, revisa la fecha y la fuente. El COMF que usamos derogó esa ley y fija el 10 % en el artículo 499.</p>
+  <p>El tercero es asumir que un cheque genera intereses mientras espera el cobro. El artículo 480 dice lo contrario. Los intereses aparecen después, en el reclamo del tenedor, a la tasa máxima desde el protesto (art. 507), y ese dato debe comprobarse.</p>
+  <p>El cuarto es registrar el cheque recibido como ingreso. Recibir un cheque no es recibir dinero en efectivo, y el pago de un cheque reduce una obligación que el banco ya tenía. Ese criterio lo aplicarás en la Semana 06.</p>
+  <p>El quinto es reemplazar el protesto por una leyenda. El artículo 492 lo prohíbe. Si ves esa práctica en un caso, identifica la norma que la contradice y explica por qué el protesto sigue siendo necesario.</p>
+  <p>Si el error persiste, sigue esta ruta: identifica la parte que intervino, después revisa si el cheque cumple los requisitos, luego compara las fechas con el plazo y, por último, decide si el protesto y la multa aplican. Cada paso usa una norma distinta y solo después se combinan.</p>
+
+  <h3>9. Cierre y transferencia</h3>
+  <p>Volvamos a Ana. Su cuenta tenía 1.000,00 dólares y el cheque al proveedor fue por 300,00 dólares. Si el banco pagó ese cheque, la obligación del BDL con Ana bajó a 700,00 dólares, y el proveedor recibió el pago dentro del plazo. Si el cheque hubiera llegado después de veinte días, el banco todavía podría pagarlo dentro de trece meses, pero las acciones de cobro tendrían sus propios plazos.</p>
+  <p>Como tarea de transferencia, imagina que el BDL recibe de otro cliente un cheque girado el 5 de noviembre de 2026 por 800,00 dólares, con saldo de 500,00 dólares en la cuenta. El cheque se presenta el 2 de diciembre de 2026 y se protesta por insuficiencia de fondos. Antes de calcular, indica si el cheque se presentó dentro del plazo del artículo 493, qué multa corresponde según el artículo 499, cuánto puede debitarse de la cuenta, y qué información falta para decidir el resto. Tu respuesta será correcta si distingues las tres cosas y no supones un dato que el texto no da.</p>
+  <p>Cómo reconocer que aprendiste: puedes ordenar las partes y los requisitos de un cheque, calcular plazos sin confundir presentación con pago, y explicar por qué la multa no siempre se cobra completa. Si una de esas tres cosas te cuesta, vuelve a la sección correspondiente antes de la evaluación.</p>
+
+  <div class="nota-lateral">
+    <h3>Glosario breve</h3>
+    <p><strong>Cuenta corriente:</strong> cuenta de depósito a la vista de la que el cliente puede ordenar pagos con cheques.</p>
+    <p><strong>Girador:</strong> titular de la cuenta que emite el cheque (art. 478).</p>
+    <p><strong>Girado:</strong> entidad financiera que paga el cheque con cargo a los depósitos del girador (art. 478).</p>
+    <p><strong>Beneficiario:</strong> persona a la que se ordena pagar el cheque (art. 478).</p>
+    <p><strong>Portador o tenedor:</strong> quien tiene el cheque en su poder y lo presenta para cobrarlo (art. 489 y art. 504).</p>
+    <p><strong>Endoso:</strong> transmisión del cheque a la orden mediante una fórmula escrita en el reverso (art. 485).</p>
+    <p><strong>Protesto:</strong> prueba formal de que el cheque no fue pagado (art. 504).</p>
+    <p><strong>Título ejecutivo:</strong> documento que permite iniciar un proceso de ejecución; en el cheque aplica en el caso del artículo 516.</p>
+    <p><strong>Prescripción:</strong> pérdida del derecho a reclamar por el paso del tiempo; en el cheque, seis meses (art. 512).</p>
+    <p><strong>Cuenta Única del Tesoro Nacional:</strong> cuenta del Estado a la que se transfieren las multas por cheques protestados (art. 499).</p>
+    <p><strong>Salario básico unificado (SBU):</strong> referencia salarial fijada por el Estado cada año, usada para medir ciertas multas (art. 520). Para 2026 es de 482,00 dólares (Acuerdo Ministerial MDT-2025-195).</p>
+  </div>
+
+  <h2>Ejercicios guiados</h2>
+  <p>Trabaja cada ejercicio por escrito antes de abrir su solución. Las soluciones están en los desplegables.</p>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 1 · Revisar si un documento es un cheque</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad revisarás cuatro documentos y decidirás si cumplen los requisitos del artículo 479.</p>
+    <p><strong>Enunciado.</strong> Revisa los cuatro documentos siguientes y decide cuáles cumplen los requisitos del artículo 479. (a) Documento con la palabra «cheque», la orden de pagar 300,00 dólares al BDL, la firma de Ana, el lugar de emisión y la fecha de pago. (b) Igual al anterior, pero sin firma de Ana. (c) Igual al anterior, pero sin lugar de emisión. (d) Documento con la palabra «cheque» y la orden de pagar 300,00 dólares «si el proveedor entrega la mercadería», firmado por Ana, con lugar y fecha.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Revisa uno por uno los seis requisitos de la Tabla 2. Después pregúntate si la orden es pura y simple y si falta algo.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) Cumple: tiene la denominación, la orden de pagar una suma determinada, el girado, la fecha de pago, el lugar de emisión y la firma. (b) No cumple: falta la firma del girador (requisito 6), y el artículo 479 dice que sin ese requisito no tiene validez como cheque. (c) No cumple: falta el lugar de emisión (requisito 5). (d) No cumple: la orden está condicionada a un hecho, y el requisito 2 exige un mandato puro y simple.</p>
+      <p class="comprobacion">Comprobación: en cada caso, identifica el requisito que falta o el que no se cumple. No basta con decir que el documento «parece» un cheque.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si marcaste (c) como válido, revisa el requisito 5 de la Tabla 2. Si marcaste (d) como válido, recuerda que una condición cambia la naturaleza de la orden de pago.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio entrena una revisión que el banco hace al recibir un documento: antes de pagar, verifica que el papel tenga todas las piezas que la ley exige.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 2 · Presentación y pago</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás si un cheque se presentó dentro del plazo y qué plazo aplica para el pago.</p>
+    <p><strong>Enunciado.</strong> Un cheque girado y pagadero en Ecuador fue emitido el 3 de noviembre de 2026. Se presentó para el pago el 27 de noviembre de 2026. (a) ¿Se presentó dentro del plazo de veinte días del artículo 493? (b) Si el banco lo paga el 15 de julio de 2027, ¿sigue dentro del plazo en que el girado puede pagarlo, según el artículo 517? Justifica con las fechas.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Cuenta los días desde la emisión hasta la presentación. Después compara con el plazo de la tabla 4. Para la parte (b), revisa qué plazo del artículo 517 se cuenta desde la emisión.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 27 − 3 = 24 días. Como 24 es mayor que 20, no se presentó dentro del plazo de veinte días. (b) El plazo de trece meses desde el 3 de noviembre de 2026 vence el 3 de diciembre de 2027. El 15 de julio de 2027 está dentro de ese plazo, así que el girado todavía puede pagar. La parte (a) no cambia esa conclusión: el artículo 517 permite pagar después del plazo de presentación.</p>
+      <p class="comprobacion">Comprobación: la parte (a) da un número mayor que veinte; la parte (b) compara una fecha con otra fecha y confirma que la primera está antes del límite.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si concluiste que el cheque ya no puede pagarse, recuerda la diferencia entre presentar y pagar que aparece en la sección 5. Si contaste los días a partir de la presentación, vuelve a contar desde la emisión.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>El ejercicio separa dos plazos distintos. Tener clara esa separación evita concluir que un cheque tardío pierde toda posibilidad de pago.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 3 · La multa cuando el saldo no alcanza</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás una multa del artículo 499 y separarás el monto de la multa del monto que puede debitarse.</p>
+    <p><strong>Enunciado.</strong> Otro cliente del BDL gira un cheque de 2.500,00 dólares que se protesta por insuficiencia de fondos. Su saldo disponible es de 180,00 dólares. Calcula la multa, indica cuánto puede debitar el banco de la cuenta y explica qué no puedes concluir con los datos.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>La multa se calcula sobre el valor del cheque. El débito tiene un límite distinto, que el artículo 499 indica con la expresión «monto que se mantenga en depósito».</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Multa: 10 % × 2.500,00 = 250,00 dólares. Monto debitable: 180,00 dólares, que es el saldo en depósito. Diferencia entre la multa y lo debitable: 250,00 − 180,00 = 70,00 dólares. Con esos datos no puedes concluir cómo se recupera la diferencia, porque el texto no lo regula. Tampoco puedes afirmar que el cliente deba esos 70,00 dólares sin revisar el documento que fundamenta la multa y las reglas de la Junta sobre cobro.</p>
+      <p class="comprobacion">Comprobación: 250,00 es el 10 % de 2.500,00, porque 2.500,00 ÷ 10 = 250,00. La diferencia de 70,00 dólares se obtiene restando el saldo de la multa.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si calculaste la multa sobre el saldo (10 % de 180,00), revisa la base del porcentaje: el artículo 499 habla del valor de cada cheque protestado.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>La multa y el débito son dos medidas distintas. Cuando un texto no regula algo, la conclusión correcta es decir qué falta, no inventar la regla.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 4 · Protesto y lo que puede reclamarse</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad identificarás las formas de acreditar el protesto y los conceptos que el tenedor puede reclamar.</p>
+    <p><strong>Enunciado.</strong> El proveedor de un cliente tiene un cheque de 500,00 dólares no pagado por insuficiencia de fondos, que se presentó dentro del plazo. (a) Nombra las tres formas de acreditar el protesto según el artículo 504. (b) Enumera los conceptos que puede reclamar según el artículo 507. (c) ¿Puedes calcular el interés? Justifica.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Busca en la sección 6 la lista de formas de protesto y los tres conceptos del artículo 507. Para la parte (c), revisa qué dato necesita el cálculo.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) Declaración fechada y escrita del girado en el cheque; requerimiento notarial cuando el girado se niega a firmar esa declaración; o declaración fechada de una cámara de compensación que acredite el envío en tiempo hábil y el no pago. (b) El importe no pagado (500,00 dólares); los intereses a la tasa máxima desde la fecha del protesto; y los gastos del protesto, de las notificaciones y las costas procesales. (c) No puedes calcular el interés, porque el texto no fija la tasa máxima. Necesitas consultarla en la fuente oficial vigente a la fecha del protesto, y luego aplicarla desde esa fecha.</p>
+      <p class="comprobacion">Comprobación: la lista de (a) tiene tres formas y la de (b), tres conceptos. Si tu respuesta tiene más o menos, revisa el texto del artículo.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si escribiste que el protesto es el cobro, recuerda que es la prueba formal de la falta de pago. Si calculaste un interés con un porcentaje que recordabas, revisa si ese porcentaje está verificado en la fuente oficial.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Aquí practicas la diferencia entre lo que la norma permite reclamar y el monto que hay que calcular. Sin el dato de la tasa, la respuesta correcta es explicar qué falta.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 5 · Qué información necesitas para una sanción</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>En esta actividad identificarás qué datos faltan para calcular una sanción administrativa del artículo 520.</p>
+    <p><strong>Enunciado.</strong> Supongamos que en 2026 un organismo de control impone a una entidad una multa por incumplir una obligación del capítulo de cheques. Explica qué necesitarías conocer para calcular el monto de la multa, y qué podrías afirmar con el texto del COMF que usamos.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Piensa en tres datos: el rango legal de la multa, el valor de la referencia que ese rango usa y la infracción concreta que se sanciona.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Con el texto podrías afirmar que la sanción está entre uno y treinta salarios básicos unificados, y que la impone un organismo de control. Si la sanción es de 2026, el SBU es de 482,00 dólares (Acuerdo Ministerial MDT-2025-195), así que el rango va de 482,00 a 14.460,00 dólares: 1 × 482,00 = 482,00 y 30 × 482,00 = 14.460,00. Para fijar el monto exacto dentro de ese rango necesitarías además el tipo de incumplimiento, porque la norma no fija una cifra única, y el acto administrativo que lo determina. Sin esos datos, la conclusión correcta es que el monto exacto no puede calcularse todavía.</p>
+      <p class="comprobacion">Comprobación: tu respuesta debe distinguir lo que el texto dice, lo que debes consultar y lo que aún no puedes afirmar.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si escribiste un monto sin calcularlo a partir del SBU de 2026, recuerda que el texto usa esa unidad de referencia y no da su valor en dólares. Si confundiste la multa del artículo 499 con la del artículo 520, revisa que una la paga el girador y la otra se impone por incumplimientos.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio enseña que un rango legal no es un monto. Antes de calcular una sanción hay que saber qué referencia se usa y qué infracción se sanciona.</p>
+    </details>
+  </div>
+
+  <h3>Presupuesto de tiempo de la sesión</h3>
+  <p>La sesión se estima en 120 minutos de trabajo acompañado: apertura 5 minutos, explicación con pausas 40 minutos, cinco ejercicios 50 minutos, evaluación y revisión 20 minutos, y cierre 5 minutos. El tiempo es orientativo y no garantiza una duración igual para todos.</p>
+
+</section>
+
+<!-- ============ EVALUACIÓN ============ -->
+<section class="panel" id="p-evaluacion" role="tabpanel" hidden>
+  <h2>Evaluación de la Sesión 01</h2>
+  <p>El cuestionario tiene 15 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas como <span class="badge">Teórica</span> se responden con lo estudiado; las marcadas como <span class="badge analisis">Análisis</span> presentan un caso breve. Al elegir una opción verás de inmediato su retroalimentación.</p>
+  <p>El puntaje es de práctica y no es una nota oficial. Los reintentos no demuestran por sí solos que dominas el tema: las explicaciones, los cálculos y los ejercicios también son evidencia de aprendizaje.</p>
+
+  <div class="estado-eval" aria-live="polite">
+    <p id="estado-texto" style="margin:0;">Preguntas respondidas: 0 de 15 · Aciertos: 0</p>
+    <div class="progreso" aria-hidden="true"><div id="barra"></div></div>
+  </div>
+
+  <form id="quiz" onsubmit="return false;"></form>
+
+  <div class="resultado" id="resultado" role="status">
+    <h3>Resultado de práctica</h3>
+    <p id="resultado-texto"></p>
+    <button type="button" class="boton" id="btn-reintentar" hidden>Intentar nuevamente</button>
+    <button type="button" class="boton secundario" id="btn-reiniciar">Reiniciar cuestionario</button>
+  </div>
+  <p style="margin-top:0.5rem;"><button type="button" class="boton secundario" id="btn-reiniciar-fin">Reiniciar cuestionario</button></p>
+</section>
+
+<!-- ============ REFLEXIÓN ============ -->
+<section class="panel" id="p-reflexion" role="tabpanel" hidden>
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Te invitan a pensar qué significa que un documento de pago dependa de la confianza en quien lo recibe.</p>
+
+  <h3>Una promesa escrita</h3>
+  <p>Un cheque es una orden escrita que sostiene la confianza entre personas que no se conocen. Quien lo recibe confía en que el banco tiene el dinero y en que la firma es válida. Los requisitos del artículo 479 existen para que esa confianza no dependa solo de la buena voluntad.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué revisarías tú antes de aceptar un cheque de alguien que no conoces, y por qué esa revisión es distinta de la que haría el banco?</p>
+
+  <h3>Cuando el saldo no alcanza</h3>
+  <p>Girar un cheque por más dinero del que hay en la cuenta puede parecer un descuido pequeño. Sin embargo, el protesto, la multa y el proceso de cobro afectan a quien firmó y también a quien esperaba el pago. La ley trata ese hecho con consecuencias concretas.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué efecto tiene una multa que se cobra solo hasta el saldo disponible sobre la persona que giró el cheque y sobre quien esperaba el pago?</p>
+
+  <h3>Plazos que se confunden</h3>
+  <p>Cuando los plazos se mezclan, el cobro se retrasa o se pierde sin que nadie lo advierta. Por eso la ley separa el plazo de presentación, el plazo de pago y el plazo de prescripción.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué información te daría un registro de fechas de emisión y presentación de los cheques de una entidad?</p>
+
+  <h3>Sanción y transparencia</h3>
+  <p>Una multa que la ley dirige al Estado y una sanción que impone un organismo de control son decisiones públicas. Entenderlas exige conocer la norma, la fuente de los montos y la fecha en que se aplican.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿por qué una cifra antigua de multa, aunque hubiera sido correcta en su momento, puede llevar a un error si se usa hoy?</p>
+</section>
+
+<!-- ============ ACTIVIDAD CON IA ============ -->
+<section class="panel" id="p-ia" role="tabpanel" hidden>
+  <h2>Actividad con IA</h2>
+  <p>Esta actividad es formativa e individual. Su propósito es verificar una explicación de apoyo, no reemplazar tu trabajo.</p>
+
+  <h3>Paso 1 · Trabajo inicial propio</h3>
+  <p>Antes de consultar cualquier herramienta, escribe en un párrafo cuál es la diferencia entre presentar un cheque y pagarlo, y explica qué plazo aplica a cada uno según lo estudiado.</p>
+
+  <h3>Paso 2 · Prompt</h3>
+  <p>Usa exactamente este texto: «Explica, en un párrafo y con lenguaje sencillo, cuál es el plazo para presentar un cheque girado y pagadero en Ecuador, cuál es el plazo para que el girado lo pague y cuál es la multa por cheque protestado por falta de fondos. Indica la norma que usas en cada caso.»</p>
+
+  <h3>Paso 3 · Contraste con el material</h3>
+  <p>Compara la respuesta con la sección 5 y con la sección 7 de esta sesión. Marca cada afirmación que coincida con el material y cada una que no aparezca en él.</p>
+
+  <h3>Paso 4 · Verificación</h3>
+  <p>Verifica al menos una afirmación en el texto del COMF, Libro I, Título III, Capítulo 1, artículos 493, 499 y 517. Si la herramienta menciona un 5 % de multa, una Ley de Cheques vigente o un plazo distinto de veinte días, búscalo en el texto y registra el resultado. No aceptes una cifra solo porque la explicación sea coherente.</p>
+
+  <h3>Paso 5 · Justificación</h3>
+  <p>Escribe un párrafo que explique qué aceptaste, qué corregiste y qué rechazaste, y por qué. La respuesta de la herramienta no es una fuente verificada por sí sola.</p>
+
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>Escribí mi trabajo inicial antes de consultar la herramienta.</li>
+    <li>Contrasté la respuesta con la sección 5 y con la sección 7.</li>
+    <li>Verifiqué al menos un artículo en el texto del COMF y registré el resultado.</li>
+    <li>Justifiqué qué acepté, corregí o rechacé.</li>
+    <li>No compartí datos personales, tributarios ni bancarios reales.</li>
+  </ul>
+</section>
+
+<!-- ============ BIBLIOGRAFÍA ============ -->
+<section class="panel" id="p-bibliografia" role="tabpanel" hidden>
+  <h2>Bibliografía</h2>
+  <p>Las referencias se ordenan alfabéticamente y siguen el formato APA 7.</p>
+  <ul>
+    <li>Código Orgánico Monetario y Financiero. (2014). Libro I, Título III, Capítulo 1, artículos 478 a 520, y Capítulo 2 (derogatorias). Registro Oficial, Suplemento 332, 12 de septiembre de 2014. Texto del proyecto de la asignatura, con notas de reforma hasta 2025. El texto vigente debe comprobarse en el Registro Oficial antes de citarlo, porque la última reforma del Libro I que se conoce figura en el Registro Oficial, Suplemento 142, del 13 de octubre de 2025.</li>
+    <li>Ministerio del Trabajo del Ecuador. (2025). Acuerdo Ministerial MDT-2025-195: fijación del salario básico unificado del trabajador en general para el año 2026. Verificado a partir de reseñas publicadas en diciembre de 2025 y enero de 2026; el texto oficial debe comprobarse en el portal del Ministerio del Trabajo.</li>
+  </ul>
+  <p>No se incluyen otras referencias académicas en esta sesión porque no se verificaron. La tasa máxima de interés del artículo 507 y las normas de la Junta sobre cheques cruzados y cámaras de compensación deben consultarse en sus fuentes oficiales antes de usarse. La tasa máxima la publica el Banco Central del Ecuador cada mes, y las cifras que aparecen en bancos y tarifarios no sustituyen esa publicación.</p>
+  <p>Te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de las normas se comprueba en el Registro Oficial y en las fuentes de los organismos de control, no en el buscador académico.</p>
+</section>
+
+</main>
+
+<script>
+/* ===== 1. Pestañas ===== */
+(function () {
+  const botones = Array.from(document.querySelectorAll('nav.menu [role="tab"]'));
+  function mostrar(id) {
+    botones.forEach(b => {
+      const activo = b.dataset.tab === id;
+      b.setAttribute('aria-selected', activo ? 'true' : 'false');
+      document.getElementById('p-' + b.dataset.tab).hidden = !activo;
+    });
+  }
+  botones.forEach((b, i) => {
+    b.addEventListener('click', () => mostrar(b.dataset.tab));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const d = e.key === 'ArrowRight' ? 1 : -1;
+        const n = botones[(i + d + botones.length) % botones.length];
+        n.focus(); mostrar(n.dataset.tab);
+      }
+    });
+  });
+  mostrar('sesion');
+})();
+
+/* ===== 2. Evaluación ===== */
+const PREGUNTAS = [
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 478 del COMF, ¿quién es el girado en un cheque?",
+  "opciones": [
+   {
+    "t": "La persona a la que se ordena pagar la suma de dinero",
+    "ok": false,
+    "fb": "Esa persona es el beneficiario. El girado es otra parte: no recibe el pago, sino que lo ejecuta con cargo a los depósitos del girador."
+   },
+   {
+    "t": "La entidad financiera que paga el cheque con cargo a los depósitos del girador",
+    "ok": true,
+    "fb": "El artículo 478 define al girado como la entidad a la que el girador ordena que pague la cantidad. Por eso el banco no paga con dinero propio, sino con el que le debe al cliente en su cuenta."
+   },
+   {
+    "t": "El cliente que emite el cheque y da la orden de pago",
+    "ok": false,
+    "fb": "Ese es el girador. Confundirlo con el girado lleva a pensar que el cliente es quien paga, cuando la obligación de pagar corresponde al banco."
+   },
+   {
+    "t": "La Superintendencia de Bancos, que autoriza la emisión",
+    "ok": false,
+    "fb": "La Superintendencia controla a las entidades, pero el artículo 478 no la menciona como parte del cheque. Las partes son el girador, el girado y el beneficiario."
+   }
+  ],
+  "gen": "Revise la sección 2 de la Sesión 01 y la Tabla 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 493, ¿en qué plazo deben presentarse para el pago los cheques girados y pagaderos en Ecuador?",
+  "opciones": [
+   {
+    "t": "Noventa días desde la emisión",
+    "ok": false,
+    "fb": "Noventa días es el plazo para un cheque girado en el exterior y pagadero en Ecuador. Confundir los dos casos cambia la conclusión sobre el plazo aplicable."
+   },
+   {
+    "t": "Seis meses desde la emisión",
+    "ok": false,
+    "fb": "Seis meses es el plazo de prescripción de las acciones del tenedor (art. 512), que se cuenta desde el vencimiento del plazo de presentación, no desde la emisión."
+   },
+   {
+    "t": "Trece meses desde la emisión",
+    "ok": false,
+    "fb": "Trece meses es el plazo máximo en que el girado puede pagar el cheque (art. 517). No es el plazo de presentación, que es más corto."
+   },
+   {
+    "t": "Veinte días contados desde la fecha de su emisión",
+    "ok": true,
+    "fb": "El artículo 493 fija veinte días desde la emisión para los cheques girados y pagaderos en Ecuador. Esa es la regla para presentarlos al cobro."
+   }
+  ],
+  "gen": "Revise la Tabla 4 y la sección 5 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 479, ¿qué sucede con un cheque al que le falta uno de sus requisitos?",
+  "opciones": [
+   {
+    "t": "No tiene validez como cheque",
+    "ok": true,
+    "fb": "El artículo 479 dice que el cheque en el que falte alguno de los requisitos no tendrá validez como cheque. Por eso debes revisar los seis requisitos antes de confiar en el documento."
+   },
+   {
+    "t": "Sigue siendo válido si tiene la firma del girador, aunque falte el lugar de emisión",
+    "ok": false,
+    "fb": "El lugar de emisión es el requisito 5 del artículo 479. Que falte uno de los requisitos basta para que el documento no sea válido como cheque; la firma no lo compensa."
+   },
+   {
+    "t": "Vale como cheque, pero no puede protestarse",
+    "ok": false,
+    "fb": "El texto no sostiene esa distinción. Si el documento no es cheque, la regla general de presentación y protesto no se aplica como si lo fuera."
+   },
+   {
+    "t": "Solo deja de ser válido cuando el banco lo protesta",
+    "ok": false,
+    "fb": "El protesto prueba la falta de pago de un cheque válido. La validez depende de los requisitos del artículo 479, no de que el banco haya protestado el documento."
+   }
+  ],
+  "gen": "Revise la Tabla 2 y el ejercicio 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 480, ¿el importe de un cheque genera intereses?",
+  "opciones": [
+   {
+    "t": "Sí, desde la fecha de emisión a la tasa activa",
+    "ok": false,
+    "fb": "El artículo 480 dice lo contrario: el importe del cheque no genera intereses. Los intereses solo aparecen después, en el reclamo del tenedor (art. 507)."
+   },
+   {
+    "t": "Sí, desde la presentación a la tasa pasiva",
+    "ok": false,
+    "fb": "Tampoco es correcto. La tasa pasiva no se aplica al importe del cheque mientras espera el pago. Revisa el artículo 480."
+   },
+   {
+    "t": "No; el importe no genera intereses y cualquier estipulación en contrario se considera inexistente",
+    "ok": true,
+    "fb": "El artículo 480 establece que el importe del cheque no genera intereses y que toda estipulación sobre intereses se reputa inexistente. Por eso un cheque no se convierte en una inversión mientras espera el cobro."
+   },
+   {
+    "t": "Solo si el cheque es certificado",
+    "ok": false,
+    "fb": "El cheque certificado tiene otro efecto (art. 503): obliga al girado a pagar y libera al girador. No genera intereses sobre el importe."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y el error frecuente 3 de la sección 8."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Ana tiene 1.000,00 dólares en su cuenta corriente del BDL. Gira un cheque de 300,00 dólares a favor de su proveedor, y el banco lo paga dentro del plazo. Desde los libros del BDL, ¿qué describe mejor la posición del banco frente a Ana?",
+  "opciones": [
+   {
+    "t": "El banco registró un ingreso de 300,00 dólares por pagar el cheque",
+    "ok": false,
+    "fb": "Pagar el cheque no es un ingreso. El banco reduce una obligación que ya tenía con Ana, porque el cheque ordena pagar con cargo a su depósito."
+   },
+   {
+    "t": "Antes del pago, el banco debe a Ana su saldo; el cheque ordena pagar 300,00 con cargo a ese depósito, y la obligación se reduce cuando se paga",
+    "ok": true,
+    "fb": "El depósito de Ana es una obligación del banco con ella. El cheque no crea dinero: ordena usar parte de ese depósito. Al pagarse, la deuda baja de 1.000,00 a 700,00 dólares."
+   },
+   {
+    "t": "El banco se convierte en deudor del proveedor por los 300,00 dólares",
+    "ok": false,
+    "fb": "El deudor del proveedor no es el banco en este caso. El proveedor es beneficiario y el banco paga con cargo a la cuenta de Ana, que es el girador."
+   },
+   {
+    "t": "Ana pierde su derecho frente al banco en el momento en que gira el cheque",
+    "ok": false,
+    "fb": "Girar el cheque no elimina el derecho de Ana. Ese derecho disminuye solo en la medida en que el banco paga el cheque con cargo a su depósito."
+   }
+  ],
+  "gen": "Revise la sección 1 de la Sesión 01 y el ejemplo del saldo de Ana."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 503, ¿qué efecto tiene la palabra «certificado» escrita, fechada y firmada por el girado en un cheque?",
+  "opciones": [
+   {
+    "t": "Obliga al girado a pagar el cheque a su presentación y libera al girador de la responsabilidad del pago",
+    "ok": true,
+    "fb": "El cheque certificado compromete al banco girado a pagarlo cuando se presenta, y libera al girador de la responsabilidad de pago. Es el efecto que el artículo 503 le atribuye a la certificación."
+   },
+   {
+    "t": "Convierte el cheque en un documento a plazo de noventa días",
+    "ok": false,
+    "fb": "La certificación no cambia el plazo de presentación. El plazo de noventa días corresponde a los cheques girados en el exterior (art. 493)."
+   },
+   {
+    "t": "Autoriza el pago en cuotas mensuales",
+    "ok": false,
+    "fb": "El artículo 497 regula los pagos parciales con el consentimiento del tenedor, pero la certificación del artículo 503 no autoriza cuotas. Revisa el texto del artículo 503."
+   },
+   {
+    "t": "Permite endosar el cheque en blanco",
+    "ok": false,
+    "fb": "El artículo 487 prohíbe los endosos en blanco o al portador. La certificación no cambia esa prohibición."
+   }
+  ],
+  "gen": "Revise la Tabla 3 y la sección 4 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un cheque de 1.000,00 dólares se protesta por insuficiencia de fondos. El saldo de la cuenta del girador es de 60,00 dólares. Según el artículo 499, ¿qué afirmación es correcta?",
+  "opciones": [
+   {
+    "t": "La multa es de 50,00 dólares, porque es el 5 % del cheque",
+    "ok": false,
+    "fb": "El 5 % proviene de la Ley de Cheques, que el COMF derogó. El artículo 499 fija el 10 % sobre el valor del cheque protestado."
+   },
+   {
+    "t": "La multa es de 100,00 dólares y el banco debe debitarla completa, aunque el saldo sea menor",
+    "ok": false,
+    "fb": "La multa sí es de 100,00 dólares, pero el artículo 499 limita el débito al monto que se mantenga en depósito. Un débito completo con saldo insuficiente no está previsto en el texto."
+   },
+   {
+    "t": "La entidad debe entregar los 100,00 dólares de la multa al proveedor del cheque",
+    "ok": false,
+    "fb": "La multa no se paga al beneficiario: el artículo 499 la transfiere a la Cuenta Única del Tesoro Nacional."
+   },
+   {
+    "t": "La multa es de 100,00 dólares; el banco puede debitar hasta 60,00, y el texto no dice cómo se recupera el resto",
+    "ok": true,
+    "fb": "El 10 % de 1.000,00 es 100,00 dólares. El débito tiene como límite el monto en depósito, es decir 60,00 dólares. Que el texto no regule el excedente significa que no puede concluirse cómo se cobra ese resto."
+   }
+  ],
+  "gen": "Revise el Cálculo 2 y el ejercicio 3 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 516, ¿cuándo un cheque constituye título ejecutivo?",
+  "opciones": [
+   {
+    "t": "Siempre que se gire sin firma del girador",
+    "ok": false,
+    "fb": "La falta de firma hace que el documento no sea cheque válido (art. 479). El artículo 516 no lo convierte en título ejecutivo."
+   },
+   {
+    "t": "Cuando el girado lo cancela a solicitud del girador",
+    "ok": false,
+    "fb": "La cancelación del cheque es un acto de pago (art. 497). El título ejecutivo del artículo 516 corresponde a un cheque no pagado y protestado."
+   },
+   {
+    "t": "Cuando no fue pagado por falta o insuficiencia de fondos y fue protestado dentro del plazo de presentación",
+    "ok": true,
+    "fb": "El artículo 516 establece esa condición. Por eso el protesto dentro del plazo importa: sin él, el cheque no tiene la fuerza de título ejecutivo que describe el artículo."
+   },
+   {
+    "t": "Cuando su importe supera 1.000,00 dólares",
+    "ok": false,
+    "fb": "El monto del cheque no decide si es título ejecutivo. Lo decisivo son el motivo del no pago y el protesto dentro del plazo."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y la Tabla 4."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un cheque girado en Ecuador y pagadero en Ecuador fue emitido el 3 de noviembre de 2026. El banco lo recibe por primera vez el 30 de noviembre de 2026 y no lo paga por falta de fondos. ¿Cuál es la conclusión más sólida?",
+  "opciones": [
+   {
+    "t": "El cheque venció de manera definitiva y el girado no puede pagarlo nunca",
+    "ok": false,
+    "fb": "El artículo 517 permite al girado pagar hasta trece meses después de la emisión. Que la presentación sea tardía no elimina esa posibilidad."
+   },
+   {
+    "t": "La presentación fue tardía según el artículo 493, pero el girado puede pagarlo dentro de trece meses; las acciones de cobro dependen de los artículos 505 y 512, que deben revisarse",
+    "ok": true,
+    "fb": "Los veinte días del artículo 493 vencen el 23 de noviembre, así que la presentación del 30 de noviembre es tardía. El artículo 517 sí permite el pago posterior. Pero las acciones de cobro tienen otros plazos y condiciones que hay que revisar antes de concluir."
+   },
+   {
+    "t": "El cheque se convierte en letra de cambio y debe seguir otra norma",
+    "ok": false,
+    "fb": "El texto no convierte el cheque en otro título. La tardanza en la presentación no cambia su naturaleza de cheque regulado en el COMF."
+   },
+   {
+    "t": "El banco debe pagarlo con intereses desde la fecha de emisión",
+    "ok": false,
+    "fb": "El artículo 480 dice que el importe del cheque no genera intereses. Los intereses aparecen solo en el reclamo del tenedor, a la tasa máxima desde el protesto (art. 507)."
+   }
+  ],
+  "gen": "Revise el Cálculo 1 y la sección 5 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 512, ¿en qué plazo prescriben las acciones del portador o tenedor contra el girador, los endosantes y los demás obligados?",
+  "opciones": [
+   {
+    "t": "Seis meses, contados desde la expiración del plazo de presentación",
+    "ok": true,
+    "fb": "El artículo 512 fija seis meses desde la expiración del plazo de presentación. Este plazo limita el tiempo para reclamar, y es distinto del plazo para presentar el cheque."
+   },
+   {
+    "t": "Veinte días desde la emisión",
+    "ok": false,
+    "fb": "Veinte días es el plazo de presentación del artículo 493, no el de prescripción. Confundir ambos plazos es un error frecuente."
+   },
+   {
+    "t": "Trece meses desde la emisión",
+    "ok": false,
+    "fb": "Trece meses es el plazo máximo para que el girado pague (art. 517). La prescripción de las acciones del tenedor es un plazo distinto."
+   },
+   {
+    "t": "Un año desde el protesto",
+    "ok": false,
+    "fb": "El texto no fija un año desde el protesto. La prescripción del artículo 512 se cuenta desde la expiración del plazo de presentación."
+   }
+  ],
+  "gen": "Revise la Tabla 4 y la sección 5 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un cheque de 1.000,00 dólares se protesta por insuficiencia de fondos. Aplicando el artículo 499, ¿cuál es el valor de la multa que paga el girador?",
+  "opciones": [
+   {
+    "t": "50,00 dólares",
+    "ok": false,
+    "fb": "Ese valor corresponde al 5 %, porcentaje de la Ley de Cheques derogada. El artículo 499 establece el 10 %."
+   },
+   {
+    "t": "10,00 dólares",
+    "ok": false,
+    "fb": "Ese valor corresponde al 1 % del cheque. El artículo 499 fija el 10 %, así que la multa es diez veces mayor."
+   },
+   {
+    "t": "100,00 dólares",
+    "ok": true,
+    "fb": "El 10 % de 1.000,00 es 1.000,00 × 10 ÷ 100 = 100,00 dólares. Esa es la multa; el monto que el banco puede debitar depende del saldo en depósito."
+   },
+   {
+    "t": "1.000,00 dólares",
+    "ok": false,
+    "fb": "Ese es el valor del cheque, no de la multa. La multa del artículo 499 es un porcentaje del valor del cheque protestado."
+   }
+  ],
+  "gen": "Revise el Cálculo 2 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 504, ¿cuál de las siguientes NO es una forma de acreditar el protesto de un cheque?",
+  "opciones": [
+   {
+    "t": "Una declaración del girado, fechada y escrita en el cheque",
+    "ok": false,
+    "fb": "Esa forma sí está prevista en el numeral 1 del artículo 504. Es una de las tres formas de acreditar el protesto."
+   },
+   {
+    "t": "Un acta notarial de requerimiento de pago, cuando el girado se niega a extender la declaración",
+    "ok": false,
+    "fb": "El numeral 2 del artículo 504 prevé esa forma. Si el girado se niega a firmar, el notario requiere el pago y deja constancia."
+   },
+   {
+    "t": "Una declaración fechada de una cámara de compensación que acredite el envío en tiempo hábil y el no pago",
+    "ok": false,
+    "fb": "Esa forma está en el numeral 3 del artículo 504. Es válida cuando la cámara acredita el envío dentro del plazo."
+   },
+   {
+    "t": "Una leyenda del banco que diga que el cheque fue presentado y no pagado, sin protesto formal",
+    "ok": true,
+    "fb": "El artículo 492 prohíbe que la entidad ponga esa leyenda en lugar del protesto, y el artículo 504 no la incluye entre las formas de acreditar el protesto. Si la entidad la usa, puede ser sancionada con una multa por el valor del cheque."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y la sección 8, error 5."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un banco pone en un cheque la leyenda «presentado y no pagado» en lugar de protestarlo. Según el artículo 492, ¿qué puede afirmarse?",
+  "opciones": [
+   {
+    "t": "Es una práctica válida si el cliente la firma",
+    "ok": false,
+    "fb": "La firma del cliente no cambia la prohibición. El artículo 492 prohíbe a las entidades financieras poner esa leyenda en lugar del protesto."
+   },
+   {
+    "t": "Está prohibida, y la entidad puede ser sancionada con una multa por el valor del cheque",
+    "ok": true,
+    "fb": "El artículo 492 prohíbe esa práctica y establece que la entidad que la infrinja será sancionada por los organismos de control con una multa por el valor del correspondiente cheque."
+   },
+   {
+    "t": "Es equivalente al protesto cuando lo realiza una cámara de compensación",
+    "ok": false,
+    "fb": "La cámara de compensación puede emitir la declaración del numeral 3 del artículo 504, pero una leyenda del banco no es equivalente al protesto."
+   },
+   {
+    "t": "Solo se sanciona cuando el cheque es certificado",
+    "ok": false,
+    "fb": "La prohibición del artículo 492 no depende de que el cheque sea certificado. Se aplica en general, con las excepciones que el mismo artículo indica."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y el ejercicio 4."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 520, ¿quién puede imponer sanciones por incumplimientos de este capítulo, y entre qué límites?",
+  "opciones": [
+   {
+    "t": "Los organismos de control, con multas entre uno y treinta salarios básicos unificados",
+    "ok": true,
+    "fb": "El artículo 520 atribuye esa potestad a los organismos de control y fija el rango entre uno y treinta salarios básicos unificados. Con el SBU de 2026, que es de 482,00 dólares según el Acuerdo Ministerial MDT-2025-195, el rango equivale a entre 482,00 y 14.460,00 dólares."
+   },
+   {
+    "t": "Un juez de garantías, con multas entre uno y diez salarios básicos",
+    "ok": false,
+    "fb": "El texto no atribuye la potestad a un juez, ni fija diez como límite. Revisa el artículo 520."
+   },
+   {
+    "t": "El SRI, con un porcentaje sobre el valor del cheque",
+    "ok": false,
+    "fb": "El artículo 520 no atribuye esa potestad al SRI ni fija un porcentaje. El porcentaje del 10 % corresponde a la multa del artículo 499, que es distinta."
+   },
+   {
+    "t": "El girador, a favor de la entidad financiera",
+    "ok": false,
+    "fb": "El girador paga la multa del artículo 499, pero el artículo 520 se refiere a sanciones de los organismos de control por incumplimientos. Son figuras distintas."
+   }
+  ],
+  "gen": "Revise la sección 7 de la Sesión 01 y el ejercicio 5."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un proveedor recibe un cheque «no a la orden» de 200,00 dólares. Según el artículo 501, ¿qué puede hacer el banco girado al pagarlo?",
+  "opciones": [
+   {
+    "t": "Pagarlo en efectivo a cualquier persona que presente el cheque",
+    "ok": false,
+    "fb": "Eso contradice el artículo 501. El banco solo puede acreditar su valor en una cuenta del beneficiario, o pagarlo en moneda al propio beneficiario o al cesionario."
+   },
+   {
+    "t": "Endosarlo a un tercero para que lo cobre",
+    "ok": false,
+    "fb": "El banco girado no endosa el cheque. Un cheque «no a la orden» solo se transfiere como cesión ordinaria, y el banco actúa según el artículo 501."
+   },
+   {
+    "t": "Acreditar su valor solo en una cuenta del beneficiario, o pagarlo en moneda al propio beneficiario o al cesionario",
+    "ok": true,
+    "fb": "Esa es la regla del artículo 501 para el banco girado que recibe un cheque «no a la orden». La restricción protege que el cobro llegue a quien corresponde."
+   },
+   {
+    "t": "Retenerlo indefinidamente hasta que el beneficiario lo reclame",
+    "ok": false,
+    "fb": "El texto no autoriza retener el cheque indefinidamente. La retención que sí regula el artículo 495 es la del cheque revocado, y responde a otra situación."
+   }
+  ],
+  "gen": "Revise la Tabla 3 y la sección 4 de la Sesión 01."
+ }
+];
+
+(function () {
+  const formulario = document.getElementById('quiz');
+  const textoEstado = document.getElementById('estado-texto');
+  const barra = document.getElementById('barra');
+  const resultado = document.getElementById('resultado');
+  const resultadoTexto = document.getElementById('resultado-texto');
+  const btnReintentar = document.getElementById('btn-reintentar');
+  let respuestas = [];
+
+  function actualizar() {
+    const total = PREGUNTAS.length;
+    const respondidas = respuestas.filter(r => r !== null).length;
+    const aciertos = respuestas.filter((r, i) => r !== null && PREGUNTAS[i].opciones[r].ok).length;
+    textoEstado.textContent = 'Preguntas respondidas: ' + respondidas + ' de ' + total + ' · Aciertos: ' + aciertos;
+    barra.style.width = (respondidas / total * 100) + '%';
+
+    if (respondidas === total) {
+      formulario.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+      const errores = total - aciertos;
+      const nota = (aciertos / total * 10).toFixed(1).replace('.', ',');
+      const pct = Math.round(aciertos / total * 100);
+      resultadoTexto.textContent = 'Aciertos: ' + aciertos + ' de ' + total + '. Calificación de práctica: ' + nota + ' sobre 10 (' + pct + ' %).' +
+        (errores > 0
+          ? ' Revisa las rutas indicadas en cada retroalimentación y, si lo deseas, intenta nuevamente con las mismas preguntas.'
+          : ' No hubo errores en esta práctica.');
+      btnReintentar.hidden = errores === 0;
+      resultado.classList.add('visible');
+    }
+  }
+
+  function reiniciar() {
+    respuestas = PREGUNTAS.map(() => null);
+    formulario.innerHTML = '';
+    PREGUNTAS.forEach((p, i) => {
+      const fs = document.createElement('fieldset');
+      fs.className = 'pregunta';
+      const lg = document.createElement('legend');
+      const insignia = document.createElement('span');
+      insignia.className = 'badge' + (p.tipo === 'Análisis' ? ' analisis' : '');
+      insignia.textContent = p.tipo;
+      lg.appendChild(insignia);
+      lg.appendChild(document.createTextNode(' ' + (i + 1) + '. ' + p.enunciado));
+      fs.appendChild(lg);
+
+      p.opciones.forEach((o, j) => {
+        const fila = document.createElement('div');
+        fila.className = 'opcion';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + i;
+        radio.id = 'q' + i + '-' + j;
+        radio.value = String(j);
+        const etiqueta = document.createElement('label');
+        etiqueta.htmlFor = radio.id;
+        etiqueta.textContent = String.fromCharCode(97 + j) + ') ' + o.t;
+        fila.appendChild(radio);
+        fila.appendChild(etiqueta);
+        fs.appendChild(fila);
+      });
+
+      const fb = document.createElement('div');
+      fb.className = 'fb';
+      fb.id = 'fb' + i;
+      fb.setAttribute('aria-live', 'polite');
+      fs.appendChild(fb);
+
+      fs.addEventListener('change', e => {
+        if (e.target.name !== 'q' + i) return;
+        const j = parseInt(e.target.value, 10);
+        respuestas[i] = j;
+        const op = p.opciones[j];
+        fb.className = 'fb visible ' + (op.ok ? 'ok' : 'mal');
+        fb.innerHTML = '';
+        const titulo = document.createElement('div');
+        titulo.textContent = (op.ok ? 'CORRECTO. ' : 'Incorrecto. ') + op.fb;
+        fb.appendChild(titulo);
+        if (!op.ok) {
+          const ruta = document.createElement('div');
+          ruta.className = 'ruta';
+          ruta.textContent = 'Ruta de revisión: ' + p.gen;
+          fb.appendChild(ruta);
+        }
+        actualizar();
+      });
+
+      formulario.appendChild(fs);
+    });
+    resultado.classList.remove('visible');
+    btnReintentar.hidden = true;
+    actualizar();
+  }
+
+  document.getElementById('btn-reintentar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar-fin').addEventListener('click', reiniciar);
+  reiniciar();
+})();
+</script>
+</body>
+</html>

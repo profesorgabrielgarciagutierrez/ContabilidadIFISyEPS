@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad IFIS y EPS · Semana 02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Base y variables ---------- */
+:root {
+  --azul: #003366;
+  --cielo: #87CEEB;
+  --ejemplo: #E8F4FD;
+  --texto: #1a1a1a;
+  --gris: #4a4a4a;
+  --ok-fondo: #e6f4ea;
+  --ok-texto: #114d2a;
+  --mal-fondo: #fdecea;
+  --mal-texto: #7a1c12;
+  --serif: "Lora", Georgia, "Times New Roman", serif;
+  --sans: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #ffffff;
+  color: var(--texto);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+main { max-width: 46rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+h1, h2, h3, h4 { font-family: var(--serif); color: var(--azul); line-height: 1.25; }
+h1 { font-size: 1.6rem; margin: 0.2rem 0 0.2rem; }
+h2 { font-size: 1.35rem; margin: 1.6rem 0 0.6rem; }
+h3 { font-size: 1.12rem; margin: 1.3rem 0 0.4rem; }
+h4 { font-size: 1rem; margin: 1rem 0 0.3rem; }
+p { margin: 0 0 0.9rem; }
+ul, ol { margin: 0 0 1rem 1.2rem; padding: 0; }
+li { margin-bottom: 0.35rem; }
+a { color: var(--azul); }
+:focus-visible { outline: 3px solid #e0a100; outline-offset: 2px; }
+
+/* ---------- Encabezado y menú ---------- */
+.cab { background: var(--azul); color: #ffffff; padding: 1rem 1rem 0.9rem; }
+.cab .kicker { margin: 0; font-size: 0.9rem; opacity: 0.92; }
+.cab h1 { color: #ffffff; }
+.cab .sub { margin: 0; font-size: 1rem; opacity: 0.95; }
+.menu {
+  background: var(--cielo);
+  color: #000000;
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.tab {
+  flex: 0 0 auto;
+  font: inherit;
+  font-weight: 600;
+  color: #000000;
+  background: transparent;
+  border: 0;
+  padding: 0.75rem 0.9rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+.tab.activa {
+  background: #ffffff;
+  color: var(--azul);
+  font-weight: 700;
+  border-bottom-color: var(--azul);
+}
+.tab:hover { background: rgba(255,255,255,0.45); }
+
+/* ---------- Bloques de contenido ---------- */
+.panel[hidden] { display: none; }
+.concepto {
+  border-left: 4px solid var(--azul);
+  padding: 0.2rem 0 0.2rem 0.9rem;
+  margin: 1rem 0;
+}
+.ejemplo {
+  background: var(--ejemplo);
+  padding: 0.8rem 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+.antes {
+  background: #f4f8fb;
+  border: 1px solid #c9dbe8;
+  border-left: 5px solid var(--azul);
+  padding: 0.9rem 1rem;
+  border-radius: 4px;
+  margin: 0.8rem 0 1.2rem;
+}
+.antes h2 { margin-top: 0.2rem; font-size: 1.15rem; }
+.ayuda {
+  background: #fffbea;
+  border-left: 4px solid #c99700;
+  padding: 0.6rem 0.9rem;
+  margin: 0.8rem 0;
+}
+.comprender {
+  background: #f1f7f4;
+  border-left: 4px solid #2f7d55;
+  padding: 0.7rem 0.9rem;
+  margin: 1rem 0;
+}
+.pregunta-r {
+  font-style: italic;
+  color: var(--azul);
+  border-top: 1px dashed #9db8cc;
+  padding-top: 0.6rem;
+}
+.tiempo {
+  font-size: 0.92rem;
+  color: var(--gris);
+  margin-bottom: 0.4rem;
+}
+.titulo-tabla { font-weight: 600; margin-top: 1rem; margin-bottom: 0.3rem; }
+.tabla-wrap { overflow-x: auto; margin-bottom: 1rem; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; min-width: 26rem; font-size: 0.97rem; }
+th, td { border: 1px solid #b8c8d6; padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
+th { background: #e9f1f7; color: var(--azul); }
+.calculo {
+  background: #f7f9fb;
+  border: 1px solid #d5dfe8;
+  padding: 0.7rem 0.9rem;
+  margin: 0.9rem 0;
+  border-radius: 4px;
+}
+.calculo p { margin-bottom: 0.45rem; }
+.num { white-space: nowrap; }
+.cifra { font-variant-numeric: tabular-nums; }
+
+/* ---------- Ejercicios y soluciones ---------- */
+.ejercicio {
+  border: 1px solid #c9d6e2;
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  margin: 1.2rem 0;
+}
+.ejercicio h3 { margin-top: 0; }
+details.solucion {
+  border: 1px solid #9db8cc;
+  background: #f9fcff;
+  border-radius: 4px;
+  margin: 0.8rem 0;
+  padding: 0.2rem 0.8rem;
+}
+details.solucion > summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--azul);
+  padding: 0.5rem 0;
+}
+details.solucion[open] > summary { border-bottom: 1px solid #c9dbe8; margin-bottom: 0.6rem; }
+
+/* ---------- Evaluación ---------- */
+.eval-intro { background: #f4f8fb; padding: 0.8rem 1rem; border-radius: 4px; }
+.progreso { font-weight: 700; color: var(--azul); margin: 0.8rem 0; }
+.pregunta { border-top: 2px solid var(--azul); padding: 0.8rem 0 0.4rem; margin-top: 1.1rem; }
+.pregunta h3 { margin: 0 0 0.4rem; }
+.insignia {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #e9f1f7;
+  color: var(--azul);
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.enun { font-size: 1.02rem; }
+ol.ops { list-style: none; margin: 0.5rem 0; padding: 0; }
+ol.ops li { margin-bottom: 0.45rem; }
+.op {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--texto);
+  background: #ffffff;
+  border: 1px solid #9db8cc;
+  border-radius: 4px;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  line-height: 1.45;
+}
+.op:hover:not(:disabled) { background: #f0f6fb; }
+.op.elegida { border: 2px solid var(--azul); background: #eaf2f9; font-weight: 600; }
+.op:disabled { cursor: default; opacity: 0.95; }
+.retro { padding: 0.6rem 0.8rem; border-radius: 4px; margin: 0.4rem 0 0.2rem; }
+.retro.ok { background: var(--ok-fondo); color: var(--ok-texto); border-left: 4px solid #2f7d55; }
+.retro.mal { background: var(--mal-fondo); color: var(--mal-texto); border-left: 4px solid #b33a2b; }
+.resultado {
+  border: 2px solid var(--azul);
+  padding: 0.9rem 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  background: #f4f8fb;
+}
+.resultado p { margin-bottom: 0.4rem; }
+.botones { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.8rem 0 1.2rem; }
+.btn {
+  font: inherit;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--azul);
+  border: 0;
+  border-radius: 4px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+}
+.btn.secundario { background: #ffffff; color: var(--azul); border: 2px solid var(--azul); }
+
+footer.pie { font-size: 0.88rem; color: var(--gris); margin-top: 2rem; }
+
+/* ---------- Pantallas estrechas ---------- */
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  main { padding: 0.8rem 0.9rem 2.5rem; }
+  .cab { padding: 0.9rem 0.9rem 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="cab">
+  <p class="kicker">Contabilidad IFIS y EPS · Licenciatura en Contabilidad y Auditoría · Ciclo 02 · 2026</p>
+  <h1>Semana 02 · Unidad 1</h1>
+  <p class="sub">Patrimonio técnico, solvencia, encaje y referencias internacionales</p>
+</header>
+
+<nav class="menu" aria-label="Secciones de la semana">
+  <button class="tab" data-tab="p-repaso" aria-selected="false">Repaso</button>
+  <button class="tab activa" data-tab="p-ses01" aria-selected="true">Sesión 01</button>
+  <button class="tab" data-tab="p-eval" aria-selected="false">Evaluación</button>
+  <button class="tab" data-tab="p-reflexion" aria-selected="false">Reflexión</button>
+  <button class="tab" data-tab="p-ia" aria-selected="false">Actividad con IA</button>
+  <button class="tab" data-tab="p-biblio" aria-selected="false">Bibliografía</button>
+</nav>
+
+<main>
+
+<!-- ============ REPASO ============ -->
+<section id="p-repaso" class="panel" hidden>
+  <h2>Repaso: lo que ya debes recordar</h2>
+  <p class="tiempo">Tiempo orientativo: 5 minutos · Trabajo individual</p>
+  <p>En la Semana 01 viste dos ideas que usaremos hoy. La primera: el dinero del país y el dinero que los bancos reciben y prestan son cosas distintas. El dinero del país lo administra el Estado; el sistema financiero es el conjunto de entidades que reciben dinero de unas personas y lo prestan a otras. La segunda: quien vigila a un banco no es su dueño. La Superintendencia de Bancos revisa que el banco cumpla las reglas, pero no es quien lo maneja ni quien lo posee.</p>
+  <p>Antes de seguir, intenta responder por escrito y sin mirar el texto: ¿qué organismo vigila a una cooperativa de ahorro y crédito, y por qué no es el mismo que vigila a un banco privado? Escribe dos líneas y luego revisa la solución.</p>
+  <details class="solucion">
+    <summary>Ver solución razonada</summary>
+    <p>La cooperativa pertenece al sector popular y solidario, y la vigila la Superintendencia de Economía Popular y Solidaria (SEPS). El banco privado pertenece al sector privado, y lo vigila la Superintendencia de Bancos. Son dos organismos distintos porque cada tipo de entidad tiene su propia ley y sus propios dueños.</p>
+    <p>Si tu respuesta confundió quién vigila con quién es dueño, revisa la diferencia entre supervisar y poseer.</p>
+  </details>
+</section>
+
+<!-- ============ SESIÓN 01 ============ -->
+<section id="p-ses01" class="panel">
+  <h2>Sesión 01. Cuánto colchón necesita un banco</h2>
+  <p class="tiempo">Duración orientativa: 120 minutos de trabajo acompañado y autónomo · Trabajo individual</p>
+
+  <div class="antes">
+    <h2>Antes de empezar</h2>
+    <p>Imagina que llegas a la ventanilla del Banco Didáctico del Litoral S. A. (BDL), un banco ficticio que usaremos durante el curso. Tienes una tarjeta y una aplicación del banco. El dinero que dejas en tu cuenta sirve para pagar y retirar cuando quieras. Ahora haces una pregunta: «Si el banco tiene 8 000 000 de dólares de clientes que pueden retirarlos cuando quieran, ¿el banco puede devolverles ese dinero si pierde una parte de los préstamos que ha dado?».</p>
+    <p>Esa pregunta no se responde con una sola cifra. Para contestarla necesitas saber cuánto dinero tiene el banco a la mano, cuánto le deben, cuánto es suyo y cuánto podría perder.</p>
+    <p>Al terminar esta sesión podrás separar lo que el banco tiene de lo que debe, calcular un indicador que compara su colchón de dinero propio con sus riesgos, calcular cuánto dinero debe guardar para los retiros y explicar por qué un banco puede tener dinero y, aun así, tener problemas.</p>
+    <p>En este curso, IFIS significa instituciones financieras: bancos, cooperativas de ahorro y crédito y otras entidades que reciben dinero del público y lo prestan. EPS significa economía popular y solidaria, un conjunto de organizaciones que se distingue de los bancos por su origen y por la forma en que se organizan; la unidad 4 la estudiará en detalle. Esta sesión trata de bancos.</p>
+    <p>Intenta cada cálculo antes de abrir la solución, escribe tus respuestas y luego compáralas. Todas las entidades y cifras del caso son ficticias, y cuando una cifra sea un supuesto, te lo diremos.</p>
+  </div>
+
+  <h3>1. Qué hace un banco</h3>
+  <p>Piensa en lo que haces cuando vas a un banco. Puedes decir «quiero depositar», «quiero retirar», «quiero un préstamo» o «quiero pagar». Cada frase describe una operación distinta, y cada operación cambia lo que el banco tiene y lo que debe.</p>
+  <p>Un banco es una empresa que recibe dinero de personas y empresas, y lo presta a otras personas y empresas. Cuando depositas dinero en tu cuenta, el banco no lo guarda en una caja para ti: lo usa, y se compromete a devolvértelo cuando lo pidas o en la fecha acordada. Su ganancia viene de la diferencia entre lo que cobra por los préstamos y lo que paga por los depósitos.</p>
+  <p>Hay dos formas principales de depósito. El <strong>depósito a la vista</strong> es el dinero que puedes retirar en cualquier momento, sin avisar con anticipación: es el dinero de una cuenta corriente o de ahorros que usas para pagos y retiros del día a día. El <strong>depósito a plazo fijo</strong> es el dinero que dejas en el banco durante un tiempo acordado, a cambio de un interés; si lo retiras antes, pierdes condiciones.</p>
+  <p>Los dueños del banco, que llamamos accionistas, también ponen dinero propio. Ese dinero es distinto del que dejan los clientes, y esa diferencia es la base de todo lo que veremos hoy.</p>
+  <p>Antes de continuar, intenta lo siguiente: si retiras 1 000 dólares de tu cuenta de ahorros, ¿el banco te devuelve dinero tuyo o dinero de los dueños? Explica tu respuesta en una frase.</p>
+  <div class="ayuda">
+    <p>Si respondiste «dinero de los dueños», revisa quién puso ese dinero: tú lo depositaste, y el banco se comprometió a devolvértelo. El dueño del banco no tiene que devolverte ese dinero; el banco sí.</p>
+  </div>
+
+  <h3>2. Lo que el banco tiene, lo que debe y lo que es de sus dueños</h3>
+  <p>Para entender la situación de un banco, los contadores separan tres cosas. El <strong>activo</strong> es todo lo que el banco tiene o lo que otros le deben: el dinero en caja, el dinero que mantiene en el Banco Central, los préstamos que dio a sus clientes y sus edificios. El <strong>pasivo</strong> es todo lo que el banco debe a otros: sobre todo los depósitos de sus clientes, que tiene que devolver. El <strong>patrimonio contable</strong> es lo que queda cuando el banco pagara todo lo que debe con todo lo que tiene: es la parte que de verdad pertenece a los dueños.</p>
+  <p>Estas tres cosas se relacionan con una igualdad sencilla: <strong>lo que tiene = lo que debe + lo que es de los dueños</strong>. Esta igualdad se llama ecuación contable, y siempre debe cumplirse en el balance del banco.</p>
+  <p>Los depósitos de los clientes aparecen en el lado de lo que el banco debe, no en el de los dueños. Esta es la distinción más importante de la sesión: recibir dinero no convierte ese dinero en patrimonio del banco.</p>
+  <p class="titulo-tabla"><strong>Tabla 1.</strong> Datos de partida del Banco Didáctico del Litoral S. A. (datos del caso didáctico, no información real)</p>
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr><th>Concepto</th><th>Importe (dólares)</th><th>Origen</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Lo que el banco tiene (activo total)</td><td class="cifra">10 500 000,00</td><td>Dato del caso didáctico</td></tr>
+        <tr><td>Lo que el banco debe (pasivo total), que incluye depósitos a la vista de clientes por 8 000 000,00</td><td class="cifra">9 000 000,00</td><td>Dato del caso didáctico</td></tr>
+        <tr><td>Colchón de dinero propio del banco, la parte más firme (patrimonio técnico primario)</td><td class="cifra">1 200 000,00</td><td>Supuesto didáctico</td></tr>
+        <tr><td>Colchón complementario, de menor calidad (patrimonio técnico secundario)</td><td class="cifra">150 000,00</td><td>Supuesto didáctico</td></tr>
+        <tr><td>Riesgo total de los activos y contingentes, medido con pesos por riesgo (activos ponderados por riesgo)</td><td class="cifra">11 000 000,00</td><td>Supuesto didáctico</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La Tabla 1 tiene dos tipos de datos. Las dos primeras filas son cifras del balance del caso. Las tres últimas son supuestos: sirven para practicar los cálculos y no son cifras de un banco real. Mantén esa distinción en todo el análisis.</p>
+
+  <div class="calculo">
+    <p><strong>Cálculo 1. Cuánto es de los dueños.</strong></p>
+    <p><em>Situación:</em> quieres saber cuánto del banco pertenece realmente a sus dueños, según su balance.</p>
+    <p><em>Qué buscamos:</em> el patrimonio contable, en dólares.</p>
+    <p><em>Datos:</em> lo que el banco tiene es 10 500 000,00; lo que debe es 9 000 000,00 (Tabla 1).</p>
+    <p><em>Cálculo:</em> lo que es de los dueños = lo que tiene − lo que debe = 10 500 000,00 − 9 000 000,00 = 1 500 000,00.</p>
+    <p><em>Comprobación:</em> lo que debe + lo que es de los dueños = 9 000 000,00 + 1 500 000,00 = 10 500 000,00, igual a lo que tiene.</p>
+    <p><em>Interpretación:</em> de lo que el banco tiene, 1 500 000,00 son de los dueños. Los 8 000 000,00 de depósitos son dinero de los clientes, que el banco debe devolver.</p>
+  </div>
+
+  <p>Fíjate en la diferencia entre dos resultados que usaremos después. Lo que es de los dueños es 1 500 000,00 según el balance; el colchón que exige la norma es 1 350 000,00, como verás en el punto 3. No son lo mismo: el primero resume el balance; el segundo mide cuánto aguanta el banco frente a pérdidas. La diferencia entre ambos viene de los supuestos de la Tabla 1, no de una regla general.</p>
+
+  <h3>3. El colchón del banco: patrimonio técnico</h3>
+  <p>Un banco puede perder dinero: un cliente no paga un préstamo, o el valor de algo que posee baja. Para aguantar esas pérdidas sin dejar de funcionar, la ley exige que tenga un colchón de dinero propio. Ese colchón se llama <strong>patrimonio técnico</strong>. Es parecido a los ahorros de una familia para un imprevisto: cuanto más grande es el colchón frente a los riesgos, más tranquilo puede estar quien deposita.</p>
+  <p>El patrimonio técnico tiene dos partes. La <strong>primaria</strong> es el colchón más firme: aportes de los dueños y reservas acumuladas, que se pueden usar con facilidad para cubrir pérdidas. La <strong>secundaria</strong> es un colchón complementario, de menor calidad. Sumadas, dan el patrimonio técnico total.</p>
+  <p>El Código Orgánico Monetario y Financiero (COMF) regula el patrimonio técnico en su artículo 190. Según el texto del COMF que se usa en este curso (versión con reformas publicadas en el Registro Oficial 142, de 13 de octubre de 2025), las entidades deben mantener una relación entre su patrimonio técnico y la suma ponderada por riesgo de sus activos y contingentes que no sea inferior al 9 %. El artículo 190.1 establece que el patrimonio técnico secundario no puede superar el 100 % del primario. La Superintendencia de Bancos puede exigir porcentajes adicionales. Confirma la vigencia de estos porcentajes en el Registro Oficial antes de usarlos en una evaluación oficial.</p>
+  <p>En el caso del BDL, el colchón total es 1 200 000,00 (primario) más 150 000,00 (secundario), es decir, 1 350 000,00. El secundario (150 000,00) no supera el 100 % del primario (1 200 000,00), así que cumple el límite. Aquí no revisamos si cada partida está en la parte correcta, porque eso requeriría el detalle del balance.</p>
+  <div class="ayuda">
+    <p>Pregúntate: si alguien sumara al colchón primario dinero que los clientes depositaron, ¿el colchón quedaría más firme o solo más grande en el papel? Responde en una frase antes de seguir.</p>
+  </div>
+
+  <h3>4. Los riesgos: no todo lo que tiene el banco pesa igual</h3>
+  <p>Un banco tiene cosas muy distintas. El efectivo en su bóveda casi no puede perder valor. Un préstamo a una empresa sin garantías sí puede no ser pagado. Por eso, para medir cuánto colchón necesita, la norma asigna a cada activo un <strong>peso según su riesgo</strong>: lo seguro pesa poco y lo arriesgado pesa más. El COMF habla de la suma ponderada de activos y contingentes. Un contingente es un compromiso que el banco solo pagaría si ocurre un hecho futuro, como una garantía que entregó a un tercero; lo estudiaremos en la unidad 3. La suma de todo eso, ya ponderado, se llama <strong>activos ponderados por riesgo</strong>, y en esta sesión la abreviamos APR.</p>
+  <p>Con el colchón y los riesgos ya medidos, podemos compararlos. La <strong>solvencia</strong> de un banco es su capacidad de aguantar pérdidas: se mide dividiendo el colchón entre el riesgo asumido. Si el resultado es alto, el colchón alcanza para los riesgos; si es bajo, el banco podría quedar débil frente a una pérdida grande.</p>
+  <div class="calculo">
+    <p><strong>Cálculo 2. Qué tan grande es el colchón frente a los riesgos.</strong></p>
+    <p><em>Situación:</em> quieres saber qué parte de los riesgos del banco está cubierta por su colchón de dinero propio.</p>
+    <p><em>Qué buscamos:</em> la relación de solvencia del BDL, en porcentaje.</p>
+    <p><em>Datos:</em> colchón total de 1 350 000,00 (Tabla 1) y riesgo total ponderado (APR) de 11 000 000,00 (supuesto didáctico). El mínimo de referencia es el 9 % del artículo 190 del COMF.</p>
+    <p><em>Cálculo:</em> solvencia = colchón ÷ riesgo total × 100 = 1 350 000,00 ÷ 11 000 000,00 × 100 = 0,122727… × 100 = 12,27 %.</p>
+    <p><em>Comprobación de plausibilidad:</em> 12 % de 11 000 000,00 es 1 320 000,00, que es menos que el colchón de 1 350 000,00. Por eso el resultado debe ser algo mayor que 12 %, como indica el cálculo.</p>
+    <p><em>Interpretación:</em> el colchón cubre el 12,27 % del riesgo del banco. Frente al mínimo del 9 % del artículo 190 del COMF, el resultado queda por encima. Esa comparación solo vale para las cifras supuestas del caso: un cumplimiento real exigiría un balance verificado, un riesgo calculado con la normativa de la Junta de Política y Regulación Financiera y Monetaria y la revisión de cualquier exigencia adicional de la Superintendencia de Bancos.</p>
+  </div>
+  <p>Observa qué pasaría si dividieras el colchón entre el total de lo que el banco tiene (10 500 000,00): obtendrías 12,86 %. Ese número no es la relación del 9 %, porque no pondera por riesgo. El mismo artículo 190 fija otra relación, no inferior al 4 % para bancos públicos y privados, que compara el patrimonio técnico con los activos totales y contingentes sin ponderar. El caso no informa los contingentes; como aumentarían el denominador, el resultado sería menor que 12,86 %, y con estos datos no podemos saber si supera el 4 %. La estudiaremos cuando tratemos los contingentes.</p>
+
+  <h3>5. El fondo para los retiros: el encaje</h3>
+  <p>Los bancos no deben prestar todo el dinero que reciben. Una parte de los depósitos debe guardarse como reserva para atender los retiros del día. Esa parte obligatoria se llama <strong>encaje</strong>. Piensa en una panadería que cada día deja una parte de las ventas en la caja para dar cambio: si todo se gastara en comprar harina, no podría atender a nadie. El encaje cumple esa función, con reglas que fija la norma.</p>
+  <p>El COMF dice que el encaje se mantiene sobre los depósitos y captaciones, y que se mantiene en el Banco Central del Ecuador (artículo 240). La Junta de Política y Regulación Financiera y Monetaria regula los porcentajes, diferenciados por tipo de entidad y estructura de captación (artículo 241). Para los bancos con activos de hasta 1 000 millones de dólares, la resolución JPRFM-2025-014-M fija un encaje de 4,0 %, y la base de cálculo son los depósitos y captaciones. Esa cifra la conocemos por una fuente secundaria que reproduce la resolución, porque el texto oficial no pudo consultarse; antes de usarla en un análisis real debe confirmarse en el Registro Oficial o en el Banco Central.</p>
+  <p>El encaje se calcula sobre los depósitos y captaciones. Los depósitos a la vista son la parte más fácil de entender, porque el cliente puede retirarlos en cualquier momento. Para este caso, supongamos que todas las captaciones del BDL son sus depósitos a la vista de 8 000 000,00, así que la base es esa cifra; en la práctica, las captaciones pueden incluir otros productos y la base debe confirmarse con la norma. Se compara la reserva requerida con la reserva que el banco mantiene: si hay más de lo requerido, hay excedente; si hay menos, hay déficit.</p>
+  <div class="calculo">
+    <p><strong>Cálculo 3. Cuánto debe guardar el banco para los retiros.</strong></p>
+    <p><em>Situación:</em> un cliente quiere saber si el banco tiene suficiente reserva para responder a los depósitos a la vista.</p>
+    <p><em>Qué buscamos:</em> la reserva requerida y el excedente o déficit de la reserva.</p>
+    <p><em>Datos:</em> depósitos a la vista de 8 000 000,00 (Tabla 1); porcentaje de encaje de 4,0 % (bancos con activos de hasta 1 000 millones, según la resolución JPRFM-2025-014-M, citada en fuente secundaria); reserva mantenida de 520 000,00 (supuesto didáctico).</p>
+    <p><em>Cálculo:</em> reserva requerida = 8 000 000,00 × 4 % = 8 000 000,00 × 0,04 = 320 000,00. Excedente = 520 000,00 − 320 000,00 = 200 000,00.</p>
+    <p><em>Comprobación de plausibilidad:</em> 4 % equivale a una veinticincoava parte; 8 000 000,00 ÷ 25 = 320 000,00. El resultado coincide.</p>
+    <p><em>Interpretación:</em> con el porcentaje de 4,0 % y la base supuesta, el banco guarda 200 000,00 más de lo requerido. Ese resultado describe el caso; no permite afirmar que el banco cumple la norma, porque el porcentaje viene de una fuente secundaria y la base real puede incluir otras captaciones.</p>
+  </div>
+
+  <h3>6. Tener dinero hoy y tener colchón: liquidez y solvencia</h3>
+  <p>Estas dos palabras suenan parecidas, pero preguntan cosas distintas. La <strong>liquidez</strong> pregunta: ¿tengo dinero a la mano para pagar lo que debo en los próximos días? La <strong>solvencia</strong> pregunta: ¿tengo colchón suficiente para aguantar pérdidas de los riesgos que asumo? Un banco puede tener mucho efectivo y poco colchón, o al revés.</p>
+  <p>Por eso el encaje y la solvencia no se reemplazan. El encaje informa sobre el dinero que el banco aparta para retiros. La solvencia informa sobre el colchón frente a pérdidas. Un banco con reserva de sobra no tiene, por esa sola razón, un buen colchón.</p>
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado.</strong> Supongamos que el BDL tiene mucho dinero disponible, pero su colchón es de 400 000,00 y su riesgo total ponderado es de 11 000 000,00 (cifras supuestas para este ejemplo). Su solvencia es 400 000,00 ÷ 11 000 000,00 × 100 = 3,64 %, muy por debajo del mínimo del 9 % del artículo 190 del COMF. El dinero disponible responde a la pregunta de los retiros de hoy; no responde a la pregunta de si el colchón aguanta pérdidas.</p>
+  </div>
+
+  <h3>7. Basilea: un grupo de supervisores que propone reglas</h3>
+  <p>Los supervisores de bancos de muchos países se reúnen en el Comité de Basilea. Ese comité no es una autoridad del Ecuador: propone reglas comunes para que los bancos del mundo tengan colchones y controles parecidos. Cada país decide si las incorpora a sus propias leyes. Por eso, cuando alguien dice «Basilea exige», pregúntate: ¿lo exige la ley de nuestro país, o es una recomendación internacional?</p>
+  <p>La Tabla 2 resume las tres versiones principales. Basilea I (1988) propuso un colchón mínimo de 8 % del riesgo ponderado. Basilea II (2004) organizó las reglas en tres partes: cuánto colchón debe tener el banco, que el supervisor revise cómo trabaja el banco, y que el banco informe con claridad al público. Basilea III (2010) pidió colchones de mejor calidad y reglas para que el banco tenga dinero disponible en momentos de presión.</p>
+  <p class="titulo-tabla"><strong>Tabla 2.</strong> Acuerdos de Basilea: qué proponen (son recomendaciones internacionales; no son leyes de Ecuador)</p>
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr><th>Acuerdo</th><th>Año</th><th>Qué proponía</th><th>Dato de referencia</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Basilea I</td><td>1988</td><td>Colchón de capital frente al riesgo de que los clientes no paguen</td><td>Colchón mínimo de 8 % del riesgo ponderado</td></tr>
+        <tr><td>Basilea II</td><td>2004</td><td>Tres partes: colchón suficiente, revisión por el supervisor y información clara al público</td><td>Tres partes que organizan el acuerdo</td></tr>
+        <tr><td>Basilea III</td><td>2010 (versión revisada de 2011 en bis.org)</td><td>Colchón de mejor calidad y reglas para tener dinero disponible en crisis</td><td>Añade reglas de liquidez y un límite a cuánto puede endeudarse el banco en total</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Para el BDL, el 8 % de Basilea I sirve como referencia para comparar. No prueba que el banco esté obligado a cumplirlo. La obligación en Ecuador depende de lo que diga la ley y la normativa vigente.</p>
+  <div class="ayuda">
+    <p>Si al leer una frase sobre Basilea te preguntas «¿quién la hace obligatoria aquí?», ya tienes el criterio correcto. Si la respuesta es «la ley de Ecuador», la frase es una disposición local que debe verificarse. Si la respuesta es «nadie, es una recomendación», es una referencia internacional.</p>
+  </div>
+
+  <h3>8. El Banco Central y el dólar</h3>
+  <p>El Banco Central del Ecuador es una institución pública, pero no es un banco que atiende clientes ni recibe depósitos del público. El artículo 26 del COMF dispone que no cumple funciones de banca pública; sus funciones concretas aparecen en otros artículos del mismo código, que debes consultar en su texto oficial.</p>
+  <p>Ecuador usa el dólar de Estados Unidos desde el año 2000 (dato tomado de una fuente secundaria), proceso que se llama dolarización. Eso significa que el país no fabrica dólares propios ni puede cambiar el valor de su moneda. En otros países, el banco central puede subir o bajar el precio del dinero para controlar la economía; en Ecuador esa herramienta no existe. Por eso la seguridad de los bancos depende mucho más de sus colchones, sus reservas y de las reglas de supervisión.</p>
+  <p>Antes de continuar, pregúntate: si el país no puede fabricar su propio dinero, ¿qué hace que un cliente confíe en que el banco le devolverá sus depósitos? Piensa en las reservas y en los colchones que vimos antes. No busques una sola respuesta; intenta explicar un mecanismo.</p>
+  <div class="ayuda">
+    <p>Si tu respuesta fue «el banco central da seguridad», revisa qué hace concretamente esa seguridad: el banco tiene reservas para los retiros, un colchón para las pérdidas y un supervisor que revisa que todo eso exista.</p>
+  </div>
+
+  <h3>9. Qué podemos concluir y qué todavía no</h3>
+  <p>Con los datos del caso, podemos decir que el BDL tiene 1 500 000,00 que son de sus dueños según el balance, un colchón de 1 350 000,00 según los supuestos de la Tabla 1, y una solvencia de 12,27 % sobre el riesgo supuesto. Ese resultado supera el mínimo del 9 % del artículo 190 del COMF. También podemos decir que, con el encaje supuesto de 5 %, sus reservas superan lo requerido en 120 000,00.</p>
+  <p>Lo que no podemos decir es que el banco cumple la ley vigente, que es sólido en general o que tiene buena liquidez solo porque tiene dinero en caja. Para eso harían falta el balance verificado, el detalle de su colchón, la calidad de sus préstamos, el tipo de depósitos que tiene, la norma vigente a la fecha y las exigencias adicionales de la Superintendencia. Lo que falta también forma parte de la respuesta.</p>
+
+  <h3>10. Errores frecuentes y cómo corregirlos</h3>
+  <ul>
+    <li><strong>Pensar que el dinero de los depósitos es del banco.</strong> Es del cliente, que el banco debe devolver. Si lo cuentas como colchón, el banco parecerá más seguro de lo que es. Revisa la ecuación del Cálculo 1.</li>
+    <li><strong>Dividir el colchón entre el total de lo que el banco tiene.</strong> La solvencia compara el colchón con el riesgo ponderado. Si tu resultado es 12,86 %, usaste el total: esa es la relación del 4 %, no la del 9 %. Vuelve al Cálculo 2.</li>
+    <li><strong>Confundir tener dinero con tener colchón.</strong> Ante un banco con mucho efectivo, pregúntate qué responde ese dato: ¿puede pagar hoy? o ¿aguanta pérdidas? El ejemplo del punto 6 muestra la diferencia.</li>
+    <li><strong>Confundir un supuesto con la norma.</strong> El 4,0 % de encaje viene de una fuente secundaria y la base es un supuesto de la sesión; el 9 % sí es un mínimo del artículo 190 del COMF, pero las cifras con las que se compara son supuestas. Antes de concluir, separa la norma verificada de los datos del caso.</li>
+    <li><strong>Pensar que Basilea es una ley de Ecuador.</strong> Revisa si la frase describe una recomendación internacional o una norma que Ecuador haya adoptado.</li>
+  </ul>
+
+  <h3>Ejercicios guiados</h3>
+  <p>Los cinco ejercicios siguen el orden de la sesión. Intenta cada uno por escrito antes de abrir la solución. Las soluciones están desplegadas bajo tu control, y explican también el error más probable.</p>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 1. Cuánto es de los dueños</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás cuánto del banco es de sus dueños, a partir de su balance, y explicarás por qué los depósitos de los clientes no entran en esa cuenta.</p>
+    <p><strong>Datos:</strong> lo que el banco tiene es 10 500 000,00; lo que debe es 9 000 000,00, de los cuales 8 000 000,00 son depósitos a la vista de clientes (dato del caso didáctico, Tabla 1).</p>
+    <ol>
+      <li>Calcula cuánto es de los dueños.</li>
+      <li>Explica si los depósitos de los clientes son de los dueños, y por qué.</li>
+    </ol>
+    <div class="ayuda">
+      <p>Para comenzar, usa la igualdad: lo que tiene = lo que debe + lo que es de los dueños. Despeja lo que es de los dueños. Luego pregúntate a quién debe el banco los depósitos.</p>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución razonada</summary>
+      <p><strong>1.</strong> Lo que es de los dueños = 10 500 000,00 − 9 000 000,00 = 1 500 000,00.</p>
+      <p><strong>2.</strong> Los depósitos no son de los dueños. Son dinero de los clientes que el banco debe devolver según las condiciones de cada cuenta. Por eso aumentan lo que el banco tiene y lo que debe en la misma cantidad, y no cambian lo que es de los dueños.</p>
+      <p><strong>Comprobación:</strong> 9 000 000,00 + 1 500 000,00 = 10 500 000,00, igual a lo que tiene. Esta comprobación usa la igualdad del balance, no repite la resta.</p>
+    </details>
+    <div class="ayuda">
+      <p>Si obtuviste 2 500 000,00, restaste solo los depósitos de lo que tiene (10 500 000,00 − 8 000 000,00). La resta correcta es entre lo que tiene y todo lo que debe.</p>
+    </div>
+    <div class="comprender">
+      <p><strong>Cómo entender este ejercicio.</strong> Lo que el banco recibe no siempre es suyo: el dinero que un cliente deposita, el banco lo tiene prestado y debe devolverlo. Lo que es de los dueños es lo que queda después de pagar todo lo que debe.</p>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 2. Variante: cambia el riesgo del banco</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad compararás la solvencia del BDL en dos escenarios y explicarás qué cambió.</p>
+    <p><strong>Supongamos que</strong> el riesgo total ponderado del BDL sube a 13 000 000,00 (dato supuesto), mientras el colchón se mantiene en 1 350 000,00.</p>
+    <ol>
+      <li>Calcula la solvencia en el nuevo escenario.</li>
+      <li>Indica qué dato cambió y cuál se mantuvo igual.</li>
+    </ol>
+    <div class="ayuda">
+      <p>Recuerda qué se compara con qué: el colchón se divide entre el riesgo total ponderado. Identifica cuál de los dos datos cambió.</p>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución razonada</summary>
+      <p><strong>1.</strong> Solvencia = 1 350 000,00 ÷ 13 000 000,00 × 100 = 0,103846… × 100 = 10,38 %.</p>
+      <p><strong>2.</strong> Cambió el riesgo total ponderado (de 11 000 000,00 a 13 000 000,00). El colchón no cambió. Con el mismo colchón y más riesgo, la solvencia baja.</p>
+      <p><strong>Comprobación de plausibilidad:</strong> 10 % de 13 000 000,00 es 1 300 000,00, menos que 1 350 000,00. Por eso el resultado debe ser algo mayor que 10 %, como indica el cálculo.</p>
+    </details>
+    <div class="ayuda">
+      <p>Si obtuviste 12,86 %, dividiste entre el total de lo que tiene el banco (1 350 000,00 ÷ 10 500 000,00). La solvencia se divide entre el riesgo total ponderado.</p>
+    </div>
+    <div class="comprender">
+      <p><strong>Cómo entender este ejercicio.</strong> El mismo colchón puede cubrir más o menos según el riesgo que el banco asuma. Si quieres comparar dos escenarios, identifica primero qué cifra cambió.</p>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 3. Variante: la reserva no alcanza</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás la reserva que el banco debe guardar en un escenario distinto y explicarás qué puede concluirse del resultado.</p>
+    <p><strong>Supongamos que</strong> los depósitos a la vista del BDL son de 10 000 000,00, el encaje aplicable es de 4,0 % (según una fuente secundaria de la resolución JPRFM-2025-014-M; el texto oficial debe confirmarse) y la reserva que el banco guarda es de 380 000,00.</p>
+    <ol>
+      <li>Calcula la reserva requerida y la diferencia entre la reserva guardada y la requerida.</li>
+      <li>Explica por qué esa diferencia no permite concluir que el banco será sancionado.</li>
+    </ol>
+    <div class="ayuda">
+      <p>Antes de restar, decide qué cifra va primero: la reserva guardada o la requerida. Un resultado negativo significa que falta reserva.</p>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución razonada</summary>
+      <p><strong>1.</strong> Reserva requerida = 10 000 000,00 × 4,0 % = 400 000,00. Diferencia = reserva guardada − reserva requerida = 380 000,00 − 400 000,00 = −20 000,00. Con el supuesto, faltan 20 000,00.</p>
+      <p><strong>2.</strong> La diferencia describe el escenario supuesto. Lo que el banco deba hacer depende de la norma vigente: el porcentaje, los depósitos que cuentan, el plazo para corregir y las sanciones deben confirmarse en la normativa de la Junta y del organismo de control. Con estos datos no se puede concluir una sanción.</p>
+      <p><strong>Comprobación:</strong> 10 000 000,00 ÷ 25 = 400 000,00, igual a la reserva requerida.</p>
+    </details>
+    <div class="ayuda">
+      <p>Si obtuviste un excedente de 20 000,00, probablemente restaste en el orden contrario. Escribe primero la reserva guardada y después la requerida.</p>
+    </div>
+    <div class="comprender">
+      <p><strong>Cómo entender este ejercicio.</strong> Que falte reserva es un resultado del cálculo. Lo que sigue (corregirlo, pagar una multa o nada) lo dice la norma. Separa siempre el resultado del cálculo de la conclusión legal.</p>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 4. Dinero disponible y colchón en un mismo caso</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad distinguirás qué pregunta responde cada dato y redactarás una conclusión que no supere la información disponible.</p>
+    <p><strong>Supongamos que</strong> el BDL tiene 2 000 000,00 de dinero disponible en caja y en el Banco Central, un colchón de 400 000,00 y un riesgo total ponderado de 11 000 000,00 (datos supuestos para este ejercicio).</p>
+    <ol>
+      <li>Calcula la solvencia.</li>
+      <li>Escribe dos oraciones: una sobre la solvencia y otra sobre la liquidez. En cada una, di si los datos bastan para concluir algo.</li>
+    </ol>
+    <div class="ayuda">
+      <p>Para la liquidez, pregúntate qué dato haría falta: para saber si el banco puede pagar sus obligaciones de corto plazo, debes conocer cuánto debe en esos plazos. El enunciado no lo informa.</p>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución razonada</summary>
+      <p><strong>1.</strong> Solvencia = 400 000,00 ÷ 11 000 000,00 × 100 = 3,64 %.</p>
+      <p><strong>2.</strong> Solvencia: frente al mínimo del 9 % del artículo 190 del COMF, un 3,64 % queda muy por debajo; el colchón cubre poco de los riesgos. Liquidez: el dinero disponible es favorable, pero no permite concluir que el banco pueda pagar, porque falta conocer las obligaciones de corto plazo. Mucho dinero en caja no prueba que el colchón sea suficiente.</p>
+      <p><strong>Comprobación:</strong> 11 000 000,00 × 3,64 % = 400 400,00. La diferencia frente a 400 000,00 se debe al redondeo de 3,6364 % a 3,64 %; el orden de magnitud es el mismo.</p>
+    </details>
+    <div class="ayuda">
+      <p>Si concluiste que el banco es sólido porque tiene dinero, revisa el ejemplo del punto 6.</p>
+    </div>
+    <div class="comprender">
+      <p><strong>Cómo entender este ejercicio.</strong> Tener dinero a la mano y tener colchón frente a pérdidas responden a preguntas distintas. Una buena conclusión dice qué dato usaste, qué pregunta responde y qué falta.</p>
+    </div>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 5. Clasificar frases sobre Basilea</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad clasificarás cinco frases según su tipo: recomendación internacional, dato o supuesto de la sesión, o disposición de Ecuador que debe verificarse.</p>
+    <ol>
+      <li>«Basilea I propuso un colchón mínimo de 8 % del riesgo ponderado.»</li>
+      <li>«El BDL debe cumplir el 8 % de Basilea I porque es un banco.»</li>
+      <li>«El encaje de 4,0 % usado en la sesión debe confirmarse en el texto oficial de la resolución.»</li>
+      <li>«Basilea II organizó las reglas en tres partes.»</li>
+      <li>«La autoridad ecuatoriana debe incorporar Basilea III mediante normas.»</li>
+    </ol>
+    <div class="ayuda">
+      <p>Pregúntate: ¿quién hace obligatoria esta frase en Ecuador? Si la respuesta es «la ley o norma de Ecuador, que hay que revisar», la frase pertenece a la tercera categoría.</p>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución razonada</summary>
+      <p><strong>1.</strong> Recomendación internacional: describe una propuesta de 1988, sin decir que Ecuador la aplique.</p>
+      <p><strong>2.</strong> Disposición de Ecuador que debe verificarse: confunde una recomendación con una obligación. Que el BDL sea un banco no basta; la obligación depende de la norma vigente.</p>
+      <p><strong>3.</strong> Dato o supuesto de la sesión: el porcentaje es de práctica, no un dato confirmado.</p>
+      <p><strong>4.</strong> Recomendación internacional: describe la propuesta de 2004 (Tabla 2).</p>
+      <p><strong>5.</strong> Disposición de Ecuador que debe verificarse: habla de una acción de la autoridad nacional. Hay que comprobar si esa incorporación ocurrió, cómo y con qué alcance.</p>
+    </details>
+    <div class="ayuda">
+      <p>Si clasificaste la frase 2 como recomendación internacional, revisa el punto 7: Basilea no obliga por sí mismo a un banco de Ecuador.</p>
+    </div>
+    <div class="comprender">
+      <p><strong>Cómo entender este ejercicio.</strong> Para clasificar bien, pregúntate de dónde viene la obligación. Una recomendación internacional orienta; una norma de Ecuador obliga, y solo puede afirmarse después de revisar el texto vigente.</p>
+    </div>
+  </div>
+
+  <h3>Glosario breve</h3>
+  <ul>
+    <li><strong>Banco:</strong> empresa que recibe dinero de personas y empresas y lo presta a otras.</li>
+    <li><strong>Depósito a la vista:</strong> dinero que el cliente puede retirar en cualquier momento, como el de una cuenta corriente o de ahorros de uso diario.</li>
+    <li><strong>Depósito a plazo fijo:</strong> dinero que el cliente deja en el banco por un tiempo acordado, a cambio de un interés.</li>
+    <li><strong>Activo:</strong> todo lo que el banco tiene o lo que otros le deben.</li>
+    <li><strong>Pasivo:</strong> todo lo que el banco debe a otros, sobre todo los depósitos de sus clientes.</li>
+    <li><strong>Patrimonio contable:</strong> lo que queda del balance después de pagar todo lo que se debe; es de los dueños.</li>
+    <li><strong>Patrimonio técnico:</strong> el colchón de dinero propio que la norma reconoce para aguantar pérdidas (artículo 190 del COMF).</li>
+    <li><strong>Riesgo ponderado (APR):</strong> la suma del riesgo de lo que tiene el banco y de sus contingentes, con cada parte pesada según qué tan arriesgada es.</li>
+    <li><strong>Solvencia:</strong> capacidad de aguantar pérdidas, medida con el colchón dividido entre el riesgo ponderado.</li>
+    <li><strong>Liquidez:</strong> tener dinero a la mano para pagar obligaciones en los días siguientes.</li>
+    <li><strong>Encaje:</strong> parte de los depósitos que el banco debe guardar como reserva para los retiros.</li>
+    <li><strong>Dolarización:</strong> uso del dólar de Estados Unidos como moneda del país, lo que impide emitir moneda propia.</li>
+  </ul>
+</section>
+
+<!-- ============ EVALUACIÓN ============ -->
+<section id="p-eval" class="panel" hidden>
+  <h2>Evaluación de la sesión 01</h2>
+  <div class="eval-intro">
+    <p>Este cuestionario tiene 16 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas como [Teórica] evalúan la comprensión de lo enseñado; las marcadas como [Análisis] presentan un caso breve y piden aplicar, clasificar o interpretar. Cada opción tiene su retroalimentación.</p>
+    <p><strong>Importante:</strong> el puntaje es de práctica y no es nota oficial del parcial. Los reintentos no prueban por sí solos que comprendiste el tema; las explicaciones y las tareas de aplicación también aportan evidencia.</p>
+  </div>
+  <p class="progreso" id="progreso" aria-live="polite">Preguntas respondidas: 0 de 16</p>
+  <div id="lista-preguntas"></div>
+  <div id="resultado" class="resultado" hidden aria-live="polite"></div>
+  <div class="botones">
+    <button type="button" class="btn secundario" id="reiniciar">Reiniciar cuestionario</button>
+  </div>
+</section>
+
+<!-- ============ REFLEXIÓN ============ -->
+<section id="p-reflexion" class="panel" hidden>
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Sirven para conectar el contenido con tu experiencia como persona que usa servicios financieros.</p>
+  <h3>Lo que el cliente no ve</h3>
+  <p>Cuando dejas tu dinero en un banco, rara vez piensas en las reservas o en el colchón de la entidad. Solo notas si puedes retirar tu dinero y si el banco te inspira confianza. Esa confianza depende de cosas que no ves. Pensar en ellas no es desconfiar del banco, sino entender qué sostiene lo que confías.</p>
+  <p class="pregunta-r">Pregunta para pensar: ¿qué te gustaría saber de un banco antes de dejarle tu dinero, y por qué?</p>
+  <h3>Prestar y responsabilidad</h3>
+  <p>Un banco que presta dinero asume riesgos con el dinero de sus clientes. Un buen colchón ayuda a aguantar pérdidas, pero no reemplaza la revisión de cada préstamo. Mirar solo el colchón y no ver quién paga sus deudas sería una lectura incompleta.</p>
+  <p class="pregunta-r">Pregunta para pensar: ¿qué responsabilidad tiene quien analiza la situación de un banco cuando los datos que tiene son incompletos?</p>
+  <h3>Usar el dólar de otro país</h3>
+  <p>Usar una moneda que el país no fabrica da estabilidad y reduce algunos riesgos, pero también quita herramientas que otros países sí usan. Evaluar esa decisión exige comparar beneficios y costos, y preguntarse en qué condiciones cambiaría la conclusión. No tiene una única respuesta.</p>
+  <p class="pregunta-r">Pregunta para pensar: ¿qué debería vigilarse en un país que usa dólares para que su sistema financiero siga siendo confiable?</p>
+  <h3>Recomendaciones internacionales y realidad local</h3>
+  <p>Una recomendación internacional puede ser una guía valiosa sin ser una obligación automática. Aprender a distinguir ambas cosas evita rechazar las recomendaciones y también aplicarlas sin pensar.</p>
+  <p class="pregunta-r">Pregunta para pensar: ¿cómo decidirías si una recomendación de otros países debe convertirse en ley en el tuyo?</p>
+</section>
+
+<!-- ============ ACTIVIDAD CON IA ============ -->
+<section id="p-ia" class="panel" hidden>
+  <h2>Actividad con inteligencia artificial (IA)</h2>
+  <p class="tiempo">Tiempo orientativo: 15 minutos · Trabajo individual</p>
+  <p>Esta actividad es formativa: no crea una calificación oficial ni introduce contenidos nuevos. Su propósito es que compruebes un cálculo que una herramienta de inteligencia artificial te presenta.</p>
+  <h3>Paso 1. Trabajo inicial propio</h3>
+  <p>Antes de consultar cualquier herramienta, calcula la solvencia del BDL con los datos de la Tabla 1 y del Cálculo 2. Escribe el resultado y lo que dividiste entre qué.</p>
+  <h3>Paso 2. Pregunta exacta</h3>
+  <p>Copia literalmente este texto en la herramienta de IA que tengas disponible, sin añadir datos personales ni de cuentas reales:</p>
+  <div class="ejemplo">
+    <p>«Tengo un banco ficticio con un colchón de 1 350 000 dólares y un riesgo total ponderado de 11 000 000 de dólares. Calcula la solvencia, explica qué divide entre qué y di si ese resultado permite concluir que el banco tiene dinero disponible para pagar retiros.»</p>
+  </div>
+  <h3>Paso 3. Comparación y verificación</h3>
+  <p>Compara la respuesta con tu trabajo inicial. Verifica al menos una afirmación: la división, lo que se divide entre qué y la respuesta sobre el dinero disponible. Si la herramienta afirma que el resultado prueba que el banco puede pagar retiros, identifica qué confunde y explica por qué la solvencia no mide el dinero disponible. Si usa el total de lo que tiene el banco como divisor, rechaza ese procedimiento y justifícalo con el punto 4.</p>
+  <h3>Paso 4. Justificación</h3>
+  <p>Escribe un párrafo que diga qué aceptaste, qué corregiste y qué rechazaste de la respuesta, y por qué. La justificación es la parte que cuenta; el texto de la herramienta no es una fuente verificada por sí solo.</p>
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>¿Calculé mi propio resultado antes de consultar la herramienta?</li>
+    <li>¿Identifiqué correctamente lo que se divide entre qué?</li>
+    <li>¿Distinguí tener dinero disponible de tener colchón en la respuesta recibida?</li>
+    <li>¿Marqué como supuestos las cifras y porcentajes que no son datos confirmados?</li>
+    <li>¿Justifiqué cada decisión de aceptar, corregir o rechazar?</li>
+  </ul>
+</section>
+
+<!-- ============ BIBLIOGRAFÍA ============ -->
+<section id="p-biblio" class="panel" hidden>
+  <h2>Bibliografía</h2>
+  <p>Las referencias están en formato APA 7 (el formato de citas más usado en trabajos académicos), ordenadas alfabéticamente. Cada una respalda los contenidos indicados. Las marcadas como «no verificada en línea» deben comprobarse antes de citarlas.</p>
+  <ul>
+    <li>Asamblea Nacional del Ecuador. (2025). <em>Código Orgánico Monetario y Financiero</em>. Registro Oficial, Suplemento 142. Respalda lo dicho sobre el Banco Central (artículo 26), el encaje (artículos 240 y 241) y el patrimonio técnico (artículo 190). Verificada en el texto del COMF que se usa en el curso; confirma la vigencia en el Registro Oficial antes de citar un artículo.</li>
+    <li>Basel Committee on Banking Supervision. (1988). <em>International convergence of capital measurement and capital standards</em>. Bank for International Settlements. https://www.bis.org/publ/bcbs04.pdf. Respalda la fijación del 8 % del riesgo ponderado de Basilea I. Verificada en bis.org el 26 de noviembre de 2026.</li>
+    <li>Basel Committee on Banking Supervision. (2004). <em>Basel II: International convergence of capital measurement and capital standards: A revised framework</em>. Bank for International Settlements. https://www.bis.org/publ/bcbs107.htm. Respalda la descripción de Basilea II, publicado en junio de 2004. Verificada en bis.org el 26 de noviembre de 2026.</li>
+    <li>Basel Committee on Banking Supervision. (2011). <em>Basel III: A global regulatory framework for more resilient banks and banking systems</em> (versión revisada de junio de 2011). Bank for International Settlements. https://www.bis.org/publ/bcbs189.htm. Respalda la descripción de Basilea III. El documento original es de diciembre de 2010; la versión revisada que figura en bis.org es de 2011. Verificada en bis.org el 26 de noviembre de 2026.</li>
+  </ul>
+  <p>Te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de las leyes y de los porcentajes debe comprobarse en las fuentes oficiales; Google Scholar no las sustituye.</p>
+</section>
+
+</main>
+
+<footer class="pie">
+  <p>Contabilidad IFIS y EPS · Semana 02 · Unidad 1 · Caso didáctico ficticio. Las entidades y cifras son supuestos de enseñanza.</p>
+</footer>
+
+<script>
+/* ============================================================
+   1. Navegación por pestañas
+   ============================================================ */
+(function () {
+  const tabs = document.querySelectorAll('.tab');
+  function mostrar(id) {
+    document.querySelectorAll('.panel').forEach(function (p) { p.hidden = p.id !== id; });
+    tabs.forEach(function (t) {
+      const on = t.dataset.tab === id;
+      t.classList.toggle('activa', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { mostrar(t.dataset.tab); }); });
+})();
+
+/* ============================================================
+   2. Banco de preguntas de la evaluación
+   Formato: t = enunciado; tipo = Teórica | Análisis;
+   o = [[texto_opcion, retroalimentacion], ...] (4 opciones);
+   c = índice de la opción correcta (0 = a, 1 = b, 2 = c, 3 = d).
+   ============================================================ */
+const PREGUNTAS = [
+  { t: "¿Cuál es la diferencia principal entre patrimonio contable y patrimonio técnico?", tipo: "Teórica", c: 2,
+    o: [
+      ["Son el mismo cálculo con nombres distintos.", "No lo son. El contable sale del balance; el técnico se calcula con las reglas que fija la norma para medir la capacidad de absorber pérdidas."],
+      ["El contable incluye los depósitos de clientes y el técnico no.", "Los depósitos son deudas del banco y no forman parte del patrimonio contable. La diferencia relevante es otra: el patrimonio técnico es un concepto de la regulación, con cálculo propio."],
+      ["El contable sale del balance; el técnico se calcula según las reglas que fija la norma.", "El balance es el punto de partida del contable; el técnico aplica las reglas de la norma, que pueden incluir o excluir partidas."],
+      ["El técnico es siempre igual al contable porque ambos miden el patrimonio.", "No tiene por qué ser igual. Pueden diferir por ajustes y deducciones que la norma establece."]
+    ] },
+  { t: "Caso: el BDL tiene un patrimonio técnico de 1 350 000,00 y activos ponderados por riesgo de 11 000 000,00; su total de activos es 10 500 000,00. ¿Cuál es la relación de solvencia que exige el artículo 190 del COMF?", tipo: "Análisis", c: 0,
+    o: [
+      ["12,27 %.", "1 350 000,00 ÷ 11 000 000,00 × 100 = 12,27 %. Debajo de la línea de división va el riesgo total ponderado, no el total de activos."],
+      ["12,86 %.", "Ese resultado sale de dividir entre el total de activos sin ponderar (10 500 000,00). Es otra relación: la del 4 % del mismo artículo. La relación de solvencia del 9 % divide entre el riesgo ponderado."],
+      ["9,00 %.", "El 9 % es el mínimo que fija el artículo 190 del COMF; no es el resultado del cálculo del caso."],
+      ["90,00 %.", "Ese valor resulta de dividir el patrimonio técnico entre el patrimonio contable, comparación que no define la relación de solvencia."]
+    ] },
+  { t: "¿Qué distingue al patrimonio técnico primario del secundario?", tipo: "Teórica", c: 3,
+    o: [
+      ["El primario corresponde a los depósitos y el secundario a los créditos.", "Los depósitos y los créditos son partidas del balance. Los niveles primario y secundario son partes del patrimonio técnico, no de la cartera."],
+      ["El primario es el patrimonio contable y el secundario, el patrimonio técnico.", "Esa asignación invierte los conceptos. El patrimonio técnico es el conjunto, y el primario y el secundario son sus dos niveles."],
+      ["El secundario es siempre mayor que el primario porque incluye más partidas.", "La cantidad de partidas no determina el tamaño. Además, la norma fija un límite: el secundario no puede superar el 100 % del primario."],
+      ["El primario reúne los componentes de mayor calidad para absorber pérdidas y el secundario otros componentes de menor calidad.", "Esa es la distinción de calidad que da sentido a los dos niveles. La lista exacta de partidas la define la norma vigente."]
+    ] },
+  { t: "Caso: el BDL tiene depósitos a la vista de 8 000 000,00 (supongamos que son todas sus captaciones), un encaje de 4,0 % y reservas de 520 000,00. ¿Qué resultado es correcto?", tipo: "Análisis", c: 1,
+    o: [
+      ["Déficit de 200 000,00.", "El encaje requerido es de 320 000,00 y las reservas (520 000,00) lo superan. Hay excedente, no déficit."],
+      ["Excedente de 200 000,00.", "8 000 000,00 × 4,0 % = 320 000,00; 520 000,00 − 320 000,00 = 200 000,00. El 4,0 % es el porcentaje que la sesión toma de la resolución JPRFM-2025-014-M, citada en fuente secundaria."],
+      ["Encaje requerido de 520 000,00.", "Ese monto corresponde a las reservas, no al requerimiento. El encaje requerido se calcula sobre los depósitos."],
+      ["Excedente de 400 000,00.", "Ese monto es el encaje requerido. El excedente es la diferencia entre reservas y requerimiento."]
+    ] },
+  { t: "¿Qué afirmación describe mejor la liquidez frente a la solvencia?", tipo: "Teórica", c: 0,
+    o: [
+      ["La liquidez mide si el banco puede pagar lo que debe en los días siguientes; la solvencia relaciona el colchón de dinero propio con los riesgos que asume.", "Son preguntas distintas: una se refiere a tener dinero disponible a tiempo; la otra, a respaldar los riesgos con patrimonio."],
+      ["Son lo mismo: un banco solvente siempre es líquido.", "No necesariamente. Un banco puede tener efectivo y poco colchón, o lo contrario. Confundir ambos conceptos lleva a conclusiones erróneas."],
+      ["La liquidez depende solo del patrimonio técnico.", "El patrimonio técnico no determina cuánto efectivo hay disponible. Ese es un criterio de solvencia, no de liquidez."],
+      ["La solvencia se mide con el efectivo que el banco mantiene en caja.", "El efectivo en caja es un dato de liquidez. La solvencia compara el colchón con el riesgo ponderado."]
+    ] },
+  { t: "Con una relación de solvencia de 12,27 % (cifras supuestas del caso) frente al mínimo de 9 % del artículo 190 del COMF, ¿qué conclusión es válida?", tipo: "Análisis", c: 2,
+    o: [
+      ["El BDL cumple la normativa vigente de solvencia.", "Las cifras del caso son supuestas. Aunque el 9 % es un mínimo del artículo 190, con cifras supuestas no puede afirmarse el cumplimiento real del banco."],
+      ["El BDL es líquido, porque su indicador es alto.", "La relación de solvencia no mide liquidez. El indicador no informa sobre la disponibilidad de efectivo."],
+      ["Con las cifras supuestas, el indicador supera el 9 % del artículo 190; una conclusión de cumplimiento real requiere cifras verificadas, la norma vigente a la fecha y los requerimientos adicionales de la Superintendencia.", "Esta conclusión separa lo que los datos permiten afirmar de lo que todavía falta verificar."],
+      ["El BDL es insolvente, porque 12,27 % es un valor bajo.", "Un 12,27 % queda por encima del mínimo de 9 %. Cualquier conclusión debe apoyarse en la comparación correcta y en la norma vigente."]
+    ] },
+  { t: "¿Qué tres partes organizan el acuerdo de Basilea II de 2004?", tipo: "Teórica", c: 1,
+    o: [
+      ["Capital, liquidez y tasas de interés.", "La liquidez y el interés no son las tres partes de Basilea II. La liquidez tiene más peso en Basilea III."],
+      ["Exigir un colchón mínimo de capital, que el supervisor revise cómo trabaja el banco y que el banco informe con claridad al público.", "Basilea II organizó la regulación en esas tres partes, que completan el enfoque de 1988."],
+      ["Encaje, cartera y reservas.", "Son conceptos del balance y de la gestión de liquidez, no las partes del acuerdo."],
+      ["Activos, pasivos y patrimonio.", "Son categorías de la ecuación contable. Basilea II trata de requisitos de capital y de supervisión, no de la estructura del balance."]
+    ] },
+  { t: "Según lo estudiado, ¿qué afirmación sobre los acuerdos de Basilea es correcta?", tipo: "Análisis", c: 3,
+    o: [
+      ["Basilea es una norma del Código Orgánico Monetario y Financiero.", "El COMF es la norma ecuatoriana; los acuerdos de Basilea son recomendaciones internacionales que no forman parte de ese código por sí mismas."],
+      ["Los acuerdos de Basilea son obligatorios para cualquier banco del mundo sin trámite local.", "No son leyes nacionales. Se vuelven obligatorios en un país cuando la autoridad competente los incorpora a su normativa."],
+      ["Basilea reemplaza a la Junta reguladora del país.", "Basilea no sustituye a las autoridades nacionales; es una referencia internacional que pueden adoptar."],
+      ["Basilea es una referencia internacional; su aplicación local depende de la disposición que adopte el organismo competente.", "Esa es la distinción central de la sesión: una recomendación internacional y una obligación local son planos diferentes."]
+    ] },
+  { t: "¿Qué es el encaje bancario?", tipo: "Teórica", c: 1,
+    o: [
+      ["El interés que el banco cobra por los préstamos que concede.", "Ese es el interés que cobra el banco por sus préstamos. El encaje es una parte de los depósitos que se guarda como reserva."],
+      ["La parte de los depósitos que la entidad debe mantener como reserva, según la norma vigente.", "El encaje limita el uso de los depósitos para que la entidad tenga recursos disponibles para atender retiros."],
+      ["El patrimonio técnico dividido entre los activos ponderados por riesgo.", "Esa definición corresponde a la relación de solvencia, un indicador distinto del encaje."],
+      ["El dinero que el banco entrega a sus dueños como ganancia.", "El encaje no es una distribución de ganancias. Es una reserva que debe mantenerse sobre los depósitos."]
+    ] },
+  { t: "Caso: el BDL cumple con su encaje y su relación de solvencia es de 12,27 % (con los supuestos de la sesión). ¿Qué puedes concluir?", tipo: "Análisis", c: 3,
+    o: [
+      ["Que el banco no tendrá problemas en el futuro.", "Los indicadores describen una fecha y unos supuestos. No permiten afirmar lo que ocurrirá."],
+      ["Que el banco es rentable, porque tiene reservas y patrimonio.", "Reservas y patrimonio no miden rentabilidad. Para saber si gana dinero necesitas el estado de resultados, que no aparece en el caso."],
+      ["Que el banco es solvente y líquido, porque cumple el encaje.", "El encaje informa sobre reservas, no sobre solvencia integral. Confundir ambos conceptos lleva a una conclusión excesiva."],
+      ["Que los indicadores no bastan para una conclusión integral; faltan datos sobre la calidad de los préstamos, los riesgos y la norma vigente.", "Reconoces lo que los datos sostienen y lo que todavía no puede afirmarse."]
+    ] },
+  { t: "En una economía dolarizada, ¿qué afirmación sobre el Banco Central del Ecuador es más precisa?", tipo: "Teórica", c: 0,
+    o: [
+      ["No emite moneda propia, así que tiene menos herramientas para influir en el dinero de la economía que un país con moneda propia.", "La dolarización reduce las herramientas disponibles: el país no puede emitir ni cambiar el valor de su propia moneda."],
+      ["Emite dólares propios para la economía ecuatoriana.", "Ecuador no emite dólares: usa los de Estados Unidos porque adoptó la dolarización. Revisa el punto 8 de la sesión."],
+      ["Es un banco comercial que compite con los bancos privados por clientes.", "El Banco Central no cumple funciones de banca pública, según el artículo 26 del COMF citado en la sesión."],
+      ["Supervisa a cada cliente de los bancos y decide sus créditos.", "La supervisión de las entidades corresponde a los organismos de control; el Banco Central no decide los créditos de los clientes."]
+    ] },
+  { t: "Caso: la Cooperativa Ejemplo de Ahorro y Crédito capta depósitos como el BDL. ¿Puedes aplicar directamente el indicador de solvencia del BDL para concluir si cumple la norma?", tipo: "Análisis", c: 2,
+    o: [
+      ["Sí, porque ambas captan depósitos del público.", "Captar depósitos no basta para aplicar el mismo marco. La captación es una actividad común; las normas y el control pueden ser distintos."],
+      ["Sí, porque ambas tienen el mismo organismo de control.", "No lo tienen: el banco se controla por la Superintendencia de Bancos y la cooperativa, por la Superintendencia de Economía Popular y Solidaria."],
+      ["No: pertenecen a sectores distintos, con marcos y controles distintos; hay que aplicar la norma y el control que les corresponden.", "Cada entidad se analiza con su marco. Trasladar un indicador de una a otra sin verificar la norma sería un error de método."],
+      ["Sí, porque el indicador de solvencia es universal.", "El indicador tiene una definición general, pero las normas que fijan sus porcentajes dependen del sector y del organismo de control."]
+    ] },
+  { t: "En el cálculo de la relación de solvencia (colchón ÷ riesgo total ponderado), ¿qué cifra va debajo de la línea de división?", tipo: "Teórica", c: 3,
+    o: [
+      ["Los activos totales de la entidad.", "El total de activos no pondera por riesgo. Debajo de la división va el riesgo total ponderado."],
+      ["Los pasivos totales.", "Los pasivos son deudas con terceros. No van en esa división."],
+      ["El patrimonio contable.", "No es la cifra de la división. Arriba va el colchón (patrimonio técnico) y debajo, el riesgo total ponderado."],
+      ["Los activos ponderados por riesgo.", "Ese monto refleja el riesgo de los activos y es la cifra contra la que se compara el colchón."]
+    ] },
+  { t: "Caso: los depósitos de clientes del BDL suman 8 000 000,00. ¿Forman parte de su patrimonio técnico?", tipo: "Análisis", c: 1,
+    o: [
+      ["Sí, porque el banco los recibe y puede usarlos.", "Recibir recursos no los convierte en patrimonio. El banco los recibe con la obligación de devolverlos."],
+      ["No: son recursos del público y representan una obligación del banco frente a quienes depositaron.", "Los depósitos son deudas del banco. Si los incluyeras en el patrimonio técnico, sobrestimarías la capacidad de absorber pérdidas."],
+      ["Sí, porque son de liquidez inmediata.", "La liquidez inmediata es una característica de la disponibilidad, no un criterio para integrar el patrimonio técnico."],
+      ["Solo la parte excedente del encaje.", "El excedente del encaje es una relación con reservas, no un componente del patrimonio técnico."]
+    ] },
+  { t: "¿Qué coeficiente mínimo de capital frente a activos ponderados por riesgo fijó el acuerdo de Basilea I de 1988?", tipo: "Teórica", c: 2,
+    o: [
+      ["4 %.", "Ese valor no corresponde a Basilea I. Revisa la Tabla 2 de la sesión."],
+      ["6 %.", "Ese valor no corresponde a Basilea I. Revisa la Tabla 2 antes de responder."],
+      ["8 %.", "El acuerdo de 1988 fijó un coeficiente de 8 % sobre activos ponderados por riesgo. Es una referencia internacional, no una obligación local automática."],
+      ["10 %.", "Ese valor no corresponde a Basilea I. Recuerda que el acuerdo de 1988 es una referencia internacional."]
+    ] },
+  { t: "Caso: se quiere concluir que el BDL cumple la normativa ecuatoriana vigente de solvencia. ¿Qué información falta para esa conclusión?", tipo: "Análisis", c: 0,
+    o: [
+      ["Las cifras verificadas del patrimonio técnico y de los activos y contingentes ponderados, y los requerimientos adicionales que la Superintendencia haya fijado a la entidad.", "Sin cifras verificadas, el 12,27 % es un resultado supuesto y no permite concluir cumplimiento. Además, el 9 % debe compararse con la norma vigente a la fecha."],
+      ["El color del logotipo del banco.", "El logotipo no informa sobre normas, patrimonio ni riesgos."],
+      ["El nombre de sus accionistas.", "Los accionistas son relevantes para otros análisis, pero no reemplazan la norma vigente ni las cifras verificadas."],
+      ["El número de sucursales.", "El número de sucursales no determina la solvencia. La conclusión requiere la norma y el cálculo con datos verificados."]
+    ] }
+];
+
+/* ============================================================
+   3. Motor de la evaluación
+   Las respuestas se guardan en el arreglo resp; undefined = sin responder.
+   ============================================================ */
+(function () {
+  const LISTA = document.getElementById('lista-preguntas');
+  const PROGRESO = document.getElementById('progreso');
+  const RESULTADO = document.getElementById('resultado');
+  const REINICIAR = document.getElementById('reiniciar');
+  let resp = [];
+
+  function completa() {
+    return PREGUNTAS.every(function (_, i) { return resp[i] !== undefined; });
+  }
+  function aciertos() {
+    return PREGUNTAS.reduce(function (n, p, i) { return n + (resp[i] === p.c ? 1 : 0); }, 0);
+  }
+
+  function pintar() {
+    LISTA.innerHTML = '';
+    PREGUNTAS.forEach(function (p, i) {
+      const art = document.createElement('article');
+      art.className = 'pregunta';
+      art.id = 'q' + i;
+      const h = document.createElement('h3');
+      h.textContent = 'Pregunta ' + (i + 1) + ' ';
+      const ins = document.createElement('span');
+      ins.className = 'insignia';
+      ins.textContent = '[' + p.tipo + ']';
+      h.appendChild(ins);
+      const en = document.createElement('p');
+      en.className = 'enun';
+      en.textContent = p.t;
+      const ol = document.createElement('ol');
+      ol.className = 'ops';
+      const letras = ['a', 'b', 'c', 'd'];
+      p.o.forEach(function (op, j) {
+        const li = document.createElement('li');
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'op';
+        b.textContent = letras[j] + ') ' + op[0];
+        b.setAttribute('aria-pressed', 'false');
+        b.dataset.q = i;
+        b.dataset.o = j;
+        b.addEventListener('click', function () { elegir(i, j); });
+        li.appendChild(b);
+        ol.appendChild(li);
+      });
+      const retro = document.createElement('p');
+      retro.className = 'retro';
+      retro.hidden = true;
+      retro.setAttribute('aria-live', 'polite');
+      art.appendChild(h);
+      art.appendChild(en);
+      art.appendChild(ol);
+      art.appendChild(retro);
+      LISTA.appendChild(art);
+    });
+    marcarTodo();
+    actualizar();
+  }
+
+  function marcarTodo() {
+    PREGUNTAS.forEach(function (p, i) {
+      const art = document.getElementById('q' + i);
+      if (!art) return;
+      art.querySelectorAll('.op').forEach(function (b, j) {
+        const sel = resp[i] === j;
+        b.classList.toggle('elegida', sel);
+        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+      });
+      const retro = art.querySelector('.retro');
+      if (resp[i] !== undefined) {
+        const ok = resp[i] === p.c;
+        retro.hidden = false;
+        retro.className = 'retro ' + (ok ? 'ok' : 'mal');
+        retro.textContent = (ok ? 'CORRECTO. ' : 'Incorrecto. ') + p.o[resp[i]][1];
+      } else {
+        retro.hidden = true;
+        retro.textContent = '';
+      }
+    });
+  }
+
+  function elegir(i, j) {
+    if (completa()) return;           // evaluación completa: sin cambios
+    resp[i] = j;                       // se puede cambiar mientras no esté completa
+    marcarTodo();
+    actualizar();
+  }
+
+  function actualizar() {
+    const n = PREGUNTAS.length;
+    const respondidas = resp.filter(function (x) { return x !== undefined; }).length;
+    PROGRESO.textContent = 'Preguntas respondidas: ' + respondidas + ' de ' + n;
+    const fin = completa();
+    document.querySelectorAll('.op').forEach(function (b) {
+      b.disabled = fin && false || (fin && resp[Number(b.dataset.q)] === undefined);
+      if (fin) b.disabled = true;
+    });
+    if (!fin) {
+      RESULTADO.hidden = true;
+      RESULTADO.innerHTML = '';
+      return;
+    }
+    const ac = aciertos();
+    const err = n - ac;
+    const nota = (ac / n * 10).toFixed(1).replace('.', ',');
+    const pct = Math.round(ac / n * 100);
+    let html = '<p><strong>Resultado de la evaluación</strong></p>' +
+      '<p>Aciertos: ' + ac + ' de ' + n + '.</p>' +
+      '<p>Calificación de práctica: ' + nota + ' / 10 (' + pct + ' %).</p>' +
+      '<p>Este puntaje es de práctica y no es nota oficial del parcial.</p>';
+    if (err > 0) {
+      html += '<p>Revisa las preguntas con retroalimentación incorrecta y vuelve a leer el punto indicado en la sesión. Puedes intentarlo de nuevo con las mismas preguntas en el mismo orden.</p>' +
+        '<div class="botones"><button type="button" class="btn" id="reintentar">Intentar nuevamente</button></div>';
+    } else {
+      html += '<p>Respondiste todas las preguntas correctamente. Para practicar de nuevo, usa «Reiniciar cuestionario».</p>';
+    }
+    RESULTADO.innerHTML = html;
+    RESULTADO.hidden = false;
+    const btn = document.getElementById('reintentar');
+    if (btn) btn.addEventListener('click', reiniciar);
+  }
+
+  function reiniciar() {
+    resp = [];
+    pintar();
+    RESULTADO.hidden = true;
+    RESULTADO.innerHTML = '';
+    const primera = document.getElementById('q0');
+    if (primera) primera.scrollIntoView({ block: 'start' });
+  }
+
+  REINICIAR.addEventListener('click', reiniciar);
+  pintar();
+})();
+</script>
+</body>
+</html>

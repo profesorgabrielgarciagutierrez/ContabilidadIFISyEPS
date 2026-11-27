@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad IFIS y EPS · Semana 07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Estilos base ---------- */
+:root {
+  --azul: #003366;
+  --celeste: #87CEEB;
+  --ejemplo: #E8F4FD;
+  --texto: #1d1d1d;
+  --fondo: #ffffff;
+  --gris: #555555;
+  --ok: #1d6b34;
+  --mal: #9a1c1c;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body {
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.05rem; line-height: 1.6; color: var(--texto); background: var(--fondo);
+}
+h1, h2, h3, h4 { font-family: Lora, Georgia, serif; color: var(--azul); line-height: 1.25; }
+h2 { font-size: 1.5rem; margin-top: 1.8rem; }
+h3 { font-size: 1.2rem; margin-top: 1.4rem; }
+p { margin: 0.8rem 0; max-width: 72ch; }
+
+/* ---------- Encabezado y menú ---------- */
+header.cabecera { background: var(--azul); color: #fff; padding: 1rem 1.1rem; }
+header.cabecera h1 { color: #fff; font-size: 1.35rem; margin: 0; }
+header.cabecera p { margin: 0.2rem 0 0; font-size: 0.95rem; max-width: none; }
+nav.menu { background: var(--celeste); overflow-x: auto; white-space: nowrap; }
+nav.menu ul { list-style: none; margin: 0; padding: 0.3rem 0.5rem; display: flex; gap: 0.25rem; }
+nav.menu button {
+  font: inherit; color: #000; background: transparent; border: 2px solid transparent;
+  border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer;
+}
+nav.menu button:hover { background: rgba(255,255,255,0.45); }
+nav.menu button[aria-selected="true"] { background: #fff; color: var(--azul); font-weight: 700; }
+nav.menu button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+main { padding: 0.6rem 1rem 3rem; max-width: 860px; margin: 0 auto; }
+section.panel[hidden] { display: none; }
+
+/* ---------- Bloques ---------- */
+.nota-lateral { border-left: 5px solid var(--azul); background: #f4f8fb; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.nota-lateral h3 { margin-top: 0; }
+.concepto { border-left: 4px solid var(--azul); padding: 0.1rem 0 0.1rem 1rem; margin: 1.1rem 0; }
+.ejemplo { background: var(--ejemplo); padding: 0.8rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.ejemplo strong { color: var(--azul); }
+.tabla-wrap { overflow-x: auto; margin: 1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.97rem; min-width: 420px; }
+caption { text-align: left; font-weight: 700; color: var(--azul); padding-bottom: 0.4rem; font-family: Lora, Georgia, serif; }
+th, td { border: 1px solid #c9d6e2; padding: 0.4rem 0.55rem; vertical-align: top; text-align: left; }
+th { background: #eaf2f9; }
+.calculo { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.9rem 1rem; margin: 1.1rem 0; }
+.calculo h4 { margin: 0 0 0.4rem; }
+.calculo ol { padding-left: 1.2rem; }
+.calculo li { margin: 0.3rem 0; }
+.asiento { overflow-x: auto; margin: 1rem 0; }
+.asiento table { min-width: 560px; }
+.formula { font-weight: 600; background: #f3f6f9; padding: 0.15rem 0.4rem; border-radius: 4px; white-space: nowrap; }
+.pendiente { border-left: 4px solid #8a6d00; background: #fff8e1; padding: 0.6rem 0.9rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.pendiente strong { color: #5c4700; }
+
+/* ---------- Ejercicios ---------- */
+.ejercicio { border-top: 2px solid #d7e3ee; margin-top: 1.6rem; padding-top: 0.8rem; }
+.ejercicio .tiempo { color: var(--gris); font-size: 0.95rem; }
+details { margin: 0.6rem 0; border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.4rem 0.8rem; background: #fbfcfd; }
+details summary { cursor: pointer; font-weight: 700; color: var(--azul); padding: 0.3rem 0; }
+details summary:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+details[open] summary { margin-bottom: 0.4rem; }
+details > *:last-child { margin-bottom: 0.4rem; }
+.comprobacion { font-style: italic; color: var(--gris); }
+
+/* ---------- Evaluación ---------- */
+.estado-eval {
+  position: sticky; top: 0; background: #fff; border: 1px solid #c9d6e2; border-radius: 6px;
+  padding: 0.6rem 0.8rem; margin: 0.8rem 0; z-index: 2;
+}
+.progreso { height: 10px; background: #e3ebf3; border-radius: 6px; overflow: hidden; margin-top: 0.4rem; }
+.progreso div { height: 100%; width: 0; background: var(--azul); transition: width 0.3s; }
+fieldset.pregunta { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0; min-width: 0; }
+fieldset.pregunta legend { font-weight: 700; color: var(--azul); padding: 0 0.3rem; font-family: Lora, Georgia, serif; }
+.badge { display: inline-block; font-family: "Source Sans 3", system-ui, sans-serif; font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--azul); border-radius: 4px; padding: 0.05rem 0.4rem; margin-right: 0.3rem; }
+.badge.analisis { background: #3d5a80; }
+.opcion { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.45rem 0; }
+.opcion input { margin-top: 0.35rem; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+.opcion label { cursor: pointer; }
+.fb { margin-top: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.97rem; display: none; }
+.fb.visible { display: block; }
+.fb.ok { background: #e7f5ec; border-left: 4px solid var(--ok); color: #123d21; }
+.fb.mal { background: #fbeaea; border-left: 4px solid var(--mal); color: #4a1010; }
+.fb .ruta { margin-top: 0.35rem; font-size: 0.92rem; color: var(--gris); }
+.resultado { border: 2px solid var(--azul); border-radius: 6px; padding: 0.9rem 1rem; margin: 1.2rem 0; display: none; }
+.resultado.visible { display: block; }
+button.boton {
+  font: inherit; font-weight: 700; color: #fff; background: var(--azul); border: none; border-radius: 6px;
+  padding: 0.55rem 1rem; margin: 0.4rem 0.4rem 0.4rem 0; cursor: pointer;
+}
+button.boton.secundario { background: #fff; color: var(--azul); border: 2px solid var(--azul); }
+button.boton:focus-visible, input[type="radio"]:focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+
+/* ---------- Teléfono ---------- */
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  nav.menu button { padding: 0.4rem 0.6rem; font-size: 0.95rem; }
+  main { padding: 0.5rem 0.8rem 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <h1>Contabilidad IFIS y EPS · Semana 07</h1>
+  <p>Unidad 2 · Depósitos a plazo fijo: captar, calcular intereses y registrar su causación y su pago</p>
+</header>
+
+<nav class="menu" aria-label="Secciones de la semana">
+  <ul role="tablist">
+    <li><button role="tab" data-tab="repaso" aria-selected="false" aria-controls="p-repaso">Repaso</button></li>
+    <li><button role="tab" data-tab="sesion" aria-selected="true" aria-controls="p-sesion">Sesión 01</button></li>
+    <li><button role="tab" data-tab="evaluacion" aria-selected="false" aria-controls="p-evaluacion">Evaluación</button></li>
+    <li><button role="tab" data-tab="reflexion" aria-selected="false" aria-controls="p-reflexion">Reflexión</button></li>
+    <li><button role="tab" data-tab="ia" aria-selected="false" aria-controls="p-ia">Actividad con IA</button></li>
+    <li><button role="tab" data-tab="bibliografia" aria-selected="false" aria-controls="p-bibliografia">Bibliografía</button></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ============ REPASO ============ -->
+<section class="panel" id="p-repaso" role="tabpanel" hidden>
+  <h2>Repaso: el dinero a plazo es una obligación que crece con el tiempo</h2>
+  <p>En la semana 06 viste que un depósito a la vista, como el de una cuenta corriente, genera una obligación del banco con el cliente. Esa obligación cambia cuando el cliente deposita o retira, y el banco no la remunera por el simple hecho de tenerla. Esta semana cambia algo importante: el cliente acepta dejar el dinero durante un plazo, y a cambio el banco paga intereses. La obligación ya no solo cambia con los movimientos; también crece con el tiempo.</p>
+  <p>Recuerda también la distinción de la semana 06 entre el efectivo que entra a la caja y la cuenta que explica de quién es ese dinero. Cuando un cliente deposita 2.000,00 dólares a plazo, la caja sube 2.000,00 y la obligación con el cliente sube lo mismo. Los intereses se suman después, a medida que se generan.</p>
+  <p>Por último, en la semana 05 viste que el cheque tiene requisitos y plazos que conviene revisar antes de registrar un movimiento. Esta semana aplicaremos esa misma disciplina a los intereses: antes de calcular, debes saber qué tasa, qué plazo y qué base de días corresponden a la operación.</p>
+</section>
+
+<!-- ============ SESIÓN 01 ============ -->
+<section class="panel" id="p-sesion" role="tabpanel">
+
+  <h2>Sesión 01 · Depósitos a plazo fijo: captar, calcular y registrar</h2>
+  <p class="comprobacion">Unidad 2 · Operaciones pasivas. Duración orientativa: 120 minutos de trabajo acompañado, con cinco ejercicios y una evaluación de 15 preguntas.</p>
+
+  <div class="nota-lateral" role="note">
+    <h3>Antes de empezar</h3>
+    <p>Lucía Rivera es una clienta nueva del Banco Didáctico del Litoral S. A. (BDL), un banco privado ficticio controlado por la Superintendencia de Bancos. Lucía tiene 2.000,00 dólares que no necesitará durante seis meses y quiere que el banco le pague intereses por dejarlos quietos. Acepta un depósito a plazo fijo de 180 días.</p>
+    <p>La pregunta de esta sesión es la que se haría cualquier persona antes de firmar: ¿cuánto recibirá Lucía al vencimiento, y qué debe anotar el banco en sus libros mientras el dinero permanece depositado? Responder bien exige tres ideas: qué es un plazo fijo, cómo se calculan sus intereses y cómo se registran esos intereses a medida que se generan.</p>
+    <p>Antes de leer la explicación, escribe tu respuesta en una frase: si el banco debe devolver 2.000,00 dólares a Lucía al vencimiento, ¿los intereses aumentan lo que el banco debe, o los convierten en ingreso del banco? Compara tu respuesta al final de la sección 5. Usaremos las cuentas que ya conoces: 1101 Caja, 1103 Bancos y otras instituciones financieras, y el grupo 21 Obligaciones con el público.</p>
+  </div>
+
+  <h3>1. Un plazo fijo: dinero que el cliente no retira y el banco remunera</h3>
+  <p>Piensa en un ahorro que quieres dejar guardado para no gastarlo. Si lo mantienes en un lugar donde no puedes retirarlo sin esperar, a cambio esperas una ganancia. Un depósito a plazo fijo funciona así: el cliente entrega un monto, se compromete a mantenerlo por un plazo acordado, y el banco le paga intereses por esa permanencia. El compromiso de tiempo es lo que distingue este producto de una cuenta corriente, desde la que el cliente puede pagar y retirar cuando quiera.</p>
+  <div class="concepto">
+    <p>Un <strong>depósito a plazo fijo</strong> es una captación en la que el cliente entrega dinero a la entidad financiera por un plazo determinado, y la entidad le paga intereses según una tasa pactada. Desde los libros del banco es una obligación con el público, dentro del grupo 21. Desde los libros de Lucía es un derecho frente al banco, que se hace efectivo al vencimiento.</p>
+  </div>
+  <p>Fíjate en la perspectiva. Para Lucía, los 2.000,00 dólares son un activo: un derecho frente al banco. Para el BDL, el mismo monto es un pasivo: una deuda que debe devolver con intereses. Una misma operación aparece como activo en un lado y como pasivo en el otro, y de esa relación depende todo el registro de esta sesión.</p>
+  <p class="comprobacion">Pausa de razonamiento: si el banco usa parte del dinero de Lucía para prestar a otra persona, ¿cambia lo que debe a Lucía? Escribe una respuesta antes de seguir. La respuesta correcta es que no cambia: el préstamo es otra operación, y la obligación con Lucía sigue igual según el contrato.</p>
+
+  <h3>2. Las partes del certificado y lo que todavía no podemos clasificar</h3>
+  <p>El depósito a plazo suele documentarse con un certificado. Lucía debe poder leer en él cuatro partes: el titular, el monto, el plazo con sus fechas de emisión y de vencimiento, y la tasa con la base de días en que se calcula. También deben aparecer las condiciones de pago de intereses y de renovación. Si una de esas partes no está clara, el registro no puede hacerse con seguridad.</p>
+  <table>
+    <caption>Tabla 1 · Partes del certificado de Lucía Rivera (datos de la operación del caso)</caption>
+    <thead><tr><th scope="col">Parte</th><th scope="col">Dato del caso</th><th scope="col">Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td>Titular</td><td>Lucía Rivera (cliente ficticia)</td><td>Identifica a quién se debe el capital y los intereses.</td></tr>
+      <tr><td>Monto</td><td>2.000,00 dólares</td><td>Es el capital sobre el que se calculan los intereses.</td></tr>
+      <tr><td>Plazo</td><td>180 días, desde la fecha de emisión (supuesto)</td><td>Determina cuánto tiempo genera intereses el capital.</td></tr>
+      <tr><td>Tasa</td><td>6,00 % nominal anual (supuesto didáctico)</td><td>Es la base de la remuneración que el banco paga.</td></tr>
+      <tr><td>Base de días</td><td>360 días, declarada en el cálculo (supuesto)</td><td>Convierte el plazo en una fracción de año.</td></tr>
+    </tbody>
+  </table>
+  <p>El plan de la asignatura pide también clasificar los títulos de depósito. Esa clasificación depende de una norma que todavía no hemos consultado en la fuente oficial, así que en esta sesión solo identificamos las partes del certificado. Queda como pregunta abierta: ¿qué norma define la clase del título y qué campos debe mostrar? Para responderla necesitarías la codificación vigente de la Junta de Política y Regulación Financiera y Monetaria y el texto aplicable a los depósitos a plazo.</p>
+
+  <h3>3. Calcular intereses: tasa, plazo y base de días</h3>
+  <p>Antes de la fórmula, piensa en la situación. Si Lucía deja 2.000,00 dólares durante seis meses a una tasa anual, el interés que recibe depende de dos cosas: cuánto aporta cada año a esa tasa y qué parte del año dura el depósito. Por eso la fórmula multiplica el capital por la tasa y por el tiempo, y divide entre la base de días.</p>
+  <div class="concepto">
+    <p>El <strong>interés simple</strong> de un depósito a plazo se calcula con la fórmula <span class="formula">I = C × i × t ÷ B</span>. Aquí <strong>C</strong> es el capital, <strong>i</strong> es la tasa nominal anual expresada en decimales, <strong>t</strong> son los días del plazo y <strong>B</strong> es la base de días, que es el número de días que se toma como año. El cálculo solo es comparable con otro cuando se declara la base.</p>
+  </div>
+  <p>La tasa de esta sesión es un supuesto didáctico, no una tasa real. Conviene saber de dónde podría salir una tasa de referencia. El Banco Central del Ecuador publica cada mes una tasa pasiva referencial. La Resolución JPRF-F-2025-0150, del 29 de abril de 2025, la usa como tope para la tasa pasiva de personas jurídicas públicas autorizadas para otorgar garantías; no fija montos ni porcentajes por plazo. Al BDL, que es privado, el texto de esa resolución no le impone ese tope.</p>
+  <div class="pendiente">
+    <p><strong>Qué valor de referencia hemos podido encontrar.</strong> La publicación de prensa más reciente que consultamos, que cita al Banco Central, indica una tasa pasiva efectiva anual referencial de 5,19 % para julio de 2026. Es una fuente secundaria. No pudimos abrir la página del Banco Central para confirmar ese dato ni consultar el valor de noviembre de 2026. Por eso, en todos los cálculos de esta sesión usamos 6,00 % como supuesto, y no lo presentamos como tasa vigente.</p>
+  </div>
+
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado: el interés de Lucía a 180 días.</strong> Lucía deposita 2.000,00 dólares a 180 días, con tasa nominal anual de 6,00 % (supuesto) y base de 360 días (declarada). Primero calculamos el interés de un año: 2.000,00 × 0,06 = 120,00 dólares. Después aplicamos el plazo: como 180 ÷ 360 = 0,5, el interés del caso es 120,00 × 0,5 = 60,00 dólares. Compara con la fórmula completa: 2.000,00 × 0,06 × 180 ÷ 360 = 60,00. El resultado es coherente: medio año de interés da la mitad del interés anual.</p>
+    <p>Fíjate en la base. Si el mismo cálculo se hiciera con 365 días, daría 2.000,00 × 0,06 × 180 ÷ 365 = 59,18 dólares. La diferencia de 0,82 dólares no viene de la tasa ni del capital; viene solo de la base. Por eso la base debe declararse, y la elección debe justificarse según el contrato y la norma.</p>
+  </div>
+
+  <div class="calculo">
+    <h4>Cálculo 1 · Intereses de Lucía a 180 días (base 360)</h4>
+    <ol>
+      <li><strong>Situación.</strong> Lucía necesita saber cuánto recibirá al vencimiento de su depósito.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos una tasa nominal anual de 6,00 % y base de 360 días. El cálculo sirve para practicar la fórmula, no para afirmar una tasa vigente.</li>
+      <li><strong>Qué buscamos.</strong> El interés generado por el capital en 180 días.</li>
+      <li><strong>Datos y origen.</strong> Capital: 2.000,00 dólares (dato del caso). Tasa: 6,00 % nominal anual (supuesto). Plazo: 180 días (supuesto). Base: 360 días (declarada).</li>
+      <li><strong>Por qué esta operación.</strong> El interés depende del tiempo que el capital permanece depositado. Como la tasa es anual, hay que convertir los 180 días en una fracción de año.</li>
+      <li><strong>Operación.</strong> I = 2.000,00 × 0,06 × 180 ÷ 360 = 60,00 dólares.</li>
+      <li><strong>Resultado.</strong> El interés al vencimiento es de 60,00 dólares.</li>
+      <li><strong>Comprobación.</strong> El interés anual es 120,00 dólares; medio año da la mitad: 60,00. La comprobación es de orden de magnitud, no una segunda fórmula.</li>
+      <li><strong>Interpretación y límites.</strong> El resultado vale solo con los supuestos declarados. Con base 365 el importe sería 59,18 dólares. El error que evita es comparar cifras calculadas con bases distintas como si fueran iguales.</li>
+    </ol>
+  </div>
+
+  <h3>4. Causar intereses: reconocer el gasto cuando se genera</h3>
+  <p>Ahora viene la pregunta contable: ¿cuándo debe el banco reconocer el interés? Si Lucía recibe los 60,00 dólares al vencer, es tentador anotar el gasto ese día. Pero el interés se genera mes a mes, aunque se pague al final. Reconocerlo solo en el pago haría que los registros intermedios no muestren un gasto que ya existía. A ese reconocimiento periódico lo llamamos causación.</p>
+  <div class="concepto">
+    <p><strong>Causar</strong> un interés es reconocerlo conforme se genera, con el tiempo transcurrido, aunque el pago se realice después. Mientras no se paga, el interés causado aparece como una obligación del banco, que se llama intereses por pagar. El pago cancela esa obligación; no crea un gasto nuevo.</p>
+  </div>
+  <p class="comprobacion">Pausa de razonamiento: si el depósito de Lucía dura seis meses de 30 días, ¿cuántos intereses se causan cada mes? Calcula antes de leer la siguiente sección. La respuesta es 60,00 ÷ 6 = 10,00 dólares, porque los meses de 30 días son iguales en el caso.</p>
+
+  <div class="calculo">
+    <h4>Cálculo 2 · Causación mensual del depósito de Lucía</h4>
+    <ol>
+      <li><strong>Situación.</strong> El banco debe reconocer el interés al cierre de cada mes del depósito.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos meses de 30 días y base de 360. El cálculo sirve para ver cómo se reparte el interés del plazo.</li>
+      <li><strong>Qué buscamos.</strong> El interés causado en un mes.</li>
+      <li><strong>Datos y origen.</strong> Capital: 2.000,00 dólares. Tasa: 6,00 % nominal anual (supuesto). Plazo del mes: 30 días (supuesto).</li>
+      <li><strong>Por qué esta operación.</strong> Como el interés es proporcional al tiempo, el interés de un mes es la fracción del año que representa ese mes.</li>
+      <li><strong>Operación.</strong> 2.000,00 × 0,06 × 30 ÷ 360 = 10,00 dólares.</li>
+      <li><strong>Resultado.</strong> Se causan 10,00 dólares al mes, y en seis meses suman 60,00 dólares.</li>
+      <li><strong>Comprobación.</strong> 10,00 × 6 = 60,00, que coincide con el Cálculo 1. Es una comprobación independiente, porque el primer cálculo usó el plazo total y este usa el mensual.</li>
+      <li><strong>Interpretación y límites.</strong> Si el banco no causara mes a mes, sus registros intermedios no mostrarían el gasto por intereses. El límite es que los códigos de las cuentas de gasto y de intereses por pagar no están confirmados en el catálogo, por lo que el asiento se presenta con la lógica y no con códigos definitivos.</li>
+    </ol>
+  </div>
+
+  <div class="asiento">
+    <table>
+      <caption>Tabla 2 · Asiento de la causación mensual de Lucía (libros del BDL, lógica con cuentas por confirmar)</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Cierre del mes 1 (supuesto)</td><td>Por confirmar</td><td>Gasto por intereses de depósitos a plazo. Se reconoce el interés generado en el mes.</td><td>10,00</td><td></td></tr>
+        <tr><td></td><td>Por confirmar</td><td>Intereses por pagar. El banco debe pagar ese interés al vencimiento.</td><td></td><td>10,00</td></tr>
+        <tr><td></td><td></td><td><strong>Totales</strong></td><td><strong>10,00</strong></td><td><strong>10,00</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Observa lo que no cambia en este asiento. La caja no se mueve, porque el banco no ha pagado nada. Tampoco cambia el capital de Lucía. Lo que sube es el gasto por intereses y la obligación de pagarlos. Por eso la causación no es un cobro ni un pago: es el reconocimiento de algo que ya se produjo.</p>
+
+  <h3>5. Captar el depósito: el efectivo entra y nace la obligación</h3>
+  <p>Volvamos al momento de la apertura. Lucía entrega 2.000,00 dólares en efectivo para su plazo fijo. La caja del BDL sube 2.000,00, y el banco reconoce una obligación de devolver ese capital al vencimiento. Esa es la misma lógica de la apertura de cuenta corriente de la semana 06, con una diferencia: la obligación tiene plazo y genera intereses.</p>
+  <div class="asiento">
+    <table>
+      <caption>Tabla 3 · Asiento de la captación del depósito de Lucía (libros del BDL)</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Emisión del certificado (supuesto)</td><td>1101</td><td>Caja. Entra el efectivo que Lucía entrega.</td><td>2.000,00</td><td></td></tr>
+        <tr><td></td><td>Por confirmar</td><td>Obligaciones con el público, depósitos a plazo fijo. El banco debe devolver el capital al vencimiento.</td><td></td><td>2.000,00</td></tr>
+        <tr><td></td><td></td><td><strong>Totales</strong></td><td><strong>2.000,00</strong></td><td><strong>2.000,00</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pendiente">
+    <p><strong>Qué queda sin confirmar en la captación.</strong> El grupo 21 de obligaciones con el público sí lo consultamos en la semana 06. Pero la subcuenta exacta de los depósitos a plazo fijo no la hemos podido leer en el plan de cuentas de la Superintendencia de Bancos, y el plan de 2021 que consultamos podría estar superado. Por eso la tabla nombra la cuenta por su función. Si alguien te pide el código, la respuesta correcta es que aún no lo tenemos confirmado.</p>
+  </div>
+
+  <h3>6. El vencimiento: pagar el capital y los intereses ya causados</h3>
+  <p>Al vencer el plazo, el banco paga a Lucía 2.060,00 dólares: los 2.000,00 de capital y los 60,00 de intereses. Los intereses ya están reconocidos como obligación, porque se causaron mes a mes. Por eso el pago no genera un gasto nuevo: cancela deudas que ya existen. Este es el mismo principio que viste en la semana 06 con el cheque: pagar reduce la obligación, no produce un ingreso.</p>
+  <div class="asiento">
+    <table>
+      <caption>Tabla 4 · Asiento del pago al vencimiento (libros del BDL, liquidación supuesta)</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Vencimiento (supuesto)</td><td>Por confirmar</td><td>Obligaciones por depósitos a plazo. Se cancela el capital.</td><td>2.000,00</td><td></td></tr>
+        <tr><td></td><td>Por confirmar</td><td>Intereses por pagar. Se cancelan los 60,00 causados durante el plazo.</td><td>60,00</td><td></td></tr>
+        <tr><td></td><td>1103</td><td>Bancos y otras instituciones financieras. Sale el dinero para pagar a Lucía (liquidación supuesta, como en la semana 06).</td><td></td><td>2.060,00</td></tr>
+        <tr><td></td><td></td><td><strong>Totales</strong></td><td><strong>2.060,00</strong></td><td><strong>2.060,00</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>El asiento cuadra y el resultado del banco no cambia por el pago. Lo que cambia es la deuda con Lucía, que vuelve a cero, y la caja o la cuenta de liquidación, que baja en 2.060,00. Si registraras de nuevo los 60,00 como gasto, contarías dos veces el mismo interés.</p>
+
+  <h3>7. Renovar y cancelar: dos decisiones del cliente con reglas distintas</h3>
+  <p>Al vencer, Lucía puede retirar su dinero o renovarlo. Si renueva por el total de 2.060,00 dólares, no entra ni sale efectivo: la obligación del banco se mantiene y pasa a un nuevo plazo. Supongamos que el nuevo plazo es de 90 días, con la misma tasa supuesta de 6,00 %. El nuevo interés se calcula sobre 2.060,00, no sobre los 2.000,00 iniciales.</p>
+  <div class="calculo">
+    <h4>Cálculo 3 · Interés de la renovación de Lucía</h4>
+    <ol>
+      <li><strong>Situación.</strong> Lucía renueva por el total que recibiría al vencimiento.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos tasa de 6,00 %, base de 360 días y plazo de 90 días. Se busca ver que la base del nuevo cálculo es la suma de capital e intereses.</li>
+      <li><strong>Qué buscamos.</strong> El interés del nuevo plazo.</li>
+      <li><strong>Datos y origen.</strong> Capital renovado: 2.060,00 dólares (resultado del Cálculo 1 y del vencimiento). Tasa y base: supuestas.</li>
+      <li><strong>Por qué esta operación.</strong> El nuevo contrato parte del saldo que el banco debe a Lucía en la fecha de renovación.</li>
+      <li><strong>Operación.</strong> I = 2.060,00 × 0,06 × 90 ÷ 360 = 30,90 dólares.</li>
+      <li><strong>Resultado.</strong> El interés del nuevo plazo es de 30,90 dólares.</li>
+      <li><strong>Comprobación.</strong> Es la mitad del resultado de 180 días sobre la misma base, aproximadamente: 60,00 × 90 ÷ 180 = 30,00, y la diferencia de 0,90 viene de que el capital renovado es mayor.</li>
+      <li><strong>Interpretación y límites.</strong> La renovación no es un ingreso ni un retiro. El error que evita es calcular el nuevo interés sobre el capital inicial y olvidar los intereses ya generados.</li>
+    </ol>
+  </div>
+  <p>La cancelación anticipada es otra cuestión. Si Lucía quiere retirar antes del vencimiento, lo que le corresponde depende de las condiciones del contrato y de la norma aplicable. Nosotros no hemos consultado esas condiciones, así que no podemos decir qué interés se paga en ese caso ni si existe alguna penalidad. Lo que sí podemos decir es qué información necesitaríamos: el contrato del certificado, la regla de cancelación anticipada y la fecha de cancelación.</p>
+
+  <h3>8. Qué sí y qué no podemos concluir sobre el seguro de depósitos</h3>
+  <p>Los depósitos a plazo fijo están expresamente mencionados en la circular de la Superintendencia de Bancos sobre depósitos garantizados que consultamos: el seguro protege de forma limitada los depósitos en cuentas corrientes, de ahorro, depósitos a plazo fijo y otras modalidades legales. Esa protección tiene límites, y la cifra exacta cubierta no la tomamos de esa fuente. Lo que sí podemos afirmar es que el seguro no paga intereses ni garantiza la tasa que el banco pactó.</p>
+
+  <h3>9. Errores previsibles y cómo corregirlos</h3>
+  <p>El primer error es registrar los intereses solo al vencimiento. Si lo hiciste, revisa la sección 4: el interés se genera con el tiempo, y reconocerlo solo al final oculta el gasto de los meses intermedios.</p>
+  <p>El segundo error es usar la tasa sin declarar el plazo ni la base de días. Si tu cálculo dio 120,00 dólares para Lucía, probablemente olvidaste el factor de tiempo. Si dio 59,18 sin explicarlo, usaste base 365 sin declararla. Ambos casos se corrigen escribiendo la fórmula completa con todos sus datos.</p>
+  <p>El tercer error es registrar el pago al vencimiento como gasto de 60,00 dólares otra vez. Si lo hiciste, pregúntate qué obligación cancela el pago. Si la respuesta es que ya existían intereses por pagar, el gasto ya se había reconocido en la causación.</p>
+  <p>El cuarto error es presentar una tasa como vigente. Si escribiste que la tasa actual del mercado es 6,00 %, corrige: el 6,00 % es un supuesto didáctico. La referencia real del Banco Central debe confirmarse en su publicación del mes correspondiente.</p>
+  <p>Si el error persiste, sigue esta ruta: identifica el monto y el capital, después la tasa, el plazo y la base, después la fecha en que el interés se genera, y solo entonces decide el asiento. Si alguno de esos datos falta, anótalo como pendiente y no lo completes con una cifra inventada.</p>
+
+  <h3>10. Cierre y transferencia</h3>
+  <p>Volvamos a Lucía. Entregó 2.000,00 dólares a plazo de 180 días. El banco reconoce la obligación al recibir el dinero, causa 10,00 dólares cada mes, paga 2.060,00 al vencer y, si Lucía renueva, la nueva base incluye los intereses ya generados. Cada paso cambia una cuenta distinta, y ninguno produce un ingreso del banco por el hecho de recibir o devolver el dinero.</p>
+  <p>Como tarea de transferencia, imagina que Sebastián Paredes, cliente ficticio del BDL, deposita 1.500,00 dólares a 90 días, con tasa nominal anual de 4 % (supuesto) y base de 360 días. Calcula el interés total, escribe el asiento de la captación y el de la causación del primer mes de 30 días, y di qué parte del asiento no puedes confirmar todavía. Tu respuesta será correcta si declaras la base, separas la captación de la causación y marcas los códigos que dependen de una confirmación.</p>
+  <p>Sabrás que aprendiste esta sesión cuando puedas explicar por qué los intereses se causan con el tiempo, por qué el pago al vencimiento cancela obligaciones existentes, y por qué la base de días debe declararse. Si una de esas partes te cuesta, vuelve a la sección correspondiente antes de la evaluación.</p>
+
+  <div class="nota-lateral">
+    <h3>Glosario breve</h3>
+    <p><strong>Depósito a plazo fijo:</strong> captación en la que el cliente se compromete a mantener el dinero por un plazo a cambio de intereses.</p>
+    <p><strong>Tasa nominal anual:</strong> tasa que se expresa por año, antes de considerar la forma exacta de capitalizar.</p>
+    <p><strong>Base de días:</strong> número de días que se toma como año en el cálculo de intereses. Debe declararse.</p>
+    <p><strong>Causación:</strong> reconocimiento del interés conforme se genera, aunque se pague después.</p>
+    <p><strong>Intereses por pagar:</strong> obligación del banco por intereses causados que todavía no se han pagado.</p>
+    <p><strong>Tasa pasiva referencial:</strong> tasa de referencia que publica el Banco Central del Ecuador cada mes para las captaciones.</p>
+  </div>
+
+  <h2>Ejercicios guiados</h2>
+  <p>Trabaja cada ejercicio por escrito antes de abrir su solución. Las soluciones están en los desplegables.</p>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 1 · Calcular el interés de un depósito a 90 días</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás el interés de un depósito a plazo y declararás la base que usas.</p>
+    <p><strong>Enunciado.</strong> Diego Ortiz, cliente ficticio del BDL, deposita 1.500,00 dólares a 90 días, con una tasa nominal anual de 4 % (supuesto) y base de 360 días. Calcula el interés al vencimiento y escribe la fórmula completa con sus datos.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Empieza por el interés de un año: capital por tasa. Después pregúntate qué fracción del año representan los 90 días.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>El interés anual es 1.500,00 × 0,04 = 60,00 dólares. Como 90 ÷ 360 = 0,25, el interés del plazo es I = 1.500,00 × 0,04 × 90 ÷ 360 = 15,00 dólares. El resultado depende de la base 360, que debes declarar.</p>
+      <p class="comprobacion">Comprobación: 90 días son un cuarto de año, y un cuarto de 60,00 es 15,00.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si obtuviste 60,00, olvidaste el factor de tiempo. Si obtuviste 15,00 con base 365, recalcula con 360 y declara la diferencia que aparece en el Cálculo 1.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio te enseña que el interés depende del tiempo y de la base, no solo de la tasa anual. Esa lectura evita comparar depósitos con cifras que usan bases distintas.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 2 · Causar y registrar el interés del primer mes</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás el interés causado de un mes y escribirás su asiento en los libros del banco.</p>
+    <p><strong>Enunciado.</strong> Con los datos del Ejercicio 1, calcula el interés causado en el primer mes de 30 días. (a) Calcula el interés del mes. (b) Escribe el asiento de la causación. (c) Di si el banco paga algo en caja ese mes.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Repite la lógica del Cálculo 2, pero con el capital de 1.500,00 dólares. Recuerda que la causación no mueve la caja.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 1.500,00 × 0,04 × 30 ÷ 360 = 5,00 dólares. (b) Debe: gasto por intereses de depósitos a plazo, 5,00. Haber: intereses por pagar, 5,00 (códigos por confirmar). (c) No hay pago en caja: el banco solo reconoce la obligación.</p>
+      <p class="comprobacion">Comprobación: en tres meses de 30 días se causan 15,00 dólares, que es el interés total del Ejercicio 1.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si escribiste la caja en el debe, recuerda que la causación no recibe ni entrega efectivo. Si pusiste el gasto en el haber, revisa qué saldo aumenta: el gasto aumenta en el debe.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio separa el reconocimiento del gasto del momento en que el dinero sale. Esa separación es la base para leer después los resultados de un período.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 3 · Renovar al vencimiento</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás el capital que se renueva y el interés del nuevo plazo, sin mover efectivo.</p>
+    <p><strong>Enunciado.</strong> Al vencer su depósito, un cliente ficticio tiene 1.515,00 dólares de capital e intereses. Renueva por ese total durante 90 días, con tasa de 4 % (supuesto) y base de 360 días. (a) Calcula el interés del nuevo plazo. (b) Di cuánto le debe el banco al cliente al final del nuevo plazo. (c) Indica si entra o sale efectivo en la renovación.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>La base del nuevo interés es el monto renovado, no el capital original. Revisa el Cálculo 3.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 1.515,00 × 0,04 × 90 ÷ 360 = 15,15 dólares. (b) 1.515,00 + 15,15 = 1.530,15 dólares. (c) No entra ni sale efectivo: la obligación se mantiene y cambia de plazo.</p>
+      <p class="comprobacion">Comprobación: 1.515,00 × 0,04 = 60,60 al año, y un cuarto de 60,60 es 15,15.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si calculaste el interés sobre 1.500,00, recuerda que la renovación parte del saldo total. Si sumaste 15,15 como efectivo entregado, revisa la sección 7: la renovación no entrega efectivo.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio muestra que los intereses ya generados se incorporan a la base de la siguiente operación. Ignorarlo subestima la obligación del banco.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 4 · Base 360 o base 365: qué cambia y qué debes declarar</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>En esta actividad compararás dos cálculos con la misma tasa y dirás cuál debe declararse.</p>
+    <p><strong>Enunciado.</strong> Un depósito de 2.000,00 dólares a 180 días, con tasa de 6 % (supuesto). (a) Calcula el interés con base 360. (b) Calcula el interés con base 365. (c) Di qué base usarías si el contrato no la indica, y qué le pedirías al banco antes de registrar.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Usa el Cálculo 1 como modelo y cambia solo el divisor. Para la parte (c), piensa en qué puede cambiar entre dos cálculos que parecen iguales.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 2.000,00 × 0,06 × 180 ÷ 360 = 60,00 dólares. (b) 2.000,00 × 0,06 × 180 ÷ 365 = 59,18 dólares. (c) No debes elegir sin el contrato. Antes de registrar, pedirías la base declarada en el certificado y la norma que la regula; con esa información el cálculo queda justificado.</p>
+      <p class="comprobacion">Comprobación: la diferencia es 60,00 − 59,18 = 0,82 dólares, y esa diferencia viene solo de la base.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si dijiste que la base no cambia el importe, recuerda que divide el interés y, por eso, cambia el resultado. Si elegiste 365 sin justificar, vuelve a la sección 3.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio enseña que una cifra solo es comparable cuando se declara la base con la que se calculó. Esa disciplina sirve para cualquier interés que leas en un estado financiero.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 5 · Un depósito corto y su interés</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás el interés de un plazo corto y explicarás qué información falta para decidir la cancelación anticipada.</p>
+    <p><strong>Enunciado.</strong> Un depósito de 800,00 dólares a 60 días, con tasa nominal de 5 % (supuesto) y base de 360 días. (a) Calcula el interés. (b) Escribe el asiento de la causación del primer mes de 30 días. (c) Si el cliente cancela a los 30 días, di qué información necesitas para saber cuánto le corresponde.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Calcula primero el interés de 60 días. Para (b), usa 30 días. Para (c), revisa la sección 7.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 800,00 × 0,05 × 60 ÷ 360 = 6,67 dólares. (b) 800,00 × 0,05 × 30 ÷ 360 = 3,33 dólares. Debe: gasto por intereses, 3,33; haber: intereses por pagar, 3,33 (códigos por confirmar). (c) Necesitas el contrato del certificado, la regla de cancelación anticipada y la fecha exacta de cancelación. Sin esos datos no puedes calcular el interés que corresponde.</p>
+      <p class="comprobacion">Comprobación: 6,67 es el doble de 3,33, porque 60 días son el doble de 30.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si calculaste el interés como el 1 % del depósito, revisa la tasa: es 5 %. Si escribiste 6,67 en la causación de un solo mes, recuerda que el mes tiene 30 días.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio separa un cálculo que sí puedes hacer de una decisión que depende de un contrato y de una norma que todavía no hemos consultado. Distinguir ambas cosas es central en cualquier análisis bancario.</p>
+    </details>
+  </div>
+
+  <h3>Presupuesto de tiempo de la sesión</h3>
+  <p>La sesión se estima en 120 minutos de trabajo acompañado: apertura 5 minutos, explicación con pausas 40 minutos, cinco ejercicios 50 minutos, evaluación y revisión 20 minutos, y cierre 5 minutos. El tiempo es orientativo y no garantiza una duración igual para todos.</p>
+
+</section>
+
+<!-- ============ EVALUACIÓN ============ -->
+<section class="panel" id="p-evaluacion" role="tabpanel" hidden>
+  <h2>Evaluación de la Sesión 01</h2>
+  <p>El cuestionario tiene 15 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas como <span class="badge">Teórica</span> se responden con lo estudiado; las marcadas como <span class="badge analisis">Análisis</span> presentan un caso breve. Al elegir una opción verás de inmediato su retroalimentación.</p>
+  <p>El puntaje es de práctica y no es una nota oficial. Los reintentos no demuestran por sí solos que dominas el tema: las explicaciones, los asientos y los ejercicios también son evidencia de aprendizaje.</p>
+
+  <div class="estado-eval" aria-live="polite">
+    <p id="estado-texto" style="margin:0;">Preguntas respondidas: 0 de 15 · Aciertos: 0</p>
+    <div class="progreso" aria-hidden="true"><div id="barra"></div></div>
+  </div>
+
+  <form id="quiz" onsubmit="return false;"></form>
+
+  <div class="resultado" id="resultado" role="status">
+    <h3>Resultado de práctica</h3>
+    <p id="resultado-texto"></p>
+    <button type="button" class="boton" id="btn-reintentar" hidden>Intentar nuevamente</button>
+    <button type="button" class="boton secundario" id="btn-reiniciar">Reiniciar cuestionario</button>
+  </div>
+  <p style="margin-top:0.5rem;"><button type="button" class="boton secundario" id="btn-reiniciar-fin">Reiniciar cuestionario</button></p>
+</section>
+
+<!-- ============ REFLEXIÓN ============ -->
+<section class="panel" id="p-reflexion" role="tabpanel" hidden>
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Te invitan a pensar qué significa que una persona deje su dinero quieto durante meses para recibir una ganancia pequeña a cambio.</p>
+
+  <h3>Esperar tiene un precio</h3>
+  <p>Dejar el dinero en un plazo fijo significa renunciar a usarlo durante un tiempo. El interés es la compensación por esa espera. Pero la compensación también depende de quién recibe el dinero y de qué hace el banco con él, y esa segunda parte no la vemos en el certificado.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué información te gustaría tener antes de dejar tus ahorros a plazo, y cuál de esas informaciones crees que el certificado no te muestra?</p>
+
+  <h3>Un interés que aparece antes de cobrarse</h3>
+  <p>Un interés puede generarse todos los meses y no pagarse hasta el vencimiento. Para quien lo espera, el dinero aparece solo al final. Para el banco, el interés debe reconocerse cada mes. Esa diferencia entre lo que se gana con el tiempo y lo que se cobra en una fecha es la razón de la causación.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿cómo cambia tu forma de mirar un ahorro cuando distingues el interés generado del interés recibido?</p>
+
+  <h3>Cuando el cálculo depende de un supuesto</h3>
+  <p>En esta sesión usamos una tasa de 6 % que no es real, y eso nos obligó a decir qué parte del resultado depende de ese supuesto. Un cálculo bien hecho también declara sus supuestos. Ocultarlos hace que una cifra parezca más segura de lo que es.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué cifra de tu vida cotidiana usas como si fuera un dato, aunque en realidad sea una suposición?</p>
+
+  <h3>El plazo y la confianza</h3>
+  <p>Un plazo fijo pide confianza: el cliente confía en que el banco pagará al vencimiento, y el banco confía en que el cliente no necesitará el dinero antes. El seguro de depósitos existe para que esa confianza tenga un respaldo, aunque con límites que hay que conocer.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué protección crees que debe dar el sistema a quien deja sus ahorros por un plazo, y qué límites deberían explicarse con claridad?</p>
+</section>
+
+<!-- ============ ACTIVIDAD CON IA ============ -->
+<section class="panel" id="p-ia" role="tabpanel" hidden>
+  <h2>Actividad con IA</h2>
+  <p>Esta actividad es formativa e individual. Su propósito es verificar una explicación de apoyo, no reemplazar tu trabajo.</p>
+
+  <h3>Paso 1 · Trabajo inicial propio</h3>
+  <p>Antes de consultar cualquier herramienta, escribe en un párrafo cómo calcularías el interés de un depósito de 2.000,00 dólares a 90 días, con tasa de 6 % (supuesto) y base de 360 días, y qué asiento escribirías al causar el primer mes.</p>
+
+  <h3>Paso 2 · Prompt</h3>
+  <p>Usa exactamente este texto: «Explica, en un párrafo y con lenguaje sencillo, cómo calcular el interés de un depósito a plazo fijo con tasa nominal anual, plazo en días y base de 360 días, y cómo se causa ese interés mes a mes en los libros del banco. Indica qué cuenta sube o baja en cada caso y qué parte depende de confirmar el catálogo oficial.»</p>
+
+  <h3>Paso 3 · Contraste con el material</h3>
+  <p>Compara la respuesta con la sección 3 y con la sección 4 de esta sesión. Marca cada afirmación que coincida con el material y cada una que no aparezca en él.</p>
+
+  <h3>Paso 4 · Verificación</h3>
+  <p>Comprueba el cálculo haciéndolo otra vez con la fórmula completa. Si la herramienta da un código de cuenta, una tasa de referencia o una base de días que el contrato o la norma deben fijar, anótalo y busca la fuente oficial. Si no la encuentras, márcala como no confirmada. No aceptes una tasa o un código solo porque la explicación sea coherente.</p>
+
+  <h3>Paso 5 · Justificación</h3>
+  <p>Escribe un párrafo que explique qué aceptaste, qué corregiste y qué rechazaste, y por qué. La respuesta de la herramienta no es una fuente verificada por sí sola.</p>
+
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>Escribí mi trabajo inicial antes de consultar la herramienta.</li>
+    <li>Contrasté la respuesta con la sección 3 y con la sección 4.</li>
+    <li>Repetí el cálculo con la fórmula completa y registré si coincidió.</li>
+    <li>Distinguí la tasa de ejemplo de una tasa real y lo justifiqué.</li>
+    <li>Justifiqué qué acepté, corregí o rechacé.</li>
+    <li>No compartí datos personales, tributarios ni bancarios reales.</li>
+  </ul>
+</section>
+
+<!-- ============ BIBLIOGRAFÍA ============ -->
+<section class="panel" id="p-bibliografia" role="tabpanel" hidden>
+  <h2>Bibliografía</h2>
+  <p>Las referencias se ordenan alfabéticamente y siguen el formato APA 7. Cada una indica qué se consultó y qué queda por confirmar.</p>
+  <ul>
+    <li>Asamblea Nacional del Ecuador. (2014). <em>Código Orgánico Monetario y Financiero, Libro I</em>. Registro Oficial, Suplemento 332, 12 de septiembre de 2014. Consultado en la versión publicada por el Ministerio de Economía y Finanzas, con última modificación de 28 de febrero de 2020. Se confirmó el título y la fecha de publicación; los artículos sobre depósitos a plazo no se leyeron en esta sesión.</li>
+    <li>Junta de Política y Regulación Financiera. (2025, 29 de abril). <em>Resolución Nro. JPRF-F-2025-0150</em> (artículo 21.1 de la Codificación de Resoluciones Monetarias, Financieras, de Valores y Seguros). Consultada en la copia publicada por la Asociación de Bancos Privados del Ecuador. Confirma el tope de la tasa pasiva para personas jurídicas públicas que otorgan garantías, referido a la tasa referencial del Banco Central del Ecuador.</li>
+    <li>Superintendencia de Bancos. (2025). <em>Circular SB-INRE-2025-0025-C y Manual de depósitos garantizados</em>. Consultada en la copia publicada por la Asociación de Bancos Privados del Ecuador, solo a través de fragmentos de búsqueda. Menciona los depósitos a plazo fijo entre las modalidades cubiertas por el seguro de depósitos.</li>
+    <li>Superintendencia de Bancos. (2026, 27 de mayo). <em>Resolución Nro. SB-2026-1691</em>. Consultada en la copia publicada por la Asociación de Bancos Privados del Ecuador. No reforma el Catálogo Único de Cuentas; solo lo menciona en sus considerandos.</li>
+  </ul>
+  <p>La tasa pasiva referencial del Banco Central del Ecuador para el mes de cada cálculo, la base de días que el contrato o la norma fijan para los depósitos a plazo, la clasificación de los títulos y los códigos de las cuentas de depósitos a plazo y de intereses no se han confirmado en esta sesión. Deben consultarse en las publicaciones del Banco Central, en la codificación vigente de la Junta y en el catálogo oficial antes de usarse en una evaluación.</p>
+  <p>Te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de las normas se comprueba en el Registro Oficial y en las fuentes de los organismos de control, no en el buscador académico.</p>
+</section>
+
+</main>
+
+<script>
+/* ===== 1. Pestañas ===== */
+(function () {
+  const botones = Array.from(document.querySelectorAll('nav.menu [role="tab"]'));
+  function mostrar(id) {
+    botones.forEach(b => {
+      const activo = b.dataset.tab === id;
+      b.setAttribute('aria-selected', activo ? 'true' : 'false');
+      document.getElementById('p-' + b.dataset.tab).hidden = !activo;
+    });
+  }
+  botones.forEach((b, i) => {
+    b.addEventListener('click', () => mostrar(b.dataset.tab));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const d = e.key === 'ArrowRight' ? 1 : -1;
+        const n = botones[(i + d + botones.length) % botones.length];
+        n.focus(); mostrar(n.dataset.tab);
+      }
+    });
+  });
+  mostrar('sesion');
+})();
+
+/* ===== 2. Evaluación ===== */
+const PREGUNTAS = [
+ {
+  "tipo": "Teórica",
+  "enunciado": "Lucía Rivera abre un depósito a plazo fijo de 2.000,00 dólares en el Banco Didáctico del Litoral (BDL), con plazo de 180 días. ¿Qué obligación asume el banco frente a ella?",
+  "opciones": [
+   {
+    "t": "Un ingreso de 2.000,00 dólares, porque el banco recibió el dinero",
+    "ok": false,
+    "fb": "Recibir el dinero no es un ingreso. El banco asume la obligación de devolver 2.000,00 dólares y de pagar los intereses pactados cuando venza el plazo. Su resultado no cambia por recibir el depósito."
+   },
+   {
+    "t": "Devolver 2.000,00 dólares más los intereses pactados al vencimiento, según las condiciones del certificado",
+    "ok": true,
+    "fb": "Esa es la obligación del banco. El depósito crea una deuda con Lucía, que se mide por el capital y por los intereses que determinan la tasa, el plazo y la base de días. Lo que el banco gana con ese dinero se registra por separado."
+   },
+   {
+    "t": "Un aporte de capital de los socios, porque el dinero se queda en el banco",
+    "ok": false,
+    "fb": "El dinero es de Lucía, no de los socios. Un depósito de un cliente no se presenta como capital del banco; confundirlos rompe la separación patrimonial que estudiamos en la semana 01."
+   },
+   {
+    "t": "Ninguna, porque el dinero queda inmovilizado y el banco no debe nada hasta el vencimiento",
+    "ok": false,
+    "fb": "Durante el plazo el banco sigue debiendo el capital, y además los intereses se generan con el paso del tiempo. Que Lucía no pueda retirar el dinero antes no elimina la obligación."
+   }
+  ],
+  "gen": "Revise la sección 1 de la Sesión 01 y el ejemplo del depósito de Lucía."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué distingue un depósito a plazo fijo de una cuenta corriente?",
+  "opciones": [
+   {
+    "t": "Que el cliente puede retirar el dinero en cualquier momento, sin condiciones",
+    "ok": false,
+    "fb": "Esa es la característica de un depósito a la vista, como la cuenta corriente. En el plazo fijo el cliente acepta mantener el dinero durante un tiempo acordado."
+   },
+   {
+    "t": "Que el plazo fijo no genera intereses, mientras que la cuenta corriente sí",
+    "ok": false,
+    "fb": "El plazo fijo es la modalidad en la que el banco paga intereses por la permanencia del dinero. La remuneración de la cuenta corriente depende de la norma y del producto, y no la tratamos en esta sesión."
+   },
+   {
+    "t": "Que el cliente se compromete a mantener el dinero por un plazo acordado, a cambio de intereses",
+    "ok": true,
+    "fb": "Esa es la diferencia central. El plazo convierte el depósito en una captación a plazo, y el interés es la compensación por esa permanencia. La cuenta corriente, en cambio, está pensada para pagos frecuentes."
+   },
+   {
+    "t": "Que la Superintendencia de Bancos paga los intereses al cliente cada mes",
+    "ok": false,
+    "fb": "La Superintendencia controla y supervisa a las entidades; no paga los intereses de los depósitos. Los pagos los realiza la entidad financiera según el contrato del certificado."
+   }
+  ],
+  "gen": "Revise la sección 1 y el concepto de depósito a plazo."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Lucía deposita 2.000,00 dólares a 180 días. Supongamos una tasa nominal anual de 6,00 % (dato didáctico, no tasa real) y una base de 360 días declarada en el cálculo. ¿Cuánto son los intereses al vencimiento?",
+  "opciones": [
+   {
+    "t": "60,00 dólares: 2.000,00 × 0,06 × 180 ÷ 360",
+    "ok": true,
+    "fb": "El interés anual es 2.000,00 × 0,06 = 120,00 dólares. Como el plazo es de 180 días, multiplicamos por 180 ÷ 360 y obtenemos 60,00 dólares. El resultado depende de la base declarada, que aquí es 360."
+   },
+   {
+    "t": "120,00 dólares, porque la tasa anual se aplica una sola vez al capital",
+    "ok": false,
+    "fb": "Esa cifra es el interés de un año completo. El plazo es de 180 días, así que solo corresponde la mitad de ese interés anual. Olvidar el factor de tiempo es un error frecuente."
+   },
+   {
+    "t": "30,00 dólares, porque se toma solo un plazo de 90 días",
+    "ok": false,
+    "fb": "Confundir los 180 días con 90 cambia el factor de tiempo a la mitad. Con 180 días el factor es 180 ÷ 360 = 0,5 sobre el interés anual de 120,00 dólares."
+   },
+   {
+    "t": "59,18 dólares, porque el año tiene 365 días",
+    "ok": false,
+    "fb": "Usar 365 es otra base, con otro resultado: 2.000,00 × 0,06 × 180 ÷ 365 = 59,18. Sin declarar esa base, la cifra no puede compararse con el cálculo del caso, que usa 360."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y el Cálculo 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Antes de calcular los intereses de un depósito a plazo, ¿qué datos debes tener y declarar?",
+  "opciones": [
+   {
+    "t": "Solo el monto del capital, porque la tasa se conoce de antemano",
+    "ok": false,
+    "fb": "El monto es necesario, pero no basta. Sin tasa, plazo y base de días el cálculo no queda determinado, y el resultado no puede comprobarse."
+   },
+   {
+    "t": "Solo la tasa, porque el plazo no cambia el valor de los intereses",
+    "ok": false,
+    "fb": "El plazo sí cambia el resultado, porque los intereses dependen del tiempo que el dinero permanece depositado. Con la misma tasa, 90 días producen la mitad de los intereses de 180 días."
+   },
+   {
+    "t": "El nombre del titular, porque determina la tasa que se aplica",
+    "ok": false,
+    "fb": "El titular identifica la cuenta, pero no fija por sí mismo el cálculo. La tasa y el plazo se establecen en el certificado y en las condiciones del producto."
+   },
+   {
+    "t": "La tasa, el plazo, la base de días y la fecha de inicio del cómputo",
+    "ok": true,
+    "fb": "Esos cuatro datos definen el cálculo. Conviene anotar además si la tasa es nominal o efectiva, porque cambia la forma de comparar productos. El cálculo del caso declara la base de 360 días."
+   }
+  ],
+  "gen": "Revise la sección 2 y la sección 3 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué significa que un interés esté causado pero todavía no pagado?",
+  "opciones": [
+   {
+    "t": "Que el banco ya entregó ese dinero al cliente",
+    "ok": false,
+    "fb": "Si el banco ya hubiera entregado el interés, la obligación por ese monto estaría cancelada. Causado y pagado son momentos distintos."
+   },
+   {
+    "t": "Que el banco reconoce el interés por el tiempo transcurrido, aunque el pago llegue al vencimiento",
+    "ok": true,
+    "fb": "Esa es la diferencia clave: la causación registra el interés conforme se genera, y el pago ocurre después, según las condiciones del certificado. Registrar la causación evita que el gasto aparezca solo al final del plazo."
+   },
+   {
+    "t": "Que el cliente retiró el interés en ventanilla",
+    "ok": false,
+    "fb": "Si el cliente retira el interés, el pago ya ocurrió. Esa situación corresponde al momento del pago, no a la causación."
+   },
+   {
+    "t": "Que el interés no existe hasta el vencimiento del certificado",
+    "ok": false,
+    "fb": "El interés se genera con el paso del tiempo. Esperar al vencimiento para reconocerlo haría que los registros de cada mes no mostraran un gasto que ya se produjo."
+   }
+  ],
+  "gen": "Revise la sección 5 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Lucía tiene 1.500,00 dólares a plazo, con una tasa nominal anual de 4 % (supuesto didáctico) y base de 360 días. Al cierre de un mes de 30 días, ¿qué asiento registra el banco para la causación mensual del interés?",
+  "opciones": [
+   {
+    "t": "Debe: 1101 Caja, 5,00. Haber: obligación por intereses, 5,00",
+    "ok": false,
+    "fb": "Ese asiento describe un cobro en efectivo. La causación no mueve la caja: el banco solo reconoce que el interés se generó y que debe pagarlo más adelante."
+   },
+   {
+    "t": "Debe: ingreso por intereses, 5,00. Haber: obligación con Lucía, 5,00",
+    "ok": false,
+    "fb": "El banco no gana ese interés; lo debe. Usar una cuenta de ingreso invierte el sentido del registro y convierte un gasto en una ganancia."
+   },
+   {
+    "t": "Debe: gasto por intereses de depósitos, 5,00. Haber: intereses por pagar, 5,00 (códigos por confirmar)",
+    "ok": true,
+    "fb": "El cálculo es 1.500,00 × 0,04 × 30 ÷ 360 = 5,00 dólares. El gasto aumenta por el interés generado y la obligación de pagarlo aparece como intereses por pagar. Los códigos exactos deben confirmarse en el catálogo antes de un registro oficial; aquí se evalúa la lógica."
+   },
+   {
+    "t": "Debe: obligación con Lucía, 5,00. Haber: gasto por intereses, 5,00",
+    "ok": false,
+    "fb": "Ese asiento reduce la deuda con Lucía, como si el banco ya le hubiera pagado. En la causación la obligación se reconoce o aumenta; no baja."
+   }
+  ],
+  "gen": "Revise la sección 5 de la Sesión 01 y el Cálculo 2."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Al vencer el plazo de 180 días, Lucía renueva su certificado por el total de 2.060,00 dólares durante 90 días, con una tasa de 6 % (supuesto didáctico) y base de 360 días. ¿Qué ocurre con el efectivo y cuánto son los intereses del nuevo plazo?",
+  "opciones": [
+   {
+    "t": "No entra ni sale efectivo: la obligación se mantiene en 2.060,00 dólares, y el nuevo interés es 30,90 dólares",
+    "ok": true,
+    "fb": "La renovación cambia el contrato, no la caja. El capital más los intereses pasa a ser la base del nuevo plazo: 2.060,00 × 0,06 × 90 ÷ 360 = 30,90 dólares. La base del nuevo cálculo es la suma, no solo los 2.000,00 iniciales."
+   },
+   {
+    "t": "Lucía retira 2.060,00 dólares en efectivo y abre un depósito nuevo por 2.000,00",
+    "ok": false,
+    "fb": "Si Lucía retira el dinero, el banco paga en efectivo y el depósito nuevo parte de otro monto. Eso no es una renovación con el mismo capital e intereses."
+   },
+   {
+    "t": "El nuevo interés es 60,00 dólares, porque el plazo es el mismo de la vez anterior",
+    "ok": false,
+    "fb": "El plazo nuevo es de 90 días, no de 180. Los 60,00 dólares corresponden al plazo anterior. Antes de calcular, comprueba los días del nuevo contrato."
+   },
+   {
+    "t": "El banco registra un ingreso de 2.060,00 dólares porque el cliente volvió a depositar",
+    "ok": false,
+    "fb": "Renovar no es un ingreso. La obligación con el cliente sigue en el banco, y los intereses se causan con el tiempo."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y el ejercicio 3."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué ocurre si Lucía quiere cancelar su certificado antes del vencimiento?",
+  "opciones": [
+   {
+    "t": "La tasa completa se paga siempre, sin importar el tiempo transcurrido",
+    "ok": false,
+    "fb": "Esa afirmación es absoluta y no contamos con una fuente que la sostenga. Las condiciones de cancelación anticipada dependen del contrato y de la norma aplicable."
+   },
+   {
+    "t": "Todo el interés se pierde siempre, porque el contrato lo dice",
+    "ok": false,
+    "fb": "También es una afirmación absoluta. La regla puede variar según el producto; no podemos afirmarla sin revisar el contrato y la norma."
+   },
+   {
+    "t": "La cancelación es libre y no afecta ningún cálculo",
+    "ok": false,
+    "fb": "Que el cliente pueda retirar el dinero no significa que el registro no cambie. Hay que conocer las condiciones del pago anticipado para registrar el movimiento."
+   },
+   {
+    "t": "Depende de las condiciones del contrato y de la norma aplicable, que deben consultarse antes de calcular o registrar",
+    "ok": true,
+    "fb": "Esa es la respuesta honesta con lo que tenemos. Sin el contrato y sin la norma no podemos calcular cuánto corresponde pagar al cliente ni qué interés se le reconoce hasta la fecha de cancelación."
+   }
+  ],
+  "gen": "Revise la sección 7 de la Sesión 01 y la tarea de transferencia."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Al vencimiento, el BDL paga a Lucía 2.060,00 dólares: 2.000,00 de capital y 60,00 de intereses, que se causaron mes a mes durante los seis meses de 30 días. ¿Cuál es el asiento del pago en los libros del banco?",
+  "opciones": [
+   {
+    "t": "Debe: 1101 Caja, 2.060,00. Haber: obligación con Lucía, 2.060,00",
+    "ok": false,
+    "fb": "Ese asiento registra un depósito, no un pago. En el vencimiento el dinero sale del banco y la obligación baja."
+   },
+   {
+    "t": "Debe: obligación por depósitos a plazo, 2.000,00, e intereses por pagar, 60,00. Haber: 1103 Bancos y otras instituciones financieras, 2.060,00 (liquidación supuesta)",
+    "ok": true,
+    "fb": "El pago cancela el capital y los intereses ya reconocidos, y sale el dinero del banco. El debe suma 2.060,00 igual que el haber. La cuenta de liquidación 1103 se toma como supuesto, igual que en la semana 06."
+   },
+   {
+    "t": "Debe: gasto por intereses, 60,00. Haber: 1103, 60,00",
+    "ok": false,
+    "fb": "Los 60,00 ya se causaron mes a mes. Pagarlos no genera un gasto nuevo; si lo registras otra vez, contarías dos veces el mismo interés."
+   },
+   {
+    "t": "Debe: ingreso por intereses, 60,00. Haber: obligación con Lucía, 60,00",
+    "ok": false,
+    "fb": "El interés pagado al cliente no es ingreso del banco. Ese asiento invierte el sentido de la obligación."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y la Tabla 2."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué es la tasa pasiva referencial que publica el Banco Central del Ecuador?",
+  "opciones": [
+   {
+    "t": "Una tasa fija que todos los bancos privados deben pagar a sus clientes",
+    "ok": false,
+    "fb": "La referencia no es una tasa fija obligatoria para todas las entidades. Publicar una referencia y fijar un límite son cosas distintas, y el límite depende de la norma."
+   },
+   {
+    "t": "El interés que el banco cobra a sus deudores por préstamos",
+    "ok": false,
+    "fb": "Esa es la tasa activa, la que el banco cobra en sus créditos. La pasiva es la que se paga a quienes depositan su dinero."
+   },
+   {
+    "t": "Una tasa de referencia que el Banco Central publica cada mes; una resolución la usa como tope para ciertas entidades públicas",
+    "ok": true,
+    "fb": "La Resolución JPRF-F-2025-0150 la usa como tope de la tasa pasiva de personas jurídicas públicas autorizadas para otorgar garantías. En el texto consultado no se aplica como tope a bancos privados como el BDL."
+   },
+   {
+    "t": "La tasa que el cliente pacta libremente y que nunca cambia",
+    "ok": false,
+    "fb": "La tasa pactada forma parte del contrato, pero la referencia del Banco Central no es esa tasa, y las referencias cambian mes a mes."
+   }
+  ],
+  "gen": "Revise la sección 4 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Con 2.000,00 dólares a 180 días y una tasa nominal de 6 % (supuesto), ¿cuál es la diferencia entre usar base 360 y base 365?",
+  "opciones": [
+   {
+    "t": "No hay diferencia, porque el interés depende solo de la tasa",
+    "ok": false,
+    "fb": "El interés depende de la tasa, del capital, del plazo y de la base. Cambiar la base cambia el importe, aunque la tasa sea la misma."
+   },
+   {
+    "t": "La diferencia es de 60,00 dólares, porque 365 días eliminan los intereses",
+    "ok": false,
+    "fb": "Una base de 365 no anula los intereses. Con 365 el interés es 59,18 dólares, no cero."
+   },
+   {
+    "t": "La diferencia es de 5,00 dólares, porque la base se aplica al capital y no al interés",
+    "ok": false,
+    "fb": "La base se aplica al cálculo del interés, no al capital. La diferencia entre 60,00 y 59,18 es de 0,82 dólares."
+   },
+   {
+    "t": "60,00 frente a 59,18: la diferencia de 0,82 dólares se debe solo a la base, y el cálculo debe declarar cuál usa",
+    "ok": true,
+    "fb": "Con base 360, 2.000,00 × 0,06 × 180 ÷ 360 = 60,00. Con base 365, 2.000,00 × 0,06 × 180 ÷ 365 = 59,18. Solo cambia la base, y por eso el cálculo debe declararla."
+   }
+  ],
+  "gen": "Revise la sección 3 y el Cálculo 1 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué protege el seguro de depósitos sobre un depósito a plazo fijo?",
+  "opciones": [
+   {
+    "t": "Protege de forma limitada los depósitos a plazo fijo, y la protección tiene límites que deben consultarse",
+    "ok": true,
+    "fb": "Así lo indica la circular de la Superintendencia de Bancos que comentamos: el seguro protege de forma limitada los depósitos a plazo fijo y otras modalidades. No debes suponer que todo el monto está cubierto; los límites deben consultarse en la norma."
+   },
+   {
+    "t": "Garantiza el pago de cualquier tasa de interés que el banco prometa",
+    "ok": false,
+    "fb": "El seguro no garantiza tasas. Su función es proteger de forma limitada el depósito, según las condiciones que fija la norma."
+   },
+   {
+    "t": "Solo cubre las cuentas corrientes, no los depósitos a plazo",
+    "ok": false,
+    "fb": "La circular citada menciona expresamente los depósitos a plazo fijo entre las modalidades protegidas. Excluirlos es un error de lectura."
+   },
+   {
+    "t": "Cubre las pérdidas del banco por sus créditos",
+    "ok": false,
+    "fb": "El seguro protege a los depositantes, no cubre las pérdidas de la cartera del banco. Confundir ambas funciones es un error frecuente."
+   }
+  ],
+  "gen": "Revise la sección 1 de la Sesión 01 y la sección 8."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Lucía recibe un certificado de depósito con monto de 2.000,00 dólares, plazo de 180 días y una tasa. ¿Qué afirmación sobre la clasificación del título es correcta con lo que sabemos en esta sesión?",
+  "opciones": [
+   {
+    "t": "Es un título a la vista, porque Lucía puede pedir el dinero en cualquier momento",
+    "ok": false,
+    "fb": "Lucía no puede pedir el dinero sin condiciones antes del plazo; por eso el depósito no es a la vista. La clase exacta, sin embargo, depende de la norma de clasificación, que no hemos consultado todavía."
+   },
+   {
+    "t": "Es un ingreso del banco, porque incluye la tasa pactada",
+    "ok": false,
+    "fb": "La tasa es un costo del banco por captar el dinero, no un ingreso. El certificado es una obligación del banco frente a Lucía."
+   },
+   {
+    "t": "Podemos identificar sus partes, pero no afirmar su clase, porque la norma de clasificación de títulos no se consultó en esta sesión",
+    "ok": true,
+    "fb": "Sí podemos leer el monto, el plazo, la tasa y las fechas. La clasificación depende de una norma que todavía no tenemos confirmada, así que no puede asignarse con seguridad. Es una pregunta abierta, no una respuesta negativa."
+   },
+   {
+    "t": "No tiene clasificación, porque el plazo es menor de un año",
+    "ok": false,
+    "fb": "Ni el plazo ni el monto de la tasa definen la clasificación por sí solos. Afirmar que no existe clasificación por el plazo no está respaldado con la fuente que consultamos."
+   }
+  ],
+  "gen": "Revise la sección 2 de la Sesión 01 y la pregunta abierta de la sección 2."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué efecto tiene usar base 360 o base 365 días en un cálculo de intereses?",
+  "opciones": [
+   {
+    "t": "Ninguno: la base es un detalle de redacción que no cambia el importe",
+    "ok": false,
+    "fb": "La base cambia el importe porque es un divisor del cálculo. Con el mismo capital, tasa y plazo, las bases dan resultados distintos."
+   },
+   {
+    "t": "Cambia el importe calculado, por eso debe declararse la base y explicarse por qué se usa",
+    "ok": true,
+    "fb": "Con el mismo capital, tasa y plazo, las bases dan importes distintos. Un cálculo sin base declarada no puede compararse con otro, ni revisarse por otra persona."
+   },
+   {
+    "t": "Solo cambia si el plazo es mayor de un año",
+    "ok": false,
+    "fb": "La base afecta cualquier cálculo de interés, con cualquier plazo. Un plazo corto también cambia el resultado según la base que se use."
+   },
+   {
+    "t": "Solo cambia la forma de escribir la fecha de vencimiento",
+    "ok": false,
+    "fb": "La fecha de vencimiento se escribe igual con cualquier base. La base es un divisor del interés, no un formato de fecha."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y el Cálculo 1."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un depósito de 800,00 dólares se coloca a 60 días. Supongamos una tasa nominal de 5 % (dato didáctico) y base de 360 días. ¿Cuál es el interés?",
+  "opciones": [
+   {
+    "t": "3,33 dólares, porque usa 30 días en lugar de 60",
+    "ok": false,
+    "fb": "Con 30 días el cálculo daría 800,00 × 0,05 × 30 ÷ 360 = 3,33. El plazo del enunciado es de 60 días, así que el factor de tiempo es 60 ÷ 360."
+   },
+   {
+    "t": "8,00 dólares, porque el interés es el 1 % del depósito",
+    "ok": false,
+    "fb": "El 1 % de 800,00 es 8,00 dólares, pero la tasa del enunciado es 5 %. Confundir porcentajes es un error de cálculo frecuente."
+   },
+   {
+    "t": "40,00 dólares, porque no se divide por el año",
+    "ok": false,
+    "fb": "800,00 × 0,05 = 40,00 es el interés de un año completo. Falta multiplicar por el plazo y dividir por la base."
+   },
+   {
+    "t": "6,67 dólares: 800,00 × 0,05 × 60 ÷ 360",
+    "ok": true,
+    "fb": "El cálculo es 800,00 × 0,05 = 40,00 al año; 40,00 × 60 ÷ 360 = 6,67 dólares, redondeado a centavos. La tasa del 5 % es un supuesto didáctico, no una tasa real."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y el ejercicio 5."
+ }
+];
+
+(function () {
+  const formulario = document.getElementById('quiz');
+  const textoEstado = document.getElementById('estado-texto');
+  const barra = document.getElementById('barra');
+  const resultado = document.getElementById('resultado');
+  const resultadoTexto = document.getElementById('resultado-texto');
+  const btnReintentar = document.getElementById('btn-reintentar');
+  let respuestas = [];
+
+  function actualizar() {
+    const total = PREGUNTAS.length;
+    const respondidas = respuestas.filter(r => r !== null).length;
+    const aciertos = respuestas.filter((r, i) => r !== null && PREGUNTAS[i].opciones[r].ok).length;
+    textoEstado.textContent = 'Preguntas respondidas: ' + respondidas + ' de ' + total + ' · Aciertos: ' + aciertos;
+    barra.style.width = (respondidas / total * 100) + '%';
+
+    if (respondidas === total) {
+      formulario.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+      const errores = total - aciertos;
+      const nota = (aciertos / total * 10).toFixed(1).replace('.', ',');
+      const pct = Math.round(aciertos / total * 100);
+      resultadoTexto.textContent = 'Aciertos: ' + aciertos + ' de ' + total + '. Calificación de práctica: ' + nota + ' sobre 10 (' + pct + ' %).' +
+        (errores > 0
+          ? ' Revisa las rutas indicadas en cada retroalimentación y, si lo deseas, intenta nuevamente con las mismas preguntas.'
+          : ' No hubo errores en esta práctica.');
+      btnReintentar.hidden = errores === 0;
+      resultado.classList.add('visible');
+    }
+  }
+
+  function reiniciar() {
+    respuestas = PREGUNTAS.map(() => null);
+    formulario.innerHTML = '';
+    PREGUNTAS.forEach((p, i) => {
+      const fs = document.createElement('fieldset');
+      fs.className = 'pregunta';
+      const lg = document.createElement('legend');
+      const insignia = document.createElement('span');
+      insignia.className = 'badge' + (p.tipo === 'Análisis' ? ' analisis' : '');
+      insignia.textContent = p.tipo;
+      lg.appendChild(insignia);
+      lg.appendChild(document.createTextNode(' ' + (i + 1) + '. ' + p.enunciado));
+      fs.appendChild(lg);
+
+      p.opciones.forEach((o, j) => {
+        const fila = document.createElement('div');
+        fila.className = 'opcion';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + i;
+        radio.id = 'q' + i + '-' + j;
+        radio.value = String(j);
+        const etiqueta = document.createElement('label');
+        etiqueta.htmlFor = radio.id;
+        etiqueta.textContent = String.fromCharCode(97 + j) + ') ' + o.t;
+        fila.appendChild(radio);
+        fila.appendChild(etiqueta);
+        fs.appendChild(fila);
+      });
+
+      const fb = document.createElement('div');
+      fb.className = 'fb';
+      fb.id = 'fb' + i;
+      fb.setAttribute('aria-live', 'polite');
+      fs.appendChild(fb);
+
+      fs.addEventListener('change', e => {
+        if (e.target.name !== 'q' + i) return;
+        const j = parseInt(e.target.value, 10);
+        respuestas[i] = j;
+        const op = p.opciones[j];
+        fb.className = 'fb visible ' + (op.ok ? 'ok' : 'mal');
+        fb.innerHTML = '';
+        const titulo = document.createElement('div');
+        titulo.textContent = (op.ok ? 'CORRECTO. ' : 'Incorrecto. ') + op.fb;
+        fb.appendChild(titulo);
+        if (!op.ok) {
+          const ruta = document.createElement('div');
+          ruta.className = 'ruta';
+          ruta.textContent = 'Ruta de revisión: ' + p.gen;
+          fb.appendChild(ruta);
+        }
+        actualizar();
+      });
+
+      formulario.appendChild(fs);
+    });
+    resultado.classList.remove('visible');
+    btnReintentar.hidden = true;
+    actualizar();
+  }
+
+  document.getElementById('btn-reintentar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar-fin').addEventListener('click', reiniciar);
+  reiniciar();
+})();
+</script>
+</body>
+</html>

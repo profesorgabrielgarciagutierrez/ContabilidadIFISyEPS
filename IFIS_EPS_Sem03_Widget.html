@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semana 03 · Catálogo Único de Cuentas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --azul: #003366; --celeste: #87CEEB; --ejemplo: #E8F4FD;
+  --texto: #1d1d1d; --fondo: #ffffff; --gris: #4d4d4d;
+  --ok: #1d6b34; --mal: #9a1c1c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --texto: #f2f2f2; --fondo: #111a24; --gris: #c4cdd6; --ejemplo: #15283a; }
+}
+:root[data-theme="dark"] { --texto: #f2f2f2; --fondo: #111a24; --gris: #c4cdd6; --ejemplo: #15283a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body { font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif; font-size: 1.05rem; line-height: 1.6; color: var(--texto); background: var(--fondo); }
+h1, h2, h3, h4 { font-family: Lora, Georgia, serif; color: var(--azul); line-height: 1.25; }
+h2 { font-size: 1.5rem; margin-top: 1.8rem; }
+h3 { font-size: 1.2rem; margin-top: 1.4rem; }
+p { margin: 0.8rem 0; max-width: 72ch; }
+header.cabecera { background: var(--azul); color: #fff; padding: 1rem 1.1rem; }
+header.cabecera h1 { color: #fff; font-size: 1.35rem; margin: 0; }
+header.cabecera p { margin: 0.2rem 0 0; font-size: 0.95rem; max-width: none; color: #fff; }
+nav.menu { background: var(--celeste); overflow-x: auto; white-space: nowrap; }
+nav.menu ul { list-style: none; margin: 0; padding: 0.3rem 0.5rem; display: flex; gap: 0.25rem; }
+nav.menu button { font: inherit; color: #000; background: transparent; border: 2px solid transparent; border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer; }
+nav.menu button:hover { background: rgba(255,255,255,0.45); }
+nav.menu button[aria-selected="true"] { background: #fff; color: var(--azul); font-weight: 700; }
+nav.menu button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+main { padding: 0.6rem 1rem 3rem; max-width: 860px; margin: 0 auto; }
+section.panel[hidden] { display: none; }
+.nota-lateral { border-left: 5px solid var(--azul); background: #f4f8fb; color: #1d1d1d; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.nota-lateral h3 { margin-top: 0; }
+.concepto { border-left: 4px solid var(--azul); padding: 0.1rem 0 0.1rem 1rem; margin: 1.1rem 0; }
+.ejemplo { background: var(--ejemplo); padding: 0.8rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.ejemplo strong { color: var(--azul); }
+.tabla-wrap { overflow-x: auto; margin: 1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.97rem; min-width: 420px; }
+caption { text-align: left; font-weight: 700; color: var(--azul); padding-bottom: 0.4rem; font-family: Lora, Georgia, serif; }
+th, td { border: 1px solid #c9d6e2; padding: 0.4rem 0.55rem; vertical-align: top; text-align: left; }
+th { background: #eaf2f9; color: #1d1d1d; }
+.calculo { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.9rem 1rem; margin: 1.1rem 0; }
+.calculo h4 { margin: 0 0 0.4rem; }
+.calculo ol { padding-left: 1.2rem; }
+.calculo li { margin: 0.3rem 0; }
+.formula { font-weight: 600; background: #f3f6f9; color: #1d1d1d; padding: 0.15rem 0.4rem; border-radius: 4px; white-space: nowrap; }
+.asiento { overflow-x: auto; }
+.asiento table { min-width: 520px; }
+.ejercicio { border-top: 2px solid #d7e3ee; margin-top: 1.6rem; padding-top: 0.8rem; }
+.tiempo { color: var(--gris); font-size: 0.95rem; }
+details { margin: 0.6rem 0; border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.4rem 0.8rem; background: #fbfcfd; color: #1d1d1d; }
+details summary { cursor: pointer; font-weight: 700; color: var(--azul); padding: 0.3rem 0; }
+details summary:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+details[open] summary { margin-bottom: 0.4rem; }
+details > *:last-child { margin-bottom: 0.4rem; }
+.comprobacion { font-style: italic; color: var(--gris); }
+.estado-eval { position: sticky; top: 0; background: #fff; color: #1d1d1d; border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.6rem 0.8rem; margin: 0.8rem 0; z-index: 2; }
+.progreso { height: 10px; background: #e3ebf3; border-radius: 6px; overflow: hidden; margin-top: 0.4rem; }
+.progreso div { height: 100%; width: 0; background: var(--azul); transition: width 0.3s; }
+fieldset.pregunta { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0; min-width: 0; }
+fieldset.pregunta legend { font-weight: 700; color: var(--azul); padding: 0 0.3rem; font-family: Lora, Georgia, serif; }
+.badge { display: inline-block; font-family: "Source Sans 3", system-ui, sans-serif; font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--azul); border-radius: 4px; padding: 0.05rem 0.4rem; margin-right: 0.3rem; }
+.badge.analisis { background: #3d5a80; }
+.opcion { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.45rem 0; }
+.opcion input { margin-top: 0.35rem; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+.opcion label { cursor: pointer; }
+.fb { margin-top: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.97rem; display: none; color: #1d1d1d; }
+.fb.visible { display: block; }
+.fb.ok { background: #e7f5ec; border-left: 4px solid var(--ok); }
+.fb.mal { background: #fbeaea; border-left: 4px solid var(--mal); }
+.fb .ruta { margin-top: 0.35rem; font-size: 0.92rem; color: #4d4d4d; }
+.resultado { border: 2px solid var(--azul); border-radius: 6px; padding: 0.9rem 1rem; margin: 1.2rem 0; display: none; }
+.resultado.visible { display: block; }
+button.boton { font: inherit; font-weight: 700; color: #fff; background: var(--azul); border: none; border-radius: 6px; padding: 0.55rem 1rem; margin: 0.4rem 0.4rem 0.4rem 0; cursor: pointer; }
+button.boton.secundario { background: #fff; color: var(--azul); border: 2px solid var(--azul); }
+button.boton:focus-visible, input[type="radio"]:focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  nav.menu button { padding: 0.4rem 0.6rem; font-size: 0.95rem; }
+  main { padding: 0.5rem 0.8rem 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <h1>Semana 03 · Catálogo Único de Cuentas</h1>
+  <p>Unidad 1 · Introducción a la contabilidad de instituciones financieras en el Ecuador</p>
+</header>
+
+<nav class="menu" aria-label="Secciones de la semana">
+  <ul role="tablist">
+    <li><button role="tab" data-tab="repaso" aria-selected="true" aria-controls="p-repaso">Repaso</button></li>
+    <li><button role="tab" data-tab="sesion" aria-selected="false" aria-controls="p-sesion">Sesión 01</button></li>
+    <li><button role="tab" data-tab="evaluacion" aria-selected="false" aria-controls="p-evaluacion">Evaluación</button></li>
+    <li><button role="tab" data-tab="reflexion" aria-selected="false" aria-controls="p-reflexion">Reflexión</button></li>
+    <li><button role="tab" data-tab="ia" aria-selected="false" aria-controls="p-ia">Actividad con IA</button></li>
+    <li><button role="tab" data-tab="bibliografia" aria-selected="false" aria-controls="p-bibliografia">Bibliografía</button></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ================= REPASO ================= -->
+<section class="panel" id="p-repaso" role="tabpanel">
+  <h2>Repaso: lo que necesitas traer a esta sesión</h2>
+  <p>Esta materia estudia dos mundos que conviene distinguir desde el inicio. Las <strong>instituciones financieras</strong> son entidades, como los bancos, que reciben dinero del público, lo guardan bajo condiciones determinadas y lo prestan a quienes necesitan financiamiento. La <strong>economía popular y solidaria (EPS)</strong> es el conjunto de organizaciones comunitarias, asociativas y cooperativas que funcionan con criterios de solidaridad. Una parte de ellas, como las cooperativas de ahorro y crédito, forma el <strong>sector financiero popular y solidario</strong>. Ese sector no es lo mismo que el sector bancario: cada uno tiene su propio organismo de control y su propio catálogo de cuentas.</p>
+  <p>Para esta sesión necesitas tres ideas. El <strong>activo</strong> es lo que una entidad posee y controla y de lo que espera obtener beneficios. El <strong>pasivo</strong> es lo que debe a terceros. El <strong>patrimonio</strong> es lo que queda cuando al activo le restas el pasivo. La relación entre los tres se llama <strong>ecuación contable</strong>: <span class="formula">activo = pasivo + patrimonio</span>.</p>
+  <p>La segunda idea es el <strong>depósito</strong>. Cuando una persona deposita dinero en un banco, ese dinero entra a la caja del banco, pero el banco no lo gana: asume la obligación de devolverlo según las condiciones de la cuenta. Desde los libros del cliente, en cambio, ese mismo dinero es un derecho frente al banco.</p>
+  <p>La tercera idea es el <strong>encaje</strong>: la parte de los depósitos que el banco debe mantener como reserva, según las disposiciones aplicables. Más adelante verás que el catálogo tiene cuentas para registrar esas reservas.</p>
+  <p>Si alguna de estas ideas no te resulta clara, detente antes de seguir. La ecuación contable vuelve a aparecer en el Cálculo 1 y el depósito se trabaja paso a paso en la sección 3.</p>
+</section>
+
+<!-- ================= SESIÓN 01 ================= -->
+<section class="panel" id="p-sesion" role="tabpanel" hidden>
+  <h2>Sesión 01 · El Catálogo Único de Cuentas</h2>
+  <p class="comprobacion">Unidad 1 · Tema: finalidad, obligatoriedad y codificación del catálogo, y su relación con los estados financieros. Duración orientativa: 120 minutos de trabajo acompañado.</p>
+
+  <div class="nota-lateral" role="note">
+    <h3>Antes de empezar</h3>
+    <p>Imagina la ventanilla del Banco Didáctico del Litoral S. A. (BDL), una institución financiera ficticia que usaremos para estudiar el tema. Ana Pérez, clienta del banco, deposita 1.000,00 dólares en efectivo en su cuenta a la vista. La cajera registra el movimiento y el gerente de operaciones te hace una pregunta: ¿en qué cuentas queda reflejado ese dinero? Después agrega una segunda: ¿por qué el informe que el banco envía a la Superintendencia de Bancos debe usar los mismos nombres y códigos que el de cualquier otro banco?</p>
+    <p>Al terminar esta sesión podrás identificar el elemento de una cuenta a partir de su código, leer un código por niveles, decir qué débito y qué crédito corresponden a una operación desde los libros del banco, y relacionar las cuentas con el estado de situación financiera y con el estado de resultados.</p>
+    <p>Para empezar, intenta responder con tus palabras: ¿qué diferencia hay entre el dinero que el banco recibe y el dinero que el banco debe a Ana? Escribe tu respuesta antes de seguir leyendo y compárala al final. Después, lee con calma, intenta cada pausa antes de ver la explicación y revisa tus respuestas con los desplegables.</p>
+  </div>
+
+  <h3>1. ¿Qué es el Catálogo Único de Cuentas y quién lo aplica?</h3>
+  <div class="concepto">
+    <p>Un <strong>catálogo de cuentas</strong> es la lista ordenada de las cuentas que una entidad usa para registrar sus operaciones, con su código y su nombre. Una <strong>cuenta</strong> es un registro que agrupa las operaciones de un mismo tipo, por ejemplo el dinero en caja o las deudas con clientes. El <strong>Catálogo Único de Cuentas</strong> es el que la Superintendencia de Bancos fija para las entidades financieras de los sectores público y privado del Ecuador.</p>
+  </div>
+  <p>¿Por qué un solo catálogo? Imagina que cada banco llamara distinto a la misma operación. Un banco registraría el efectivo en una cuenta llamada «Caja» y otro en una llamada «Fondo de cajas». Sus informes no serían comparables y el organismo de control tendría que traducir cada uno. El catálogo resuelve esto: todas las entidades usan los mismos nombres y códigos para las mismas operaciones, y así la información puede controlarse y compararse.</p>
+  <p>La norma que rige el catálogo tiene dos rasgos que conviene retener. El primero es la obligatoriedad: la entidad debe cumplir su codificación y su estructura. El segundo es la precedencia de sus instrucciones: si las instrucciones de la Superintendencia de Bancos difieren de los principios contables generalmente aceptados, la entidad obligada debe seguir las instrucciones del catálogo. Ambos rasgos tienen un límite: la entidad no puede usar cuentas fuera del catálogo sin autorización previa de la Superintendencia de Bancos.</p>
+  <p>Hay dos precisiones que evitan confusiones. La primera: las cooperativas del sector popular y solidario tienen un catálogo propio, emitido por la Superintendencia de Economía Popular y Solidaria. Esa diferencia se estudia en la unidad 4. La segunda: el catálogo cambia con el tiempo. El plan de cuentas que usamos aquí es el que publica la Superintendencia de Bancos en un archivo fechado el 28 de diciembre de 2021, que incorpora la Resolución SB-2021-0403 del 22 de febrero de 2021. Después, la Resolución SB-2025-01841, del 25 de julio de 2025 y vigente desde el 1 de agosto de 2025, creó la cuenta 5405 entre los ingresos por servicios. Por eso, al estudiar una fecha concreta, pregúntate qué versión del catálogo estaba vigente en ella.</p>
+
+  <h3>2. Estructura de codificación: cómo se lee un código</h3>
+  <p>Cada cuenta tiene un código numérico. El código no es un número arbitrario: sus dígitos se organizan por niveles, de lo más general a lo más detallado. Antes de mirar la tabla, piensa qué crees que identifica el primer dígito.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 1 · Elementos del catálogo y estado financiero en el que se presentan</caption>
+      <thead>
+        <tr><th scope="col">Dígito inicial</th><th scope="col">Elemento</th><th scope="col">Estado financiero en el que se presenta</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Activo</td><td>Estado de situación financiera</td></tr>
+        <tr><td>2</td><td>Pasivo</td><td>Estado de situación financiera</td></tr>
+        <tr><td>3</td><td>Patrimonio</td><td>Estado de situación financiera</td></tr>
+        <tr><td>4</td><td>Gastos</td><td>Estado de resultados</td></tr>
+        <tr><td>5</td><td>Ingresos</td><td>Estado de resultados</td></tr>
+        <tr><td>6</td><td>Cuentas contingentes</td><td>Se controlan aparte (se estudian en la unidad 3)</td></tr>
+        <tr><td>7</td><td>Cuentas de orden y de control</td><td>Se controlan aparte (se estudian en la unidad 3)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>El elemento 8 corresponde a patrimonios autónomos del negocio fiduciario. No forma parte de esta sesión.</p>
+  <p>El primer dígito del código identifica el elemento. Los dos primeros identifican el <strong>grupo</strong>; los cuatro primeros, la <strong>cuenta</strong>, y los seis primeros, la <strong>subcuenta</strong>. Cada nivel es más detallado que el anterior.</p>
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado: el código 110105, Efectivo.</strong> Lee el código por niveles. El primer dígito, 1, indica el elemento: activo. Los dos primeros, 11, indican el grupo: Fondos disponibles. Los cuatro primeros, 1101, indican la cuenta: Caja. Los seis, 110105, indican la subcuenta: Efectivo. Cuando leas un código, empieza siempre por el dígito de la izquierda y avanza hacia el detalle.</p>
+    <p>Ahora compara con 1103, que el catálogo denomina Bancos y otras instituciones financieras. Ambas cuentas pertenecen al mismo grupo 11 y al mismo elemento 1. Son, por tanto, de la misma familia de fondos disponibles, aunque describan operaciones distintas.</p>
+  </div>
+  <p>Hay una distinción que debes conservar: el catálogo separa el <strong>nombre</strong> de una cuenta de su <strong>dinámica</strong>. El nombre indica qué operación representa; la dinámica indica cómo se registra. Esa diferencia es la que se trabaja en la sección siguiente.</p>
+  <p class="comprobacion">Pausa para pensar: si el código 1 identifica el elemento, ¿qué elemento crees que identifica el código 2? Comprueba tu respuesta en la Tabla 1 antes de continuar.</p>
+
+  <h3>3. Dinámica: cuándo se debita y cuándo se acredita</h3>
+  <div class="concepto">
+    <p>En la <strong>partida doble</strong> cada operación se registra en al menos dos cuentas: una con <strong>débito</strong> y otra con <strong>crédito</strong>. El débito es el lado izquierdo de un registro y el crédito es el lado derecho. Ni el débito ni el crédito significan por sí mismos «entrada de dinero» o «salida de dinero»: su efecto depende del tipo de cuenta.</p>
+  </div>
+  <p>Como principio general, las cuentas de activo y de gasto aumentan con un débito y disminuyen con un crédito. Las cuentas de pasivo, de patrimonio y de ingreso aumentan con un crédito y disminuyen con un débito. Ese principio te sirve para razonar, pero la dinámica exacta de cada cuenta figura en su descripción oficial en el catálogo; por eso, antes de registrar una operación real, consulta esa descripción. Un caso concreto lo confirma: el catálogo describe la subcuenta 210110, Depósitos monetarios que no generan intereses, como una cuenta que se debita con los pagos de cheques y con los retiros que pide el titular, y que se acredita con los depósitos en efectivo. Ese texto proviene de una versión anterior a la de 2021, y el plan de 2021 que usamos para los códigos no lo reproduce en el texto consultado; por eso, la descripción debe confirmarse en la versión vigente.</p>
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado: el depósito de Ana desde los libros del banco.</strong> Cuando Ana deposita 1.000,00 dólares en efectivo, el banco recibe un activo, el efectivo, que aumenta con débito en 1101 Caja. Al mismo tiempo, el banco asume una obligación frente a Ana, que aumenta con crédito en una cuenta del grupo 21 Obligaciones con el público.</p>
+    <p>Fíjate en lo que ocurre con el débito: la caja aumenta, pero el débito no es un ingreso. El crédito también produce un efecto: aumenta una obligación. Esa obligación no es un gasto ni un ingreso del banco; es lo que el banco debe devolver a Ana cuando ella lo solicite, según las condiciones de su cuenta.</p>
+  </div>
+  <p>Ahora considera el retiro. Si Ana retira 300,00 dólares en efectivo, el banco entrega efectivo, así que la caja disminuye con un crédito en 1101. La obligación con Ana disminuye con un débito en el grupo 21. El asiento del retiro es exactamente el inverso del asiento del depósito, y por eso sirve como control en el ejercicio 3.</p>
+  <p class="comprobacion">Pausa para pensar: ¿por qué el banco no registra el depósito de Ana como ingreso, aunque el dinero entre en su caja? Escribe una frase antes de leer la explicación siguiente.</p>
+  <p>La respuesta está en la naturaleza de la obligación. El banco recibe el dinero, pero no lo gana: debe devolverlo. Un ingreso, en cambio, aumenta el resultado porque la entidad obtiene algo a cambio de un servicio o de un activo que tiene. Confundir recibir dinero con obtener un ingreso es uno de los errores más frecuentes en esta unidad, y lo revisamos en la sección 6.</p>
+
+  <h3>4. Del catálogo a los estados financieros</h3>
+  <p>El catálogo no termina en los asientos. Cada cuenta se agrupa en un elemento, y el elemento determina en qué estado financiero aparece. Los elementos 1, 2 y 3 forman el estado de situación financiera, que cumple la ecuación contable. Los elementos 4 y 5 forman el estado de resultados, que muestra si el período generó utilidad o pérdida. El resultado del período luego pasa al patrimonio, por eso ambos estados están relacionados.</p>
+  <p>Por eso la clasificación en un elemento tiene consecuencias. Una operación clasificada como gasto reduce el resultado del período; una obligación no lo reduce de forma directa. Revisa la Tabla 1 y responde: si el banco paga los sueldos de su personal, ¿en qué elemento se clasifica ese pago? La respuesta se comprueba en los ejercicios.</p>
+
+  <h3>5. Cálculos del caso del BDL</h3>
+  <p>Los datos de partida del BDL son los de la Semana 02: activos totales de 10.500.000,00 dólares y pasivos totales de 9.000.000,00 dólares. Son datos del caso didáctico. Los saldos de fondos disponibles del Cálculo 2 son un supuesto, que se identifica como tal en el propio cálculo.</p>
+
+  <div class="calculo">
+    <h4>Cálculo 1 · Patrimonio contable del BDL</h4>
+    <ol>
+      <li><strong>Situación.</strong> El gerente quiere saber cuánto le pertenece al banco después de cubrir sus obligaciones.</li>
+      <li><strong>Supuesto y finalidad.</strong> No hay supuesto nuevo. El cálculo aplica la ecuación contable para obtener el patrimonio por diferencia.</li>
+      <li><strong>Qué buscamos.</strong> El patrimonio contable, en dólares.</li>
+      <li><strong>Datos y origen.</strong> Activos totales de 10.500.000,00 dólares y pasivos totales de 9.000.000,00 dólares, datos del caso didáctico.</li>
+      <li><strong>Por qué esta operación.</strong> La ecuación contable, activo = pasivo + patrimonio, se despeja para el patrimonio: patrimonio = activo − pasivo.</li>
+      <li><strong>Operación.</strong> 10.500.000,00 − 9.000.000,00 = 1.500.000,00 dólares.</li>
+      <li><strong>Resultado.</strong> El patrimonio contable del BDL es 1.500.000,00 dólares.</li>
+      <li><strong>Comprobación.</strong> 9.000.000,00 + 1.500.000,00 = 10.500.000,00. Esta comprobación repite la misma relación en sentido inverso: verifica la suma, pero no demuestra que las cuentas estén bien clasificadas.</li>
+      <li><strong>Interpretación y límites.</strong> El patrimonio contable no es lo mismo que la solvencia. La relación de solvencia de la Semana 02 usa el patrimonio técnico y los activos ponderados por riesgo, que este cálculo no incluye.</li>
+    </ol>
+  </div>
+
+  <div class="calculo">
+    <h4>Cálculo 2 · Subtotal de fondos disponibles (supuesto didáctico)</h4>
+    <ol>
+      <li><strong>Situación.</strong> Un auditor necesita comprobar que el subtotal de un grupo corresponde a la suma de sus cuentas.</li>
+      <li><strong>Supuesto y finalidad.</strong> Supongamos que el grupo 11 Fondos disponibles del BDL se compone de tres cuentas: 1101 Caja, 300.000,00 dólares; 1102 Depósitos para encaje, 520.000,00 dólares; y 1103 Bancos y otras instituciones financieras, 1.180.000,00 dólares. Estas cifras son un supuesto didáctico para practicar la suma por grupo; no provienen de un balance verificado. La cifra de 520.000,00 dólares coincide con las reservas de encaje supuestas en la Semana 02.</li>
+      <li><strong>Qué buscamos.</strong> El subtotal del grupo 11, en dólares.</li>
+      <li><strong>Datos y origen.</strong> Los tres saldos del supuesto anterior.</li>
+      <li><strong>Por qué esta operación.</strong> El subtotal de un grupo es la suma de las cuentas que lo componen. Ninguna cuenta del grupo puede quedar fuera.</li>
+      <li><strong>Operación.</strong> 300.000,00 + 520.000,00 + 1.180.000,00 = 2.000.000,00 dólares.</li>
+      <li><strong>Resultado.</strong> El subtotal de fondos disponibles es 2.000.000,00 dólares.</li>
+      <li><strong>Comprobación.</strong> 1.180.000,00 + 520.000,00 + 300.000,00 = 2.000.000,00. Cambiar el orden no cambia la suma. Esta comprobación revisa la aritmética, no la clasificación.</li>
+      <li><strong>Interpretación y límites.</strong> El subtotal no indica por sí solo si el banco cumple el encaje. Para eso se compara la reserva con el requerimiento, como se hizo en la Semana 02.</li>
+    </ol>
+  </div>
+
+  <h3>6. Errores frecuentes y cómo corregirlos</h3>
+  <p>Conviene conocer los errores previsibles antes de evaluarte. El primero es confundir el débito con la entrada de efectivo. Si registraste el depósito de Ana como un débito a la caja y como un ingreso, revisa qué obligación asumió el banco frente a ella: distingue captación, que es recibir recursos del público, de ingreso, que es un beneficio del período.</p>
+  <p>El segundo error es leer mal el código. Si interpretaste 1101 como un grupo, recuerda que el grupo son los dos primeros dígitos; un código de cuatro dígitos es una cuenta. El tercero es clasificar una operación por su importe o porque mueve efectivo. Lo que determina el elemento es la naturaleza de la operación, no su tamaño ni su paso por la caja. El cuarto es suponer que puedes crear una cuenta para cada caso: la entidad necesita autorización previa para usar una cuenta fuera del catálogo.</p>
+  <p>Si el error persiste, sigue esta ruta: primero, relee la sección 2 y decodifica el código; después, revisa la sección 3 y decide si la cuenta aumenta con débito o con crédito; por último, vuelve a los ejercicios 2 y 3.</p>
+
+  <h3>7. Cierre y transferencia</h3>
+  <p>Vuelve a la pregunta de la ventanilla. El BDL recibe 1.000,00 dólares de Ana y los registra en la caja con débito; y reconoce la obligación frente a Ana con crédito en el grupo 21. Ahora la pregunta del gerente tiene respuesta: el mismo nombre y el mismo código permiten que cualquier funcionario, auditor o supervisor lea ese registro de la misma forma.</p>
+  <p>Como tarea de transferencia, piensa en una cuenta distinta de las vistas en esta sesión. Antes de clasificarla, decodifica su código por niveles y decide si aumenta con débito o con crédito. Después indica su elemento y el estado financiero en que aparecería.</p>
+  <div class="nota-lateral">
+    <h3>Glosario breve</h3>
+    <p><strong>Catálogo de cuentas:</strong> lista ordenada de las cuentas, con su código y su nombre.</p>
+    <p><strong>Elemento:</strong> primer nivel del catálogo, identificado por el primer dígito.</p>
+    <p><strong>Grupo, cuenta y subcuenta:</strong> niveles que se identifican con los dos, cuatro y seis primeros dígitos.</p>
+    <p><strong>Débito y crédito:</strong> los dos lados de un registro; su efecto depende del tipo de cuenta.</p>
+    <p><strong>Partida doble:</strong> cada operación se registra con igual importe en débitos y en créditos.</p>
+  </div>
+  <p>Si fallas en las preguntas de código, relee la sección 2 y haz el ejercicio 2. Si fallas en débito y crédito, relee la sección 3 y haz el ejercicio 3. Si fallas en la ubicación de las partidas en los estados, relee la sección 4 y haz el ejercicio 5.</p>
+
+  <h2>Ejercicios guiados</h2>
+  <p>Trabaja cada ejercicio por escrito antes de abrir su solución. Las soluciones están en los desplegables; ábrelas cuando hayas intentado.</p>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 1 · Clasificar cuentas por elemento</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>Aquí vas a clasificar cinco cuentas en su elemento, usando el primer dígito del código o la denominación del grupo.</p>
+    <p><strong>Enunciado.</strong> Indica el elemento de cada una de estas cuentas: (a) 1101 Caja; (b) grupo 21 Obligaciones con el público; (c) 1102 Depósitos para encaje; (d) cuentas contingentes; (e) gastos.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Mira el primer dígito del código. Si la cuenta no tiene código, usa la Tabla 1 y busca el elemento por su denominación.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 1101 empieza por 1: activo. (b) El grupo 21 empieza por 2: pasivo, porque el banco debe devolver esos recursos a sus clientes. (c) 1102 pertenece al grupo 11, Fondos disponibles, y su primer dígito es 1: activo. (d) Las cuentas contingentes tienen el elemento 6. (e) Los gastos tienen el elemento 4.</p>
+      <p class="comprobacion">Comprobación: cada respuesta debe coincidir con el primer dígito de la Tabla 1. Si una no coincide, revisa si confundiste la denominación con el elemento.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si clasificaste (b) como activo, recuerda que el banco recibe el depósito pero asume una obligación; esa obligación es un pasivo. Si clasificaste (c) como pasivo, recuerda que el encaje es una reserva de efectivo que el banco mantiene, no una deuda con el cliente.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>El ejercicio te enseña a leer el catálogo por el primer dígito, que es el criterio más general de clasificación. Su utilidad es que, aunque no conozcas todas las cuentas, puedes ubicar cualquier partida en el estado financiero correcto.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 2 · Decodificar un código por niveles</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · Trabajo individual</p>
+    <p>Aquí vas a decodificar dos códigos e identificar su grupo, su cuenta y, cuando exista, su subcuenta.</p>
+    <p><strong>Enunciado.</strong> Para el código 110105 (Efectivo) y el código 1103 (Bancos y otras instituciones financieras), indica el elemento, el grupo, la cuenta y, si la hay, la subcuenta. Explica con tus palabras por qué 1103 no aparece con subcuenta en este ejercicio.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Escribe cada código y sepáralo en bloques: primer dígito, los dos siguientes, los dos siguientes y los dos últimos.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Código 110105: elemento 1 (activo); grupo 11 (fondos disponibles); cuenta 1101 (Caja); subcuenta 110105 (Efectivo). Código 1103: elemento 1 (activo); grupo 11 (fondos disponibles); cuenta 1103 (Bancos y otras instituciones financieras). No aparece con subcuenta en este ejercicio porque el enunciado solo llega al nivel de cuenta; eso no significa que el código no pueda tener subcuentas.</p>
+      <p class="comprobacion">Comprobación: la subcuenta empieza con los cuatro dígitos de la cuenta a la que pertenece. Así, 110105 empieza por 1101.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si dijiste que 1101 es un grupo, recuerda que el grupo son los dos primeros dígitos. Si dijiste que 110105 es una cuenta, cuenta los dígitos: son seis, y el nivel de cuenta tiene cuatro.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Decodificar te permite pasar de un código a su significado sin memorizar cada cuenta. Quien lee el código sabe de inmediato en qué parte del balance se ubica la partida.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 3 · Débito y crédito en el depósito y el retiro de Ana</h3>
+    <p class="tiempo">Tiempo orientativo: 15 minutos · Trabajo individual</p>
+    <p>Aquí vas a registrar un depósito y un retiro desde los libros del banco, y a justificar cada débito y cada crédito.</p>
+    <p><strong>Enunciado.</strong> Ana Pérez deposita 1.000,00 dólares en efectivo en su cuenta a la vista del BDL. Después retira 300,00 dólares en efectivo de la misma cuenta. Registra ambas operaciones desde los libros del banco, usando la Tabla 2, y explica la razón de cada débito y de cada crédito.</p>
+    <div class="asiento">
+      <table>
+        <caption>Tabla 2 · Formato del asiento para el ejercicio 3</caption>
+        <thead><tr><th scope="col">Operación</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Depósito</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td>Totales</td><td></td><td></td></tr>
+          <tr><td>2 · Retiro</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td>Totales</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Para el depósito, usa 1101 para la caja y 2101 Depósitos a la vista para la obligación con Ana. Supongamos que su cuenta no genera intereses, así que corresponde la subcuenta 210110, Depósitos monetarios que no generan intereses. Si la cuenta pagara intereses, la subcuenta sería 210105. Para el retiro, registra los movimientos inversos, tal como se explicó en la sección 3.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Pregúntate primero qué ocurre con el efectivo del banco y qué ocurre con la obligación frente a Ana. Luego decide qué lado aumenta o disminuye en cada una.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p><strong>Operación 1 · depósito de 1.000,00.</strong> Debe: 1101 Caja, 1.000,00. Haber: 2101 Depósitos a la vista, subcuenta 210110, 1.000,00. Totales: 1.000,00 y 1.000,00. La caja aumenta por débito porque el banco recibe efectivo, que es un activo. La obligación aumenta por crédito porque el banco debe devolver ese dinero a Ana.</p>
+      <p><strong>Operación 2 · retiro de 300,00.</strong> Debe: grupo 21 Obligaciones con el público, 300,00. Haber: 1101 Caja, 300,00. Totales: 300,00 y 300,00. La obligación disminuye por débito porque el banco ya no debe esa parte. La caja disminuye por crédito porque sale efectivo.</p>
+      <p class="comprobacion">Comprobación: en cada operación, débitos y créditos suman lo mismo. Además, después de las dos operaciones, la obligación del banco con Ana es de 700,00 dólares, y el movimiento neto de su cuenta también es de 700,00 dólares. Esa coincidencia es un control de coherencia; no prueba por sí sola que el registro esté bien fundamentado.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si registraste el depósito como ingreso, recuerda que el banco recibe recursos y asume una obligación; no obtiene un beneficio por recibirlos. Si registraste el retiro con débito en la caja, pregúntate si el banco recibió o entregó efectivo en esa operación.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio muestra que un mismo movimiento de efectivo puede ser un débito o un crédito según la cuenta. Lo que cambia es la obligación, no solo el dinero. Entender esto es la base de los registros de la unidad 2.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 4 · Variante: patrimonio con más pasivos</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>Aquí vas a recalcular el patrimonio contable del BDL en un escenario alternativo y a compararlo con el caso original.</p>
+    <p><strong>Enunciado.</strong> Supongamos que los pasivos totales del BDL fueran 9.200.000,00 dólares, mientras que los activos totales se mantienen en 10.500.000,00 dólares. Calcula el patrimonio contable en este escenario y compáralo con el del Cálculo 1. Esta es una variante: no modifica el caso original.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Usa la misma fórmula del Cálculo 1 y cambia solo el dato que la variante modifica.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Patrimonio = 10.500.000,00 − 9.200.000,00 = 1.300.000,00 dólares. El patrimonio disminuye 200.000,00 dólares respecto del caso original, porque las obligaciones crecieron en esa cantidad y los activos no cambiaron.</p>
+      <p class="comprobacion">Comprobación: 9.200.000,00 + 1.300.000,00 = 10.500.000,00.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si el patrimonio aumentó en lugar de disminuir, revisa el signo: un aumento de los pasivos, con activos iguales, reduce el patrimonio.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>La variante muestra cuánto depende el patrimonio de las obligaciones. Un banco que capta más depósitos sin aumentar sus activos en la misma medida tiene un patrimonio contable menor. Eso no demuestra que sea insolvente; indica que hay que analizar otros indicadores.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 5 · Clasificar operaciones en el estado adecuado</h3>
+    <p class="tiempo">Tiempo orientativo: 9 minutos · Trabajo individual</p>
+    <p>Aquí vas a clasificar cinco partidas según su elemento y el estado financiero en que se presentan.</p>
+    <p><strong>Enunciado.</strong> Clasifica cada partida en su elemento y en su estado financiero: (a) efectivo en caja; (b) intereses ganados por créditos concedidos; (c) sueldos pagados por los servicios del mes; (d) obligaciones con el público; (e) capital pagado de la institución.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Pregúntate si la partida es un recurso, una obligación, algo que pertenece a la entidad o un resultado del período.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) Activo (elemento 1), estado de situación financiera. (b) Ingreso (elemento 5), estado de resultados; el cobro del capital de un crédito no sería ingreso. (c) Gasto (elemento 4), estado de resultados. (d) Pasivo (elemento 2), estado de situación financiera. (e) Patrimonio (elemento 3), estado de situación financiera.</p>
+      <p class="comprobacion">Comprobación: cada partida corresponde a un solo elemento según su naturaleza, y su estado financiero coincide con la Tabla 1.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si clasificaste (e) como ingreso, recuerda que el capital pagado lo aportan los accionistas y pertenece a la entidad; no es un beneficio del período. Si clasificaste (b) como activo, revisa que el interés es un ingreso del período; el crédito concedido sí es activo.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>La clasificación depende de la naturaleza de la partida. Esta actividad es la base para leer cualquier estado financiero: primero identificas el elemento y después ubicas la partida en el estado que le corresponde.</p>
+    </details>
+  </div>
+
+  <h3>Presupuesto de tiempo</h3>
+  <p>Esta sesión está estimada en 120 minutos de trabajo acompañado: apertura 5 minutos, explicación con pausas 40 minutos, cinco ejercicios 50 minutos, evaluación y revisión 20 minutos y cierre 5 minutos. Es una estimación basada en la complejidad de las tareas; no garantiza que todos tarden lo mismo.</p>
+</section>
+
+<!-- ================= EVALUACIÓN ================= -->
+<section class="panel" id="p-evaluacion" role="tabpanel" hidden>
+  <h2>Evaluación de la Sesión 01</h2>
+  <p>Este cuestionario tiene 15 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas con <span class="badge">Teórica</span> se responden con lo estudiado; las marcadas con <span class="badge analisis">Análisis</span> presentan un caso breve. Al elegir una opción verás de inmediato su retroalimentación, y puedes cambiar tu respuesta mientras no completes el cuestionario.</p>
+  <p>El puntaje es de práctica y no es una nota oficial. Los reintentos no prueban por sí solos que dominas el tema: tus explicaciones, tus registros y tus ejercicios también son evidencia.</p>
+
+  <div class="estado-eval" aria-live="polite">
+    <p id="estado-texto" style="margin:0;">Preguntas pendientes: 15 · Aciertos: 0 · Calificación sobre 10: 0,0 · Porcentaje: 0 %</p>
+    <div class="progreso" aria-hidden="true"><div id="barra"></div></div>
+  </div>
+
+  <form id="quiz" onsubmit="return false;"></form>
+
+  <div class="resultado" id="resultado" role="status">
+    <h3>Resultado de práctica</h3>
+    <p id="resultado-texto"></p>
+    <button type="button" class="boton" id="btn-reintentar" hidden>Intentar nuevamente</button>
+    <button type="button" class="boton secundario" id="btn-reiniciar">Reiniciar cuestionario</button>
+  </div>
+  <p style="margin-top:0.5rem;"><button type="button" class="boton secundario" id="btn-reiniciar-fin">Reiniciar cuestionario</button></p>
+</section>
+
+<!-- ================= REFLEXIÓN ================= -->
+<section class="panel" id="p-reflexion" role="tabpanel" hidden>
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Sirven para pensar en el sentido del registro contable.</p>
+
+  <h3>Lo que el saldo promete</h3>
+  <p>Cuando una persona deposita dinero, confía en que el saldo de su estado de cuenta corresponde a lo que el banco le debe. Esa confianza depende de que cada operación esté registrada con cuentas comunes y de que cualquiera pueda seguir el registro hasta su origen.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué información te gustaría poder comprobar sobre el saldo de tu propia cuenta?</p>
+
+  <h3>Hablar el mismo idioma</h3>
+  <p>Un catálogo único obliga a las instituciones a llamar igual a las mismas cosas. Puede parecer un trámite, pero permite que un auditor, un supervisor o una persona nueva en el banco lean un registro sin traducirlo.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué problemas aparecerían en un trabajo si cada institución usara sus propios nombres para las mismas operaciones?</p>
+
+  <h3>Responsabilidad al registrar</h3>
+  <p>Un error de clasificación no siempre cambia el total del balance, y por eso puede pasar desapercibido. Clasificar mal un depósito como ingreso, por ejemplo, puede hacer que el banco parezca más rentable de lo que es.</p>
+  <p><strong>Pregunta para pensar:</strong> además de que los débitos y los créditos sumen lo mismo, ¿qué criterio usarías para decidir que un registro está bien clasificado?</p>
+
+  <h3>Lo que el número no dice</h3>
+  <p>Una cifra en un informe invita a sacar conclusiones rápidas. El patrimonio contable del BDL es un dato del caso, pero no alcanza para afirmar que la institución es solvente.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué otra información pedirías a un informe antes de concluir que una institución financiera está en buena situación?</p>
+</section>
+
+<!-- ================= ACTIVIDAD CON IA ================= -->
+<section class="panel" id="p-ia" role="tabpanel" hidden>
+  <h2>Actividad con IA</h2>
+  <p>Esta es una actividad formativa e individual. Su propósito es verificar una explicación de apoyo, no reemplazar tu propio trabajo.</p>
+
+  <h3>Paso 1 · Trabajo inicial propio</h3>
+  <p>Antes de consultar cualquier herramienta, escribe en un párrafo cómo registrarías el depósito y el retiro de Ana Pérez y por qué.</p>
+
+  <h3>Paso 2 · Prompt</h3>
+  <p>Usa exactamente este texto: «Explica, en un párrafo y en lenguaje sencillo, por qué el depósito de 1.000,00 dólares de un cliente en un banco se registra con débito a Caja y crédito a una obligación con el público, y no como ingreso. Indica qué cuentas del catálogo nombras y, para cada una, qué código tiene.»</p>
+
+  <h3>Paso 3 · Contraste con el material</h3>
+  <p>Compara la respuesta con la sección 3 de la Sesión 01. Marca cada afirmación que coincida con el material y cada una que no aparezca en él.</p>
+
+  <h3>Paso 4 · Verificación</h3>
+  <p>Verifica al menos una afirmación en el sitio oficial de la Superintendencia de Bancos. Como mínimo, confirma el nombre y el código de Caja (1101) y el de la cuenta 2101 Depósitos a la vista. Si la herramienta indica un código que no encuentras en el catálogo oficial, no lo uses: anótalo y busca la cuenta en el plan de cuentas.</p>
+
+  <h3>Paso 5 · Justificación</h3>
+  <p>Escribe un párrafo en el que expliques qué aceptaste, qué corregiste y qué rechazaste de la respuesta, y por qué. La respuesta de una herramienta no es una fuente verificada por sí sola.</p>
+
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>Escribí mi trabajo inicial antes de consultar la herramienta.</li>
+    <li>Contrasté la respuesta con la sección 3 de la sesión.</li>
+    <li>Verifiqué al menos una cuenta o un código en la fuente oficial.</li>
+    <li>Justifiqué qué acepté, corregí o rechacé.</li>
+    <li>No compartí datos personales, tributarios ni bancarios reales.</li>
+  </ul>
+</section>
+
+<!-- ================= BIBLIOGRAFÍA ================= -->
+<section class="panel" id="p-bibliografia" role="tabpanel" hidden>
+  <h2>Bibliografía</h2>
+  <p>Las referencias están en orden alfabético y siguen el formato APA 7.</p>
+  <ul>
+    <li>Superintendencia de Bancos. (2017). <em>Catálogo Único de Cuentas: grupo 21, Obligaciones con el público</em> [archivo CUC-plan-cuentas-pasivos_27-sept-17.pdf; reproduce las resoluciones SBS-2014-0731 y SB-2015-0560]. <a href="https://www.superbancos.gob.ec/bancos/wp-content/uploads/downloads/2020/06/CUC-plan-cuentas-pasivos_27-sept-17.pdf">https://www.superbancos.gob.ec/bancos/wp-content/uploads/downloads/2020/06/CUC-plan-cuentas-pasivos_27-sept-17.pdf</a></li>
+    <li>Superintendencia de Bancos. (2017). <em>Marco conceptual y Catálogo Único de Cuentas para uso de las entidades de los sectores financieros público y privado</em> (reformado con la Resolución No. SB-2017-705, de 30 de agosto de 2017). <a href="https://www.superbancos.gob.ec/bancos/wp-content/uploads/downloads/2017/10/CUC_marco_conceptual_27_sept_17.pdf">https://www.superbancos.gob.ec/bancos/wp-content/uploads/downloads/2017/10/CUC_marco_conceptual_27_sept_17.pdf</a></li>
+    <li>Superintendencia de Bancos. (2021). <em>Catálogo Único de Cuentas: plan de cuentas</em> [archivo del 28 de diciembre de 2021, que incorpora la Resolución SB-2021-0403]. <a href="https://www.superbancos.gob.ec/bancos/wp-content/uploads/downloads/2022/01/CUC-plan-cuentas-28-dic-21.pdf">https://www.superbancos.gob.ec/bancos/wp-content/uploads/downloads/2022/01/CUC-plan-cuentas-28-dic-21.pdf</a></li>
+    <li>Superintendencia de Bancos. (2025, 25 de julio). <em>Resolución No. SB-2025-01841</em> (crea la cuenta 5405 en el Catálogo Único de Cuentas; vigente desde el 1 de agosto de 2025) [copia publicada por la Asociación de Bancos Privados del Ecuador]. <a href="https://asobanca.org.ec/wp-content/uploads/2025/08/resolucion-SB-2025-1841.pdf">https://asobanca.org.ec/wp-content/uploads/2025/08/resolucion-SB-2025-1841.pdf</a></li>
+    <li>Superintendencia de Economía Popular y Solidaria. (2023). <em>Catálogo Único de Cuentas</em> [codificado, reforma de octubre de 2023; aplica a las cooperativas de ahorro y crédito y a otras entidades del sector financiero popular y solidario]. <a href="https://www.seps.gob.ec/wp-content/uploads/CUC-codificado-2023_reforma-octubre-2023.pdf">https://www.seps.gob.ec/wp-content/uploads/CUC-codificado-2023_reforma-octubre-2023.pdf</a></li>
+  </ul>
+  <p><strong>Nota:</strong> te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de un catálogo o de una norma se comprueba en la fuente oficial, porque Google Scholar no la sustituye.</p>
+</section>
+
+</main>
+
+<script>
+/* ===== 1. Pestañas ===== */
+(function () {
+  const botones = Array.from(document.querySelectorAll('nav.menu [role="tab"]'));
+  function mostrar(id) {
+    botones.forEach(b => {
+      const activo = b.dataset.tab === id;
+      b.setAttribute('aria-selected', activo ? 'true' : 'false');
+      document.getElementById('p-' + b.dataset.tab).hidden = !activo;
+    });
+  }
+  botones.forEach((b, i) => {
+    b.addEventListener('click', () => mostrar(b.dataset.tab));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const d = e.key === 'ArrowRight' ? 1 : -1;
+        const n = botones[(i + d + botones.length) % botones.length];
+        n.focus(); mostrar(n.dataset.tab);
+      }
+    });
+  });
+  mostrar('repaso');
+})();
+
+/* ===== 2. Evaluación: datos generados desde la fuente única ===== */
+const PREGUNTAS = [
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Cuál es la finalidad principal del Catálogo Único de Cuentas para las instituciones financieras?",
+  "opciones": [
+   {
+    "t": "Que todas las entidades registren sus operaciones con los mismos nombres y códigos, para que la Superintendencia de Bancos pueda controlar y comparar la información.",
+    "ok": true,
+    "fb": "El catálogo ordena el registro con cuentas y códigos comunes. Por eso la información de un banco puede compararse con la de otro y controlarse. Si quieres el porqué completo, relee la sección 1."
+   },
+   {
+    "t": "Que cada banco elija libremente sus cuentas según su criterio comercial.",
+    "ok": false,
+    "fb": "Fíjate en la obligatoriedad: el catálogo se aplica a la entidad y no queda a su elección. Si una cuenta no te alcanza para una operación nueva, necesitas autorización antes de usar otra."
+   },
+   {
+    "t": "Que sustituya por completo a las Normas Internacionales de Información Financiera en cualquier caso.",
+    "ok": false,
+    "fb": "El catálogo no reemplaza en todos los casos a las NIIF. Cuando sus instrucciones difieren de principios generalmente aceptados, la entidad obligada debe seguir las instrucciones de la Superintendencia. Eso es distinto de reemplazar en general la normativa contable."
+   },
+   {
+    "t": "Que sea aplicable únicamente a las cooperativas de ahorro y crédito.",
+    "ok": false,
+    "fb": "Fíjate en el alcance: el catálogo de la Superintendencia de Bancos rige para las entidades financieras de los sectores público y privado. Las cooperativas usan un catálogo propio, emitido por la Superintendencia de Economía Popular y Solidaria."
+   }
+  ],
+  "gen": "relee la sección 1 de la sesión: qué es el catálogo y quiénes lo aplican."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Un banco considera que ninguna cuenta del catálogo describe bien una operación nueva. ¿Qué debe hacer, según el marco del catálogo?",
+  "opciones": [
+   {
+    "t": "Crear una cuenta propia y registrarla sin avisar, porque la entidad conoce mejor su operación.",
+    "ok": false,
+    "fb": "Ese camino contradice la obligatoriedad del catálogo. Crear cuentas sin autorización rompe la uniformidad que el catálogo busca."
+   },
+   {
+    "t": "Registrarla en una cuenta de gastos hasta el cierre del ejercicio.",
+    "ok": false,
+    "fb": "Un gasto no sirve para aplazar la clasificación. Primero hay que determinar qué es la operación y qué elemento le corresponde."
+   },
+   {
+    "t": "Solicitar a la Superintendencia de Bancos autorización previa para usar una cuenta que no figure en el catálogo.",
+    "ok": true,
+    "fb": "El marco exige autorización previa para usar cuentas fuera del catálogo. La entidad debe justificar la necesidad y no improvisar la cuenta."
+   },
+   {
+    "t": "Registrarla en una cuenta de orden, porque estas cuentas admiten cualquier operación.",
+    "ok": false,
+    "fb": "Las cuentas de orden tienen una finalidad de control; no son un cajón para operaciones sin clasificar. Relee la sección 2 sobre los elementos."
+   }
+  ],
+  "gen": "relee la sección 1 y el criterio sobre el uso de cuentas fuera del catálogo."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "En el código 1101 (Caja), ¿qué identifica el primer dígito?",
+  "opciones": [
+   {
+    "t": "La subcuenta de efectivo.",
+    "ok": false,
+    "fb": "La subcuenta es el nivel más detallado: en el ejemplo 110105 tiene seis dígitos. El primer dígito es el nivel más general."
+   },
+   {
+    "t": "El elemento, que en este caso es el activo.",
+    "ok": true,
+    "fb": "El primer dígito identifica el elemento, y el 1 corresponde a activo. Por eso toda cuenta cuyo código empieza por 1 forma parte de los activos."
+   },
+   {
+    "t": "La moneda en que se registra la operación.",
+    "ok": false,
+    "fb": "El marco consultado no asigna un dígito a la moneda. Las operaciones en otras monedas se controlan con registros auxiliares."
+   },
+   {
+    "t": "El período contable en que se registra.",
+    "ok": false,
+    "fb": "El código no indica el período. La fecha aparece en el registro del asiento, no en el código de la cuenta."
+   }
+  ],
+  "gen": "relee la sección 2 y la Tabla 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué nivel del catálogo representa el código 1101 (Caja)?",
+  "opciones": [
+   {
+    "t": "Elemento.",
+    "ok": false,
+    "fb": "El elemento se identifica con un solo dígito. El código 1101 tiene cuatro."
+   },
+   {
+    "t": "Grupo.",
+    "ok": false,
+    "fb": "El grupo se identifica con los dos primeros dígitos (11, Fondos disponibles). El código 1101 es más detallado que eso."
+   },
+   {
+    "t": "Subcuenta.",
+    "ok": false,
+    "fb": "La subcuenta tiene seis dígitos, como 110105 (Efectivo). El código 1101 todavía no llega a ese nivel."
+   },
+   {
+    "t": "Cuenta, porque tiene cuatro dígitos y se ubica dentro del grupo 11.",
+    "ok": true,
+    "fb": "Los cuatro primeros dígitos identifican la cuenta dentro del grupo 11. La subcuenta agrega dos dígitos más, como en 110105."
+   }
+  ],
+  "gen": "relee la sección 2 y el ejemplo del código 110105."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "El código 110105 (Efectivo) pertenece al grupo:",
+  "opciones": [
+   {
+    "t": "11 Fondos disponibles.",
+    "ok": true,
+    "fb": "Los dos primeros dígitos identifican el grupo. El código 110105 empieza por 11, que corresponde a Fondos disponibles."
+   },
+   {
+    "t": "21 Obligaciones con el público.",
+    "ok": false,
+    "fb": "Compara los dos primeros dígitos: 21 no coincide con 11."
+   },
+   {
+    "t": "1101 Caja.",
+    "ok": false,
+    "fb": "1101 es una cuenta, no un grupo. Es el nivel de cuatro dígitos que contiene la subcuenta 110105."
+   },
+   {
+    "t": "1 Activo.",
+    "ok": false,
+    "fb": "El 1 es el elemento. El grupo se identifica con dos dígitos, que en este caso son 11."
+   }
+  ],
+  "gen": "relee la sección 2, donde se describen los niveles de codificación."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿A qué elemento pertenece el grupo 21, Obligaciones con el público?",
+  "opciones": [
+   {
+    "t": "Activo.",
+    "ok": false,
+    "fb": "Un activo es un recurso que controla la entidad. Las obligaciones con el público son deudas que el banco tiene con sus clientes."
+   },
+   {
+    "t": "Pasivo.",
+    "ok": true,
+    "fb": "El primer dígito 2 identifica el pasivo. El banco recibe los depósitos y asume una obligación frente a quien los hizo."
+   },
+   {
+    "t": "Patrimonio.",
+    "ok": false,
+    "fb": "El patrimonio es lo que queda después de restar pasivos a activos. Las obligaciones con clientes no son patrimonio del banco."
+   },
+   {
+    "t": "Ingresos.",
+    "ok": false,
+    "fb": "Los ingresos aumentan el resultado del período. Un depósito no es un ingreso del banco, aunque el dinero entre a su caja."
+   }
+  ],
+  "gen": "relee la sección 2 y la sección 3 sobre el depósito de Ana."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el principio general de la partida doble, ¿cuándo aumenta una cuenta de activo?",
+  "opciones": [
+   {
+    "t": "Siempre con un crédito.",
+    "ok": false,
+    "fb": "En el principio general, el crédito aumenta pasivo, patrimonio e ingresos, no los activos."
+   },
+   {
+    "t": "Siempre con un ingreso.",
+    "ok": false,
+    "fb": "El ingreso es otro elemento. Por sí solo no determina el aumento de un activo."
+   },
+   {
+    "t": "Con un débito.",
+    "ok": true,
+    "fb": "En el principio general, activo y gasto aumentan con débito, y pasivo, patrimonio e ingreso aumentan con crédito. La dinámica exacta de cada cuenta figura en su descripción en el catálogo oficial. En la subcuenta 210110 se acredita con los depósitos en efectivo y se debita con los retiros y pagos de cheques."
+   },
+   {
+    "t": "Solo cuando entra efectivo.",
+    "ok": false,
+    "fb": "Débito y crédito no equivalen a entrada o salida de efectivo. Una cuenta por cobrar puede aumentar sin que entre dinero."
+   }
+  ],
+  "gen": "relee la sección 3 sobre débito y crédito."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Ana Pérez deposita 1.000,00 dólares en efectivo en una cuenta a la vista del BDL. Desde los libros del banco, ¿cuál es el asiento correcto?",
+  "opciones": [
+   {
+    "t": "Debe: 1101 Caja 1.000,00. Haber: 2101 Depósitos a la vista 1.000,00.",
+    "ok": true,
+    "fb": "El banco recibe efectivo, un activo que aumenta con débito, y asume una obligación frente a Ana, que aumenta con crédito. La cuenta 2101 Depósitos a la vista pertenece al grupo 21; si la cuenta no genera intereses, su subcuenta es 210110."
+   },
+   {
+    "t": "Debe: grupo 21 Obligaciones con el público 1.000,00. Haber: 1101 Caja 1.000,00.",
+    "ok": false,
+    "fb": "Este asiento corresponde a un retiro: disminuye la obligación y sale efectivo. El depósito tiene el sentido contrario."
+   },
+   {
+    "t": "Debe: 1101 Caja 1.000,00. Haber: Ingresos 1.000,00.",
+    "ok": false,
+    "fb": "Un depósito no es ingreso del banco. El banco recibe recursos y asume una obligación; recibirlos no genera por sí solo una ganancia."
+   },
+   {
+    "t": "Debe: 1101 Caja 1.000,00. Haber: 1101 Caja 1.000,00.",
+    "ok": false,
+    "fb": "Ese registro se anula a sí mismo: no cambia ningún saldo y no describe la operación."
+   }
+  ],
+  "gen": "revisa la sección 3 y el ejemplo del depósito de Ana."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Ana retira 300,00 dólares en efectivo de su cuenta a la vista. ¿Qué efecto produce en los libros del banco?",
+  "opciones": [
+   {
+    "t": "La caja aumenta 300,00 y la obligación con Ana aumenta 300,00.",
+    "ok": false,
+    "fb": "Si el banco entrega efectivo, la caja disminuye. Revisa qué lado aumenta una obligación."
+   },
+   {
+    "t": "La caja aumenta 300,00 y la obligación con Ana no cambia.",
+    "ok": false,
+    "fb": "El retiro también reduce la obligación del banco frente a Ana; no la deja igual."
+   },
+   {
+    "t": "El patrimonio disminuye 300,00, porque el banco paga.",
+    "ok": false,
+    "fb": "Devolver a un cliente lo que retira no es un gasto. Lo que baja es la obligación, no el patrimonio."
+   },
+   {
+    "t": "La caja disminuye 300,00 y la obligación con Ana disminuye 300,00.",
+    "ok": true,
+    "fb": "El banco entrega efectivo, que sale de la caja (crédito en 1101), y reduce su obligación con Ana (débito en el grupo 21)."
+   }
+  ],
+  "gen": "compara el asiento del depósito con el del retiro."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "El BDL tiene activos totales de 10.500.000,00 dólares y pasivos totales de 9.000.000,00 dólares. ¿Cuál es su patrimonio contable?",
+  "opciones": [
+   {
+    "t": "19.500.000,00 dólares.",
+    "ok": false,
+    "fb": "Sumaste activos y pasivos. La ecuación contable los relaciona por diferencia: activos = pasivos + patrimonio."
+   },
+   {
+    "t": "1.500.000,00 dólares.",
+    "ok": true,
+    "fb": "Patrimonio = activos − pasivos = 10.500.000,00 − 9.000.000,00 = 1.500.000,00. Es patrimonio contable, no patrimonio técnico."
+   },
+   {
+    "t": "9.000.000,00 dólares.",
+    "ok": false,
+    "fb": "Ese importe es el total de pasivos. El patrimonio es lo que queda después de restarlos."
+   },
+   {
+    "t": "500.000,00 dólares.",
+    "ok": false,
+    "fb": "Revisa la resta: 10.500.000,00 − 9.000.000,00 es igual a 1.500.000,00."
+   }
+  ],
+  "gen": "revisa la sección 5 sobre la ecuación contable y el Cálculo 1."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Supongamos que el grupo 11 Fondos disponibles de un banco ficticio se compone de: 1101 Caja, 250.000,00 dólares; 1102 Depósitos para encaje, 480.000,00 dólares; 1103 Bancos y otras instituciones financieras, 1.020.000,00 dólares. ¿Cuál es el subtotal del grupo?",
+  "opciones": [
+   {
+    "t": "1.500.000,00 dólares.",
+    "ok": false,
+    "fb": "Sumaste solo 1102 y 1103, y dejaste fuera la caja. Cada cuenta del grupo debe incluirse en el subtotal."
+   },
+   {
+    "t": "1.270.000,00 dólares.",
+    "ok": false,
+    "fb": "Sumaste la caja y los bancos, pero no los depósitos para encaje. Revisa cada componente del grupo."
+   },
+   {
+    "t": "1.750.000,00 dólares.",
+    "ok": true,
+    "fb": "250.000,00 + 480.000,00 + 1.020.000,00 = 1.750.000,00. El subtotal suma las cuentas del grupo; no indica por sí solo si el banco cumple el encaje."
+   },
+   {
+    "t": "1.520.000,00 dólares.",
+    "ok": false,
+    "fb": "Vuelve a sumar las tres cuentas. El importe obtenido no corresponde a la suma completa de los componentes."
+   }
+  ],
+  "gen": "relee el Cálculo 2 de la sesión y la sección 5."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Una institución paga los sueldos de su personal durante el mes. ¿A qué elemento del catálogo pertenece la cuenta que registra ese pago?",
+  "opciones": [
+   {
+    "t": "Activo, porque el pago reduce el efectivo disponible.",
+    "ok": false,
+    "fb": "Un pago que se consume en el período es un gasto, no un activo. Que reduzca el efectivo no define por sí solo el elemento."
+   },
+   {
+    "t": "Pasivo, porque la institución tiene obligaciones con sus empleados.",
+    "ok": false,
+    "fb": "Una obligación puede existir, pero un sueldo pagado por los servicios del período se clasifica como gasto según la naturaleza de la operación."
+   },
+   {
+    "t": "Patrimonio, porque reduce el capital de la entidad.",
+    "ok": false,
+    "fb": "El gasto llega al patrimonio a través del resultado del período, pero la cuenta que registra el sueldo pertenece al elemento 4, no al 3."
+   },
+   {
+    "t": "Gastos, que es el elemento 4.",
+    "ok": true,
+    "fb": "Un sueldo pagado por los servicios del período es un gasto. El elemento 4 agrupa los gastos, que reducen el resultado del período."
+   }
+  ],
+  "gen": "relee la Tabla 1 y la sección 4 sobre el paso a los estados financieros."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "El BDL recibe intereses cobrados por los créditos que concedió a sus clientes. ¿A qué elemento corresponden esos intereses?",
+  "opciones": [
+   {
+    "t": "Ingresos, elemento 5.",
+    "ok": true,
+    "fb": "Los intereses que gana el banco son ingresos del período. Cobrar el capital de un crédito es otra cosa: recupera un activo y no es un ingreso."
+   },
+   {
+    "t": "Gastos, elemento 4.",
+    "ok": false,
+    "fb": "Los intereses que gana el banco son lo contrario de un gasto. Revisa quién es acreedor en la operación."
+   },
+   {
+    "t": "Activo, elemento 1, porque el banco recibe efectivo.",
+    "ok": false,
+    "fb": "Recibir efectivo no basta para clasificar la operación. El crédito concedido sí es un activo; el interés ganado es un ingreso."
+   },
+   {
+    "t": "Patrimonio, elemento 3.",
+    "ok": false,
+    "fb": "Los intereses no aumentan el patrimonio de forma directa: forman parte del resultado del período, que se registra en ingresos."
+   }
+  ],
+  "gen": "relee la sección 2 y la distinción entre ingreso y cobro."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un informe muestra que el BDL tiene patrimonio contable de 1.500.000,00 dólares. ¿Qué puede concluirse?",
+  "opciones": [
+   {
+    "t": "Que el banco es solvente.",
+    "ok": false,
+    "fb": "El patrimonio contable no equivale a solvencia. La solvencia se mide con el patrimonio técnico y los activos ponderados por riesgo."
+   },
+   {
+    "t": "Que ese es su patrimonio contable, pero para hablar de solvencia faltan el patrimonio técnico y los activos ponderados por riesgo.",
+    "ok": true,
+    "fb": "El dato describe una parte del balance. Para conocer la relación de solvencia, que definimos en la Semana 02, faltan el patrimonio técnico y los activos ponderados por riesgo."
+   },
+   {
+    "t": "Que el banco tiene liquidez suficiente para devolver sus depósitos.",
+    "ok": false,
+    "fb": "Liquidez y patrimonio son conceptos distintos. El patrimonio no indica cuánto efectivo o activos líquidos tiene el banco."
+   },
+   {
+    "t": "Que el banco cumple el encaje.",
+    "ok": false,
+    "fb": "El encaje se relaciona con las reservas frente a los depósitos sujetos a encaje, no con el patrimonio."
+   }
+  ],
+  "gen": "relee la sección 4 y el Cálculo 1, y compáralos con lo visto sobre solvencia."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué elementos del catálogo forman principalmente el estado de situación financiera?",
+  "opciones": [
+   {
+    "t": "Los elementos 4 y 5 (gastos e ingresos).",
+    "ok": false,
+    "fb": "Gastos e ingresos se presentan en el estado de resultados."
+   },
+   {
+    "t": "Los elementos 6 y 7 (cuentas contingentes y cuentas de orden).",
+    "ok": false,
+    "fb": "Estas cuentas se controlan aparte y no forman el balance principal de activos, pasivos y patrimonio."
+   },
+   {
+    "t": "Los elementos 1, 2 y 3 (activo, pasivo y patrimonio).",
+    "ok": true,
+    "fb": "El estado de situación financiera presenta activos, pasivos y patrimonio, relacionados por la ecuación activo = pasivo + patrimonio."
+   },
+   {
+    "t": "Solo el elemento 1.",
+    "ok": false,
+    "fb": "El balance necesita los tres elementos para cumplir la ecuación contable."
+   }
+  ],
+  "gen": "relee la Tabla 1 y la sección 5."
+ }
+];
+
+/* ===== 3. Motor de la evaluación ===== */
+(function () {
+  const formulario = document.getElementById('quiz');
+  const textoEstado = document.getElementById('estado-texto');
+  const barra = document.getElementById('barra');
+  const resultado = document.getElementById('resultado');
+  const resultadoTexto = document.getElementById('resultado-texto');
+  const btnReintentar = document.getElementById('btn-reintentar');
+  let respuestas = [];
+
+  function actualizar() {
+    const total = PREGUNTAS.length;
+    const respondidas = respuestas.filter(r => r !== null).length;
+    const aciertos = respuestas.filter((r, i) => r !== null && PREGUNTAS[i].opciones[r].ok).length;
+    const nota = (aciertos / total * 10).toFixed(1).replace('.', ',');
+    const pct = Math.round(aciertos / total * 100);
+    textoEstado.textContent = 'Preguntas pendientes: ' + (total - respondidas) + ' · Aciertos: ' + aciertos +
+      ' · Calificación sobre 10: ' + nota + ' · Porcentaje: ' + pct + ' %';
+    barra.style.width = (respondidas / total * 100) + '%';
+
+    if (respondidas === total) {
+      formulario.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+      const errores = total - aciertos;
+      resultadoTexto.textContent = 'Aciertos: ' + aciertos + ' de ' + total + '. Calificación de práctica: ' + nota + ' sobre 10 (' + pct + ' %).' +
+        (errores > 0
+          ? ' Revisa las rutas indicadas en cada retroalimentación y, si lo deseas, intenta nuevamente con las mismas preguntas.'
+          : ' No tuviste errores en esta práctica.');
+      btnReintentar.hidden = errores === 0;
+      resultado.classList.add('visible');
+    }
+  }
+
+  function reiniciar() {
+    respuestas = PREGUNTAS.map(() => null);
+    formulario.innerHTML = '';
+    PREGUNTAS.forEach((p, i) => {
+      const fs = document.createElement('fieldset');
+      fs.className = 'pregunta';
+      const lg = document.createElement('legend');
+      const insignia = document.createElement('span');
+      insignia.className = 'badge' + (p.tipo === 'Análisis' ? ' analisis' : '');
+      insignia.textContent = p.tipo;
+      lg.appendChild(insignia);
+      lg.appendChild(document.createTextNode(' ' + (i + 1) + '. ' + p.enunciado));
+      fs.appendChild(lg);
+
+      p.opciones.forEach((o, j) => {
+        const fila = document.createElement('div');
+        fila.className = 'opcion';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + i;
+        radio.id = 'q' + i + '-' + j;
+        radio.value = String(j);
+        const etiqueta = document.createElement('label');
+        etiqueta.htmlFor = radio.id;
+        etiqueta.textContent = String.fromCharCode(97 + j) + ') ' + o.t;
+        fila.appendChild(radio);
+        fila.appendChild(etiqueta);
+        fs.appendChild(fila);
+      });
+
+      const fb = document.createElement('div');
+      fb.className = 'fb';
+      fb.id = 'fb' + i;
+      fb.setAttribute('aria-live', 'polite');
+      fs.appendChild(fb);
+
+      fs.addEventListener('change', e => {
+        if (e.target.name !== 'q' + i) return;
+        const j = parseInt(e.target.value, 10);
+        respuestas[i] = j;
+        const op = p.opciones[j];
+        fb.className = 'fb visible ' + (op.ok ? 'ok' : 'mal');
+        fb.innerHTML = '';
+        const titulo = document.createElement('div');
+        titulo.textContent = (op.ok ? 'CORRECTO. ' : 'Incorrecto. ') + op.fb;
+        fb.appendChild(titulo);
+        if (!op.ok) {
+          const ruta = document.createElement('div');
+          ruta.className = 'ruta';
+          ruta.textContent = 'Ruta de revisión: ' + p.gen;
+          fb.appendChild(ruta);
+        }
+        actualizar();
+      });
+
+      formulario.appendChild(fs);
+    });
+    resultado.classList.remove('visible');
+    btnReintentar.hidden = true;
+    actualizar();
+  }
+
+  document.getElementById('btn-reintentar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar-fin').addEventListener('click', reiniciar);
+  reiniciar();
+})();
+</script>
+</body>
+</html>

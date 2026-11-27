@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad IFIS y EPS · Semana 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Base y variables ---------- */
+:root{
+  --azul:#003366;
+  --cielo:#87CEEB;
+  --ejemplo:#E8F4FD;
+  --texto:#1a1a1a;
+  --gris:#5a5a5a;
+  --ok:#0b5a2a;
+  --mal:#8a1c1c;
+  --foco:#ffb000;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  font-size:1.05rem;
+  line-height:1.65;
+  color:var(--texto);
+  background:#fff;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:Lora,Georgia,"Times New Roman",serif;color:var(--azul);line-height:1.25}
+h1{font-size:1.5rem;margin:0}
+h2{font-size:1.4rem;margin:1.6rem 0 .6rem}
+h3{font-size:1.15rem;margin:1.3rem 0 .4rem}
+p{margin:.75rem 0}
+a{color:var(--azul)}
+:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+
+/* ---------- Encabezado y navegación ---------- */
+header{background:var(--azul);color:#fff;padding:1rem 1rem .9rem}
+header h1{color:#fff}
+header p{margin:.3rem 0 0;font-size:.95rem;opacity:.95}
+nav{
+  background:var(--cielo);
+  overflow-x:auto;
+  white-space:nowrap;
+  -webkit-overflow-scrolling:touch;
+  position:sticky;top:0;z-index:5;
+}
+nav .tabs{display:flex;min-width:max-content;margin:0;padding:0;list-style:none}
+nav button{
+  background:none;border:0;padding:.75rem 1rem;color:#000;
+  font:inherit;font-weight:600;cursor:pointer;min-height:44px;
+}
+nav button[aria-selected="true"]{background:#fff;color:var(--azul);font-weight:700}
+nav button:hover{background:rgba(255,255,255,.55)}
+main{max-width:760px;margin:0 auto;padding:0 1rem 3rem}
+.panel{display:none;padding-top:.5rem}
+.panel.activo{display:block}
+
+/* ---------- Elementos de lectura ---------- */
+.antes{
+  border:1px solid var(--cielo);border-left:6px solid var(--cielo);
+  background:#f7fbfe;padding:.9rem 1rem;border-radius:6px;margin:1rem 0;
+}
+.antes h3{margin-top:0}
+.concepto{border-left:5px solid var(--azul);padding:.4rem 1rem;margin:1.1rem 0}
+.ejemplo{background:var(--ejemplo);padding:.8rem 1rem;border-radius:6px;margin:1rem 0}
+.ejemplo strong:first-child{color:var(--azul)}
+.nota{background:#f4f4f4;border-left:4px solid var(--cielo);padding:.7rem 1rem;margin:1rem 0;border-radius:4px}
+.pausa{border:1px dashed var(--azul);padding:.7rem 1rem;border-radius:6px;margin:1.1rem 0;background:#fff}
+.pausa strong{color:var(--azul)}
+.tiempo{color:var(--gris);font-size:.95rem}
+.calculo{border-left:5px solid var(--azul);padding:.4rem 1rem;margin:1.1rem 0}
+.tabla-wrap{overflow-x:auto;margin:.9rem 0;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:480px;font-size:.98rem}
+caption{caption-side:top;text-align:left;font-weight:700;color:var(--azul);padding-bottom:.4rem}
+th,td{border:1px solid #b8bfc7;padding:.45rem .55rem;text-align:left;vertical-align:top}
+th{background:#eef5fa}
+ul,ol{padding-left:1.3rem}
+li{margin:.3rem 0}
+
+/* ---------- Desplegables de solución ---------- */
+details{border:1px solid #9fb3c8;border-radius:6px;padding:.5rem .8rem;margin:.8rem 0;background:#fff}
+details[open]{background:#fbfdff}
+summary{cursor:pointer;color:var(--azul);font-weight:700;padding:.3rem 0;min-height:32px}
+
+/* ---------- Ejercicios ---------- */
+.ejercicio{border-top:2px solid var(--azul);padding-top:1rem;margin-top:1.6rem}
+.ejercicio h3{margin-top:0}
+.ayuda{background:#fffbea;border-left:4px solid #e0b000;padding:.6rem .9rem;margin:.7rem 0;border-radius:4px}
+.comprender{background:var(--ejemplo);padding:.8rem 1rem;border-radius:6px;margin:.9rem 0}
+
+/* ---------- Evaluación ---------- */
+.marcador{
+  position:sticky;top:44px;z-index:4;background:#fff;
+  border-bottom:1px solid #cfd6de;padding:.6rem 0 .5rem;margin-bottom:.5rem
+}
+.marcador .linea{display:flex;flex-wrap:wrap;gap:.3rem .9rem;font-size:.98rem}
+.barra{height:10px;background:#dde3ea;border-radius:5px;overflow:hidden;margin-top:.4rem}
+.barra div{height:100%;width:0;background:var(--azul);transition:width .25s}
+.pregunta{border:1px solid #c5ced8;border-radius:8px;padding:.9rem 1rem;margin:1rem 0;background:#fff}
+.pregunta p{margin:.2rem 0 .6rem}
+.insignia{
+  display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.02em;
+  background:var(--azul);color:#fff;padding:.1rem .5rem;border-radius:4px;vertical-align:middle
+}
+.insignia.analisis{background:#2b5d86}
+.opciones{display:block}
+.opciones button{
+  display:block;width:100%;text-align:left;margin:.35rem 0;padding:.6rem .75rem;
+  background:#fff;border:1px solid #7f8c99;border-radius:6px;font:inherit;color:var(--texto);
+  cursor:pointer;min-height:44px;line-height:1.4
+}
+.opciones button:hover:not(:disabled){background:#f2f8fc}
+.opciones button[aria-pressed="true"]{border:2px solid var(--azul);background:var(--ejemplo);font-weight:600}
+.opciones button:disabled{cursor:default;opacity:.92}
+.fb{min-height:1.4em;margin-top:.4rem;font-size:.98rem}
+.fb.ok{color:var(--ok)}
+.fb.mal{color:var(--mal)}
+.resultado{border:2px solid var(--azul);border-radius:8px;padding:1rem;margin:1.2rem 0;background:#f5f9fc}
+.acciones{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0}
+.acciones button{
+  font:inherit;font-weight:700;padding:.6rem 1rem;border-radius:6px;cursor:pointer;min-height:44px;
+  border:2px solid var(--azul);background:#fff;color:var(--azul)
+}
+.acciones button.primario{background:var(--azul);color:#fff}
+.acciones button[hidden]{display:none}
+
+/* ---------- Reflexión, IA, bibliografía ---------- */
+.reflexion{border-left:4px solid var(--azul);padding:.3rem 0 .3rem 1rem;margin:1.2rem 0}
+.reflexion .pregunta-r{font-weight:600;color:var(--azul)}
+.lista-pasos li{margin:.45rem 0}
+.biblio li{margin:.8rem 0;padding-left:.2rem}
+.aviso{background:#fff5f5;border-left:4px solid var(--mal);padding:.6rem .9rem;border-radius:4px;margin:1rem 0}
+
+/* ---------- Ajustes móviles ---------- */
+@media (max-width:390px){
+  body{font-size:1rem}
+  h1{font-size:1.3rem}
+  main{padding:0 .8rem 2.5rem}
+  .marcador{top:44px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Contabilidad IFIS y EPS</h1>
+  <p>Semana 01 · Unidad 1 · Introducción a la contabilidad de instituciones financieras en el Ecuador</p>
+</header>
+
+<nav aria-label="Secciones de la semana">
+  <ul class="tabs" role="tablist">
+    <li role="presentation"><button role="tab" id="t-repaso" aria-controls="p-repaso" aria-selected="false" data-tab="repaso">Repaso</button></li>
+    <li role="presentation"><button role="tab" id="t-sesion" aria-controls="p-sesion" aria-selected="true" data-tab="sesion">Sesión 01</button></li>
+    <li role="presentation"><button role="tab" id="t-eval" aria-controls="p-eval" aria-selected="false" data-tab="eval">Evaluación de la sesión</button></li>
+    <li role="presentation"><button role="tab" id="t-refl" aria-controls="p-refl" aria-selected="false" data-tab="refl">Reflexión</button></li>
+    <li role="presentation"><button role="tab" id="t-ia" aria-controls="p-ia" aria-selected="false" data-tab="ia">Actividad con IA</button></li>
+    <li role="presentation"><button role="tab" id="t-biblio" aria-controls="p-biblio" aria-selected="false" data-tab="biblio">Bibliografía</button></li>
+  </ul>
+</nav>
+
+<main>
+<section class="panel" id="p-repaso" role="tabpanel" aria-labelledby="t-repaso">
+  <h2>Antes de comenzar: lo que ya sabes sobre el dinero</h2>
+  <p>Esta semana empieza el estudio de la contabilidad de las instituciones financieras. Antes de entrar en la materia, quiero que pienses en algo que probablemente ya vives. No necesitas haber cursado ninguna asignatura previa: lo que sabes de tu entorno es suficiente para comenzar.</p>
+
+  <h3>Prueba diagnóstica de conocimientos previos</h3>
+  <p>Las cuatro preguntas siguientes forman la prueba diagnóstica de esta sesión. Sirven para saber qué ideas tienes al empezar. No se califican, y tampoco son la evaluación del contenido nuevo, que está más adelante. Toma una hoja o tu cuaderno y respóndelas por escrito, antes de leer la sección 1.</p>
+  <ol>
+    <li>¿Dónde guardas tú, o alguien cercano, el dinero que no necesitas gastar de inmediato? Anota tres lugares posibles. Puedes contar lo que has visto o lo que se dice en tu barrio: un cajón, una cuenta, un fondo en casa, una cooperativa.</li>
+    <li>Si alguien te presta dinero para comprar una moto, reparar el techo o pagar una emergencia, ¿quién te entrega el dinero y qué espera a cambio?</li>
+    <li>Si una cooperativa de tu barrio recibe ahorros de sus socios, ¿es lo mismo que una empresa que vende electrodomésticos? Escribe tu primera respuesta, aunque no estés seguro, y explica por qué te parece así.</li>
+    <li>Cuando escuchas la palabra «banco», ¿qué imaginas primero: un edificio, una empresa, una institución del Estado, un conjunto de reglas? Describe esa primera imagen.</li>
+  </ol>
+  <p><strong>Pausa de revisión.</strong> Guarda tus respuestas. Al terminar la sesión volverás a ellas y podrás corregirlas con lo que aprendiste. Esa comparación es parte del aprendizaje y no una calificación.</p>
+
+  <h3>Presentación de la asignatura</h3>
+  <p>La asignatura se llama Contabilidad IFIS y EPS. Las siglas significan <em>instituciones financieras</em> (IFIS), que son organizaciones que reciben dinero del público y lo colocan en créditos, inversiones u otras operaciones, y <em>economía popular y solidaria</em> (EPS), que es un conjunto de formas de organización económica, como las cooperativas y las asociaciones comunitarias, con un marco legal propio. Ambas siglas se explican con detalle en esta sesión y en la unidad 4.</p>
+  <p>El plan de la asignatura resume su propósito en una frase: registrar, presentar y analizar las operaciones de las instituciones del sistema financiero nacional, aplicando el Código Orgánico Monetario y Financiero, el Catálogo Único de Cuentas y la normativa de los organismos de regulación y control. Ese es el objetivo general que fija el plan, y por esa vía la materia contribuye al perfil de egreso de la carrera. El texto completo del perfil de egreso no aparece en el plan de la asignatura; si lo necesitas, búscalo en el documento institucional de la carrera.</p>
+
+  <h3>Normas de trabajo</h3>
+  <p>El trabajo es individual de principio a fin. No hay trabajos en equipo, productos grupales ni evaluaciones colectivas. Las tareas autónomas se entregan antes de la siguiente sesión, según el plan. El cuestionario de cada sesión se responde en el propio material y se autocalifica; su puntaje es de práctica y no es la nota oficial. Cuando uses una herramienta de inteligencia artificial, primero intenta resolver tú, y después compara y verifica lo que la herramienta afirma.</p>
+</section>
+
+<section class="panel activo" id="p-sesion" role="tabpanel" aria-labelledby="t-sesion">
+
+  <div class="antes">
+    <h3>Antes de empezar</h3>
+    <p>Esta sesión responde a una pregunta sencilla, pero con consecuencias importantes: <strong>¿qué es el sistema financiero ecuatoriano, quiénes forman parte de él y quién supervisa su funcionamiento?</strong> Si quieres estudiar la contabilidad de un banco o de una cooperativa, primero necesitas saber qué clase de organización es cada una, qué norma la rige y qué organismo verifica que cumpla. Sin eso, cualquier registro que hagas no tiene un fundamento claro.</p>
+    <p><strong>Al terminar podrás:</strong> decir a qué sector pertenece una entidad, identificar qué organismo la regula y cuál la controla, y justificar esa clasificación con la naturaleza de la entidad, su propiedad y la norma que la rige.</p>
+    <p class="tiempo"><strong>Cómo distribuir los 120 minutos:</strong> prueba diagnóstica del repaso 10 · apertura 5 · explicación con pausas 30 · cinco ejercicios 50 · evaluación y revisión 20 · cierre 5. Las pausas de pensamiento ya están incluidas en esos tiempos.</p>
+  </div>
+
+  <!-- 1 -->
+  <h2>1. El caso que vamos a seguir</h2>
+  <p>Durante esta unidad seguiremos a una institución que hemos creado para estudiar: el <strong>Banco Didáctico del Litoral S. A.</strong>, que llamaremos BDL. Es un banco inventado para el curso. No existe en la realidad, no tiene autorización de funcionamiento y sus cifras son supuestos didácticos. Lo decimos una vez aquí y, desde ahora, cuando un dato sea un supuesto lo verás escrito con «supongamos» o «imaginemos». Cuando un dato venga de una norma real, te diremos de qué norma viene para que puedas comprobarlo.</p>
+  <p>El BDL es una sociedad anónima de accionistas privados. Por eso se rige por la norma que aplica a los bancos privados.</p>
+  <p>Junto al BDL aparece otra entidad, también inventada: la <strong>Cooperativa Ejemplo de Ahorro y Crédito</strong>. Las dos reciben ahorros de personas y conceden créditos. A primera vista parecen iguales. Sin embargo, pertenecen a sectores distintos, y esa diferencia va a ser el hilo de toda la sesión.</p>
+  <p>Ahora piensa en la pregunta central: si el BDL y la Cooperativa Ejemplo hacen actividades parecidas, ¿por qué no deberían clasificarse ni controlarse de la misma manera? Escribe una o dos frases con tu primera idea, antes de seguir leyendo.</p>
+  <p><strong>Pausa de razonamiento.</strong> No busques una respuesta perfecta. Lo importante es que identifiques qué dato usarías para distinguir a las dos entidades. Cuando termines la sección 5, compara tu idea con lo que allí aprendiste.</p>
+
+  <!-- 2 -->
+  <h2>2. Qué es el sistema financiero</h2>
+  <p>Imagina a una familia que tiene dinero que no necesita hoy, y a otra que necesita dinero para estudiar o para montar un negocio. Si cada familia buscara por su cuenta, sería difícil encontrarse. Un sistema financiero es, en esencia, el conjunto de organizaciones y reglas que conectan a quienes tienen excedentes con quienes los necesitan. Esa conexión se llama <strong>intermediación financiera</strong>.</p>
+  <p>Observa qué hace un banco. Recibe depósitos de personas que quieren guardar y cuidar su dinero, y con ese dinero concede créditos a quienes necesitan financiarse. El banco no es dueño de los depósitos de sus clientes; los recibe, asume una obligación de devolverlos según las condiciones pactadas y, mientras tanto, los usa para dar crédito. Más adelante veremos por qué esta distinción es decisiva en la contabilidad.</p>
+  <p>Fíjate en que la intermediación no depende de que la entidad sea grande o pequeña, ni de quién la dirija. Depende de que capte recursos del público y los coloque. Esa es la idea que te servirá para clasificar cualquier organización.</p>
+
+  <!-- 3 -->
+  <h2>3. Sistema monetario y sistema financiero</h2>
+  <p>Es común pensar que el sistema financiero y el sistema monetario son lo mismo, porque los dos tratan del dinero. Pero se ocupan de cosas diferentes. El <strong>sistema monetario</strong> organiza la moneda: cuál es la moneda oficial, cómo circula, quién la administra y con qué reglas. En el Ecuador, el artículo 94 del COMF, que está en el Título I sobre el sistema monetario, establece que todas las transacciones, operaciones monetarias, financieras y sus registros contables realizados en el país se expresan en dólares de los Estados Unidos de América.</p>
+  <p>El <strong>sistema financiero</strong>, en cambio, organiza la intermediación: quién puede captar recursos del público, quién puede colocarlos, con qué requisitos y bajo qué supervisión. Un mismo billete puede pasar por las manos de ambos sistemas, pero las preguntas que hacemos son distintas. Con el sistema monetario preguntamos cómo se emite y circula el dinero. Con el sistema financiero preguntamos quién lo recibe, quién lo presta y quién lo vigila.</p>
+  <p>Por eso el Código Orgánico Monetario y Financiero trata a cada sistema en un título distinto. Esa separación es la base de todo lo que sigue.</p>
+  <p><strong>Pausa de razonamiento.</strong> Si el sistema financiero no existiera, ¿la moneda dejaría de existir? Y si la moneda cambiara de nombre mañana, ¿seguirían existiendo los créditos? Responde con tus palabras y compara después con la explicación de la sección siguiente.</p>
+
+  <!-- 4 -->
+  <h2>4. El Código Orgánico Monetario y Financiero</h2>
+  <p>El <strong>Código Orgánico Monetario y Financiero</strong>, que llamaremos COMF, es la norma que organiza el sistema monetario y el sistema financiero del Ecuador. Nos sirve para responder tres preguntas: qué sectores forman el sistema financiero, qué organismos lo regulan y qué organismos lo controlan. Sin ese marco no podríamos decir a qué sector pertenece el BDL ni quién debe vigilarlo.</p>
+  <p>El texto consolidado del COMF que citamos se publicó en el Segundo Suplemento del Registro Oficial 332, el 12 de septiembre de 2014. Ese texto ha tenido reformas posteriores. La más reciente que revisamos es la Ley Orgánica Reformatoria del COMF, publicada en el Sexto Suplemento del Registro Oficial 142, el 13 de octubre de 2025. Fíjate en la diferencia: una ley reformatoria cambia artículos de otra norma; no es el Código completo. Cuando cites un artículo, indica si lo tomas del texto consolidado y con qué reforma. El plan de la asignatura describe el Código con un Libro I que incluye un Título Preliminar, un Título I sobre el sistema monetario y un Título II sobre el sistema financiero. Esa descripción te sirve para orientarte, pero antes de citar un artículo debes comprobar en el Registro Oficial que sea el texto vigente.</p>
+  <p>Hay algo que conviene saber desde ahora: el nombre de la junta reguladora cambió con las reformas. El texto de 2014 hablaba de la Junta de Política y Regulación Monetaria y Financiera. Las resoluciones de la propia Junta citan hoy su creación en el artículo 13 con la denominación <strong>Junta de Política y Regulación Financiera y Monetaria</strong>. Por eso, en este material, usaremos esa última denominación.</p>
+
+  <!-- 5 -->
+  <h2>5. Los sectores del sistema financiero</h2>
+  <p>La Constitución de la República, en su artículo 309, dice que el sistema financiero nacional se compone de los sectores público, privado y popular y solidario, que intermedian recursos del público, y que cada uno tendrá normas y entidades de control específicas. Ese es el punto de partida.</p>
+  <p>Lo importante es entender el criterio. Un sector no se define porque la entidad reciba dinero del público, porque casi todas lo hacen. Se define por tres cosas: su naturaleza jurídica, quién es su propietario y el marco legal que la rige.</p>
+  <p>Mira la Tabla 1 y piensa en cada fila. Cada sector responde a una lógica distinta. El público tiene propósito de política pública y propiedad del Estado. El privado tiene accionistas y se rige como banco. El popular y solidario está formado por organizaciones de socios con reglas propias de la economía popular y solidaria.</p>
+
+  <div class="tabla-wrap">
+    <p><strong>Tabla 1. Criterios para ubicar una entidad en un sector.</strong></p>
+    <table>
+      <thead>
+        <tr><th>Sector</th><th>Criterio principal</th><th>Ejemplo del curso</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Público</td><td>Entidad creada y controlada por el Estado, con propósito de política pública.</td><td>Banco Estatal Ejemplo (inventado).</td></tr>
+        <tr><td>Privado</td><td>Entidad constituida por personas privadas, generalmente como sociedad mercantil y con accionistas.</td><td>Banco Didáctico del Litoral S. A. (inventado).</td></tr>
+        <tr><td>Popular y solidario</td><td>Organización de socios de la economía popular y solidaria, con un marco legal y de control propio.</td><td>Cooperativa Ejemplo de Ahorro y Crédito (inventada).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Ahora la clave del caso. El BDL y la Cooperativa Ejemplo reciben ahorros y conceden créditos, pero el BDL pertenece al sector privado porque tiene accionistas privados y se rige como banco, mientras que la cooperativa pertenece al sector popular y solidario porque sus dueños son sus socios y su marco es el de la economía popular y solidaria. La actividad es parecida; la naturaleza es distinta.</p>
+
+  <div class="ejemplo">
+    <p><strong>Un error frecuente.</strong> «La cooperativa la controla la Superintendencia de Bancos, porque también recibe ahorros». Recibir ahorros no decide quién controla. La cooperativa pertenece al sector popular y solidario y su control corresponde a la Superintendencia de Economía Popular y Solidaria. Si la confundes, el error se propaga a todos los registros y análisis que hagas después.</p>
+  </div>
+
+  <h3>Errores frecuentes</h3>
+  <p>Si confundes los sectores, revisa tu respuesta con tres preguntas: ¿quién es el dueño?, ¿qué norma la rige?, ¿cómo se organiza su propiedad? Si una de esas respuestas te parece dudosa, no decidas todavía: busca el dato que falta.</p>
+
+  <h2>6. Organismos de regulación y de control</h2>
+  <p>Aquí aparece una distinción que vas a usar durante toda la carrera: <strong>regular</strong> no es lo mismo que <strong>controlar</strong>. Regular es fijar las reglas generales que todas las entidades deben seguir. Controlar es verificar que cada entidad cumple esas reglas y, si no las cumple, aplicar sanciones.</p>
+  <p>Con esta distinción, lee la Tabla 2. Los tres organismos que estudiaremos son la Junta de Política y Regulación Financiera y Monetaria, la Superintendencia de Bancos y la Superintendencia de Economía Popular y Solidaria.</p>
+
+  <div class="tabla-wrap">
+    <p><strong>Tabla 2. Organismos del sistema financiero y su papel.</strong></p>
+    <table>
+      <thead>
+        <tr><th>Organismo</th><th>Qué hace</th><th>A qué sector se aplica</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Junta de Política y Regulación Financiera y Monetaria</td><td>Formula las políticas crediticia y financiera y dicta las normas generales del sistema.</td><td>Al sistema en su conjunto.</td></tr>
+        <tr><td>Superintendencia de Bancos</td><td>Ejerce la vigilancia, auditoría, control y supervisión de las entidades públicas y privadas del sistema financiero.</td><td>Sectores público y privado, incluidos los bancos.</td></tr>
+        <tr><td>Superintendencia de Economía Popular y Solidaria</td><td>Ejerce el control y la supervisión del sector financiero popular y solidario, como las cooperativas de ahorro y crédito.</td><td>Sector popular y solidario.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Dos observaciones para leer bien la tabla. Primera: la Junta regula; no inspecciona bancos ni cooperativas. Segunda: las superintendencias controlan, pero cada una tiene su sector. Por eso la Superintendencia de Bancos no controla a la cooperativa, aunque las dos sean organismos del Estado.</p>
+  <p>El Banco Central del Ecuador también forma parte de este panorama, con un papel distinto. El artículo 26 del COMF lo define como persona jurídica de derecho público, parte de la Función Ejecutiva. El artículo 27 le encarga instrumentar la política monetaria que formula la Junta. El Banco Central, por tanto, no es el organismo que controla a los bancos ni a las cooperativas: esas funciones corresponden a las superintendencias que muestra la Tabla 2.</p>
+
+  <p><strong>Pausa de razonamiento.</strong> Imagina que un banco presenta un incumplimiento. ¿A qué organismo le corresponde verificarlo? Ahora haz lo mismo con la cooperativa. ¿Qué cambiaría si el incumplimiento estuviera en la cooperativa y no en el banco?</p>
+
+  <h2>7. Por qué importa para la contabilidad</h2>
+  <p>Puede parecer que esta información pertenece solo a la historia institucional y no a la contabilidad. Pero antes de registrar cualquier operación debes saber a qué entidad pertenecen los libros, qué catálogo de cuentas usa y qué normas debe cumplir. Un banco y una cooperativa pueden tener cuentas parecidas, pero no son intercambiables: el catálogo, el organismo de control y las reglas de información cambian según el sector.</p>
+  <p>Por eso esta sesión no registra asientos. Su tarea es que sepas clasificar la entidad correctamente. Desde esa clasificación empezarán a tener sentido las semanas siguientes.</p>
+
+  <h2>Cierre de la sesión</h2>
+  <p>Volvamos al BDL y a la Cooperativa Ejemplo. Ahora puedes responder la pregunta inicial con más precisión: no deben clasificarse ni controlarse igual porque su naturaleza y su propiedad son diferentes, y porque el marco legal que las rige también lo es. Recibir ahorros y prestar dinero es una actividad que comparten; pertenecer a un sector es otra cosa.</p>
+  <p>Antes de seguir, vuelve a tus respuestas de la prueba diagnóstica. ¿Qué cambió en tu primera idea sobre el banco y sobre la cooperativa? Anota en una línea qué corregirías.</p>
+
+  <h3>Tarea autónoma del plan</h3>
+  <p>Esta tarea se hace fuera de las dos horas de la sesión. Lee el Libro I del COMF en sus capítulos 1 al 5: el Título Preliminar, el Título I sobre el sistema monetario y el Título II sobre el sistema financiero. Elabora un organizador gráfico con los organismos del sistema financiero y sus funciones, y anota una lista de preguntas sobre los temas que te llamaron la atención. Entrégalo antes de la siguiente sesión. Si en la lectura encuentras un artículo que no coincide con lo que dice este material, anótalo: esa comparación también es parte del aprendizaje.</p>
+
+  <h3>Glosario breve</h3>
+  <ul>
+    <li><strong>Intermediación financiera:</strong> recibir recursos de quienes tienen excedentes y colocarlos en quienes los necesitan.</li>
+    <li><strong>Sistema monetario:</strong> las reglas sobre la moneda y su circulación.</li>
+    <li><strong>Sistema financiero:</strong> las reglas sobre quién capta y coloca recursos del público, y quién lo supervisa.</li>
+    <li><strong>Regulación:</strong> fijar reglas generales que las entidades deben cumplir.</li>
+    <li><strong>Control:</strong> verificar que una entidad cumple las reglas y, si no lo hace, sancionarla.</li>
+  </ul>
+
+  <h2>Ejercicios guiados</h2>
+  <p>Trabaja cada ejercicio por escrito. Intenta primero, y solo después abre la solución. Te tomará en total unos cincuenta minutos.</p>
+
+  <article class="ejercicio">
+    <h3>Ejercicio 1. Clasificar entidades por sector</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · trabajo individual</p>
+    <p>Aquí vas a clasificar cinco entidades según su sector, identificar el organismo que las controla y justificar cada decisión con los criterios de la sección 5. Estas son las entidades:</p>
+    <ol>
+      <li>Banco Didáctico del Litoral S. A., banco de accionistas privados que capta depósitos y concede créditos.</li>
+      <li>Cooperativa Ejemplo de Ahorro y Crédito, organización de socios que recibe ahorros y concede préstamos a sus socios.</li>
+      <li>Banco Estatal Ejemplo, banco creado por el Estado con un propósito de política pública.</li>
+      <li>Asociación de Productores Ejemplo, organización que compra y vende la producción de sus socios, sin recibir depósitos ni conceder créditos.</li>
+      <li>Comercial Ejemplo S. A., empresa que vende electrodomésticos a crédito directo a sus clientes, sin captar depósitos del público.</li>
+    </ol>
+    <div class="ayuda">
+      <p><strong>Para empezar.</strong> Por cada entidad, responde tres preguntas: ¿quién la posee?, ¿qué norma la rige?, ¿capta y coloca recursos del público? Con esas tres respuestas casi siempre tendrás la clasificación. Si una entidad no capta ni coloca, piensa en qué sistema, si alguno, le corresponde.</p>
+    </div>
+    <details>
+      <summary>Ver solución razonada</summary>
+      <p><strong>1. Banco Didáctico del Litoral S. A.</strong> Sector privado. Lo poseen accionistas privados, se rige como banco y capta y coloca recursos. Control: Superintendencia de Bancos.</p>
+      <p><strong>2. Cooperativa Ejemplo.</strong> Sector popular y solidario. Es una organización de socios que capta y coloca recursos con un marco propio. Control: Superintendencia de Economía Popular y Solidaria.</p>
+      <p><strong>3. Banco Estatal Ejemplo.</strong> Sector público. Lo decisivo son su propiedad estatal y su propósito de política pública. Su actividad financiera la controla la Superintendencia de Bancos, porque el COMF le asigna a ese organismo la vigilancia y el control de las entidades de los sectores público y privado.</p>
+      <p><strong>4. Asociación de Productores Ejemplo.</strong> No pertenece al sistema financiero por la actividad descrita, porque no capta depósitos ni concede créditos. Su encuadre corresponde a otro marco de la economía popular y solidaria, que no vamos a evaluar aquí.</p>
+      <p><strong>5. Comercial Ejemplo S. A.</strong> No pertenece al sistema financiero. Vender a crédito a sus propios clientes no equivale a captar depósitos del público. Su control corresponde a otros organismos, según su actividad.</p>
+      <div class="comprender">
+        <p><strong>Cómo entender este ejercicio.</strong> Lo importante no es memorizar la lista. Lo que debes notar es que la pregunta de si la entidad capta depósitos separa dos casos parecidos: el banco y la cooperativa sí captan; la asociación y la empresa comercial no. Si una entidad no capta ni coloca recursos del público, no hay que llevarla al sistema financiero, aunque venda o compre a crédito.</p>
+      </div>
+    </details>
+  </article>
+
+  <article class="ejercicio">
+    <h3>Ejercicio 2. Relacionar funciones y organismos</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · trabajo individual</p>
+    <p>Aquí vas a relacionar cada función con el organismo que la cumple. Las funciones son estas:</p>
+    <ol>
+      <li>Dictar las normas generales del sistema financiero.</li>
+      <li>Verificar que los bancos cumplan las normas que les aplican.</li>
+      <li>Verificar que las cooperativas de ahorro y crédito cumplan las normas que les aplican.</li>
+      <li>Instrumentar la política monetaria.</li>
+    </ol>
+    <div class="ayuda">
+      <p><strong>Para empezar.</strong> Pregúntate primero si la función es regular o controlar. Luego, si el control se refiere a bancos o a cooperativas.</p>
+    </div>
+    <details>
+      <summary>Ver solución razonada</summary>
+      <p><strong>1.</strong> Corresponde a la Junta de Política y Regulación Financiera y Monetaria, porque establece reglas generales. Es regular, no controlar.</p>
+      <p><strong>2.</strong> Corresponde a la Superintendencia de Bancos, porque el control de los bancos le corresponde a ella.</p>
+      <p><strong>3.</strong> Corresponde a la Superintendencia de Economía Popular y Solidaria, porque el sector al que pertenece la cooperativa tiene ese control.</p>
+      <p><strong>4.</strong> Corresponde al Banco Central del Ecuador, que instrumenta la política monetaria formulada por la Junta. No es un organismo de control de bancos ni de cooperativas.</p>
+      <div class="comprender">
+        <p><strong>Cómo entender este ejercicio.</strong> La clave es distinguir entre quien dicta las reglas, quien revisa a cada sector y quien cumple una función monetaria. Si confundiste el control de bancos con el de cooperativas, revisa de nuevo la Tabla 2.</p>
+      </div>
+    </details>
+  </article>
+
+  <article class="ejercicio">
+    <h3>Ejercicio 3. Evaluar una afirmación sobre el sector</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · trabajo individual</p>
+    <p>La Cooperativa Ejemplo de Ahorro y Crédito afirma: «Cumplimos el marco normativo aplicable a nuestro sector, porque tenemos nombre, actividad y socios registrados». Aquí vas a decidir si esa afirmación permite concluir que la cooperativa cumple, y qué información necesitarías para comprobarla.</p>
+    <div class="ayuda">
+      <p><strong>Para empezar.</strong> Separa lo que la cooperativa dice en tres partes: su nombre, su actividad y sus socios. Pregúntate si alguna de esas cosas prueba que cumple una norma.</p>
+    </div>
+    <details>
+      <summary>Ver solución razonada</summary>
+      <p>El nombre y la actividad permiten una clasificación inicial: la entidad parece pertenecer al sector popular y solidario. Pero no prueban que cumpla las normas. Tener socios tampoco basta, porque el número de socios es un dato parcial.</p>
+      <p>Para comprobar el cumplimiento necesitarías, al menos, los documentos de constitución, para verificar su naturaleza; sus estados financieros, para revisar su información contable; y los informes o resoluciones del organismo de control competente, para saber si ha tenido observaciones o sanciones.</p>
+      <div class="comprender">
+        <p><strong>Cómo entender este ejercicio.</strong> Una afirmación sobre cumplimiento necesita documentos que la respalden. Un dato de identidad (cómo se llama y qué hace) sirve para clasificar, pero no sirve para garantizar que la entidad cumple. Si tu respuesta fue «sí, cumple porque tiene socios», revisa la diferencia entre clasificar y verificar.</p>
+      </div>
+    </details>
+  </article>
+
+  <article class="ejercicio">
+    <h3>Ejercicio 4. Explicar la relación entre el sistema monetario y el financiero</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · trabajo individual</p>
+    <p>Escribe un párrafo de seis a diez líneas que explique por qué el Título II del COMF, sobre el sistema financiero, aparece después del Título I, sobre el sistema monetario. Tu explicación debe incluir al menos una relación entre ambos sistemas y un ejemplo tomado del BDL.</p>
+    <div class="ayuda">
+      <p><strong>Para empezar.</strong> Piensa primero en el dinero del BDL: en qué moneda se expresan sus operaciones, qué hace el banco con los depósitos y qué organiza cada sistema sobre ese dinero.</p>
+    </div>
+    <details>
+      <summary>Ver solución razonada</summary>
+      <p>Una explicación completa podría decir algo así: «El sistema monetario define la moneda y sus reglas de circulación. Sin esa base, los créditos y los depósitos no tendrían una unidad común para medirse. El sistema financiero se apoya en esa moneda y regula quién puede captar y colocar recursos. Por eso el BDL registra sus depósitos y sus créditos en dólares de los Estados Unidos: la moneda la define el sistema monetario, y la intermediación la regula el sistema financiero. El orden de los títulos refleja que primero conviene entender la moneda y después la intermediación que se realiza con ella».</p>
+      <div class="comprender">
+        <p><strong>Cómo entender este ejercicio.</strong> Tu párrafo debe mostrar una relación, no solo listar dos definiciones. Si solo escribiste que ambos «tratan del dinero», vuelve a la sección 3 y busca la diferencia entre organizar la moneda y organizar la intermediación.</p>
+      </div>
+    </details>
+  </article>
+
+  <article class="ejercicio">
+    <h3>Ejercicio 5. Identificar la información necesaria para una conclusión</h3>
+    <p class="tiempo">Tiempo orientativo: 8 minutos · trabajo individual</p>
+    <p>El Banco Estatal Ejemplo afirma: «Como somos un banco, la Superintendencia de Bancos nos controla». Otra persona responde: «Como somos del Estado, no nos controla nadie». Decide cuál de las dos conclusiones se sostiene con la información disponible y qué datos faltan para afirmar con certeza quién lo controla.</p>
+    <div class="ayuda">
+      <p><strong>Para empezar.</strong> Separa lo que sabes (que es un banco y que es estatal) de lo que todavía no sabes (si el COMF aplica al control de esa entidad y en qué términos).</p>
+    </div>
+    <details>
+      <summary>Ver solución razonada</summary>
+      <p>La primera afirmación tiene una base razonable: el COMF asigna a la Superintendencia de Bancos la vigilancia y el control de las entidades de los sectores público y privado. La segunda afirmación no se sostiene: el hecho de que el Estado sea el dueño no quita la supervisión. Lo que sí falta es confirmar, en el texto vigente, cómo se aplica el control a esa entidad concreta y si su norma de creación le asigna algún régimen especial.</p>
+      <div class="comprender">
+        <p><strong>Cómo entender este ejercicio.</strong> Una conclusión es válida solo hasta donde llegan los datos. Aquí puedes concluir que la Superintendencia de Bancos es el organismo competente para los bancos del sector público, pero no puedes afirmar cómo se aplica a este banco sin revisar su norma de creación. Escribe qué información te falta y por qué.</p>
+      </div>
+    </details>
+  </article>
+
+  <h2>Cierre integrador</h2>
+  <p>Has visto que la pregunta sobre el BDL y la cooperativa no se responde con la actividad, sino con la naturaleza, la propiedad y la norma que rige a cada entidad. Esa es la idea que te acompañará en las siguientes semanas: antes de registrar o analizar, clasifica la entidad y señala quién la controla. Como transferencia, piensa en una organización de tu entorno que reciba dinero de terceros y escribe en tres líneas a qué sector creerías que pertenece, qué norma la rige y qué información comprobarías para estar seguro.</p>
+  <p>Para revisar, vuelve a los ejercicios 1 y 2 si te confundiste con los sectores o con los organismos. Si el problema es distinguir regular de controlar, relee la sección 6.</p>
+</section>
+
+<section class="panel" id="p-eval" role="tabpanel" aria-labelledby="t-eval">
+  <h2>Evaluación de la sesión</h2>
+  <p>Este cuestionario tiene 16 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas como <span class="insignia">[Teórica]</span> piden comprender lo enseñado; las marcadas como <span class="insignia analisis">[Análisis]</span> presentan un caso breve y piden aplicar, clasificar o interpretar. Cada opción tiene su retroalimentación.</p>
+  <p><strong>Importante:</strong> el puntaje es de práctica y no es la nota oficial del parcial. Los reintentos no prueban por sí solos que comprendiste el tema; tus explicaciones, tus registros y tus tareas de aplicación también son evidencia.</p>
+
+  <div class="marcador" aria-live="polite">
+    <div class="linea">
+      <span id="contador">Respondidas: 0 de 16</span>
+      <span id="aciertos">Aciertos: 0</span>
+      <span id="calificacion">Calificación de práctica: —</span>
+    </div>
+    <div class="barra" aria-hidden="true"><div id="progreso"></div></div>
+  </div>
+
+  <div id="preguntas"></div>
+
+  <div id="resultado" class="resultado" hidden></div>
+
+  <div class="acciones">
+    <button type="button" id="btn-reintentar" class="primario" hidden>Intentar nuevamente</button>
+    <button type="button" id="btn-reiniciar">Reiniciar cuestionario</button>
+  </div>
+</section>
+
+<section class="panel" id="p-refl" role="tabpanel" aria-labelledby="t-refl">
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Sirven para pensar en lo que aprendiste desde tu vida diaria.</p>
+
+  <div class="reflexion">
+    <h3>Confiarle el dinero a otra persona</h3>
+    <p>Muchas personas guardan sus ahorros donde les parece más seguro: en casa, con un familiar o en una institución que conocen desde siempre. Confiar el dinero es una decisión que mezcla experiencia, costumbre y, a veces, desconfianza. Una institución supervisada no elimina todos los riesgos, pero sí añade reglas y controles que cualquiera puede consultar.</p>
+    <p class="pregunta-r">Pregunta para pensar: ¿qué te haría sentir más seguro al entregar tu dinero a una institución que no conoces? Anota tres razones.</p>
+  </div>
+
+  <div class="reflexion">
+    <h3>Ser responsable al registrar</h3>
+    <p>En la contabilidad, un registro mal hecho puede parecer inofensivo. Pero otras personas tomarán decisiones con base en esa información: un cliente, un socio o un supervisor. Por eso, registrar bien es también una forma de cuidar a quienes confían en la institución.</p>
+    <p class="pregunta-r">Pregunta para pensar: ¿qué consecuencias puede tener un dato mal clasificado para alguien que nunca vio tus papeles?</p>
+  </div>
+
+  <div class="reflexion">
+    <h3>Cooperar con el propio sector</h3>
+    <p>Las cooperativas nacen de personas que se organizan para resolver una necesidad común, como ahorrar juntos o acceder a un crédito. La cooperación no es solo solidaridad: exige reglas, transparencia y responsabilidad frente a los socios.</p>
+    <p class="pregunta-r">Pregunta para pensar: ¿qué cosas de tu comunidad se resuelven mejor cuando las personas se organizan juntas, y cuáles no?</p>
+  </div>
+
+  <div class="reflexion">
+    <h3>Distinguir opinión de dato</h3>
+    <p>Es común escuchar frases como «los bancos son todos iguales» o «las cooperativas no tienen control». Estas frases mezclan opiniones con datos. Un dato se puede comprobar en una norma o en un documento; una opinión expresa lo que alguien piensa sobre eso.</p>
+    <p class="pregunta-r">Pregunta para pensar: escoge una frase que hayas escuchado sobre bancos o cooperativas. ¿Qué datos necesitarías para comprobarla? ¿Dónde los buscarías?</p>
+  </div>
+</section>
+
+<section class="panel" id="p-ia" role="tabpanel" aria-labelledby="t-ia">
+  <h2>Actividad con IA</h2>
+  <p>Esta actividad es individual y formativa. Sigue la modalidad del plan para esta semana: resolver primero a mano, consultar la herramienta y auditar su respuesta. Su propósito es comparar tu propia explicación con la de una herramienta de inteligencia artificial, y aprender a verificar lo que esa herramienta afirma. No introduce contenidos nuevos que se evalúen.</p>
+
+  <h3>Paso 1. Trabajo inicial propio</h3>
+  <p>Antes de usar la herramienta, escribe en un párrafo cómo explicarías a un familiar la diferencia entre sistema monetario y sistema financiero en el Ecuador. No busques el texto de la sesión; escribe con lo que recuerdes.</p>
+
+  <h3>Paso 2. Prompt exacto</h3>
+  <p>Copia este mensaje tal como está en la herramienta:</p>
+  <p>«Explica en lenguaje sencillo la diferencia entre sistema monetario y sistema financiero en Ecuador. Indica qué organismos regulan y controlan al sector financiero y señala qué afirmaciones tuyas deberían verificarse en fuentes oficiales.»</p>
+
+  <h3>Paso 3. Contraste</h3>
+  <p>Compara la respuesta de la herramienta con tu párrafo inicial. Haz una lista de las diferencias: qué añade, qué omite y qué afirma con más seguridad de la que el texto permite.</p>
+
+  <h3>Paso 4. Verificación</h3>
+  <p>Escoge al menos una afirmación de la herramienta sobre organismos, sectores o normas. Verifícala en el texto del COMF o en la página institucional del organismo correspondiente. Anota la fecha de consulta y el resultado. Si la herramienta menciona un artículo, comprueba que el número corresponda a la versión vigente.</p>
+
+  <h3>Paso 5. Justificación</h3>
+  <p>Escribe por qué aceptas, corriges o rechazas cada parte de la respuesta. Una frase bien justificada vale más que una aceptación sin revisar.</p>
+
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>¿Distinguí lo que la herramienta afirma de lo que comprobé?</li>
+    <li>¿Verifiqué al menos una afirmación en una fuente oficial?</li>
+    <li>¿Corregí algún sector, organismo o función que estaba mal?</li>
+    <li>¿Puedo explicar con mis palabras por qué la herramienta no sustituye la verificación?</li>
+  </ul>
+</section>
+
+<section class="panel" id="p-biblio" role="tabpanel" aria-labelledby="t-biblio">
+  <h2>Bibliografía</h2>
+  <p>Estas referencias orientan el estudio de la semana. Antes de citar cualquiera en un trabajo, confirma la edición, la fecha de la versión consultada y el artículo o apartado que usas.</p>
+  <ul class="biblio">
+    <li>Asamblea Constituyente del Ecuador. (2008). <em>Constitución de la República del Ecuador</em>. Registro Oficial 449, 20 de octubre de 2008. Artículos 309 y 311 sobre el sistema financiero nacional y el sector financiero popular y solidario.</li>
+    <li>Asamblea Nacional del Ecuador. (2014). <em>Código Orgánico Monetario y Financiero</em>. Segundo Suplemento del Registro Oficial 332, 12 de septiembre de 2014. Reformado; revisar la última reforma en el Registro Oficial.</li>
+    <li>Asamblea Nacional del Ecuador. (2025). <em>Ley Orgánica Reformatoria del Código Orgánico Monetario y Financiero</em>. Sexto Suplemento del Registro Oficial 142, 13 de octubre de 2025.</li>
+    <li>Asamblea Nacional del Ecuador. (2011). <em>Ley Orgánica de Economía Popular y Solidaria</em>. Registro Oficial 444, 10 de mayo de 2011. Se estudiará con detalle en la unidad 4.</li>
+  </ul>
+  <div class="nota">
+    <p>Te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de las normas y las versiones de los textos legales se comprueban en las fuentes oficiales; Google Scholar no las reemplaza.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ============================================================
+   1. Navegación por pestañas
+   ============================================================ */
+(function () {
+  const tabs = document.querySelectorAll('[role="tab"]');
+  const panels = document.querySelectorAll('.panel');
+
+  function activar(id) {
+    tabs.forEach(t => {
+      const sel = t.dataset.tab === id;
+      t.setAttribute('aria-selected', sel ? 'true' : 'false');
+      t.tabIndex = sel ? 0 : -1;
+    });
+    panels.forEach(p => p.classList.toggle('activo', p.id === 'p-' + id));
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => activar(t.dataset.tab)));
+  window.activarPestana = activar;
+})();
+
+/* ============================================================
+   2. Datos de la evaluación (generados desde codigo/ej_semana01.json)
+   Cada opción: [texto, retroalimentación]. c = índice de la correcta.
+   ============================================================ */
+const PREGUNTAS = [
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué es la intermediación financiera?",
+    "c": 0,
+    "o": [
+      [
+        "Recibir recursos de quienes tienen excedentes y colocarlos en quienes los necesitan.",
+        "Es la definición de la sección 2: captar recursos del público y colocarlos en créditos u otras operaciones."
+      ],
+      [
+        "Emitir la moneda oficial y fijar su circulación.",
+        "Eso describe el sistema monetario, no la intermediación. Emitir y circular la moneda es una función distinta de captar y colocar recursos."
+      ],
+      [
+        "Vigilar que las entidades cumplan las normas.",
+        "Eso es control, una función de los organismos. La intermediación es la actividad de captar y colocar recursos, no la de verificar."
+      ],
+      [
+        "Repartir las utilidades entre los socios de una cooperativa.",
+        "Repartir utilidades es una decisión de cada organización. No define la intermediación, que es la conexión entre quien tiene excedentes y quien los necesita."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Cuál es la diferencia entre el sistema monetario y el sistema financiero?",
+    "c": 1,
+    "o": [
+      [
+        "El sistema monetario regula quién puede conceder créditos.",
+        "Eso corresponde al sistema financiero. El sistema monetario organiza la moneda: cuál es, cómo circula y quién la administra."
+      ],
+      [
+        "El sistema monetario organiza la moneda, y el financiero organiza quién capta y coloca recursos del público.",
+        "Con el sistema monetario preguntas cómo circula la moneda; con el financiero, quién recibe dinero del público, quién lo presta y quién lo supervisa."
+      ],
+      [
+        "Son idénticos, porque ambos tratan del dinero.",
+        "Tratar del dinero es lo que tienen en común, pero las preguntas que responden son distintas. Revisa la sección 3 para ver cuáles son."
+      ],
+      [
+        "El sistema financiero emite los billetes.",
+        "La emisión y la circulación de la moneda pertenecen al sistema monetario. Un billete puede pasar por ambos sistemas, pero eso no significa que el sistema financiero lo emita."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "Supongamos que un cliente deposita 1.000,00 dólares en el Banco Didáctico del Litoral S. A. (BDL). Desde los libros del BDL, ¿cuál es la afirmación correcta sobre esa operación?",
+    "c": 2,
+    "o": [
+      [
+        "El BDL recibe un ingreso de 1.000,00 dólares, porque recibió dinero.",
+        "Recibir dinero no basta para registrar un ingreso. El depósito crea una obligación del banco frente al cliente. Los ingresos vendrán después, por otras causas, como intereses o comisiones."
+      ],
+      [
+        "El depósito es un aporte de capital de los accionistas del BDL.",
+        "Los depósitos de clientes no son aportes de capital. El capital lo aportan los accionistas; el depósito es lo que el banco debe a quien depositó."
+      ],
+      [
+        "El depósito es una obligación del BDL frente al cliente, y el cliente tiene un derecho frente al banco.",
+        "El banco recibe el dinero y asume la obligación de devolverlo según las condiciones del producto. Desde los libros del cliente, esa misma operación es un derecho frente al banco."
+      ],
+      [
+        "El depósito es un gasto del BDL, porque el banco paga intereses.",
+        "El depósito en sí no es un gasto. Recibirlo crea una obligación; el interés que se pague será tratado más adelante, con sus propias reglas."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué sectores reconoce el Código Orgánico Monetario y Financiero (COMF) en el sistema financiero, en línea con el artículo 309 de la Constitución?",
+    "c": 3,
+    "o": [
+      [
+        "Público, privado y monetario.",
+        "El monetario es un sistema, no un sector del financiero. Los tres sectores del sistema financiero son el público, el privado y el popular y solidario."
+      ],
+      [
+        "Privado, comercial y cooperativo.",
+        "«Comercial» no es un sector del sistema financiero. El sector cooperativo forma parte del popular y solidario, que es la denominación que usa la Constitución."
+      ],
+      [
+        "Público, bancario y de cooperativas.",
+        "«Bancario» describe un tipo de entidad, no un sector. Los sectores son público, privado y popular y solidario."
+      ],
+      [
+        "Público, privado y popular y solidario.",
+        "Es lo que dice el artículo 309 de la Constitución. El criterio para ubicar una entidad es su naturaleza, su propiedad y su marco legal, no solo la actividad que realiza."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué papel cumple el Banco Central del Ecuador en el sistema financiero, según el COMF?",
+    "c": 1,
+    "o": [
+      [
+        "Atiende al público como un banco comercial y compite con los bancos privados.",
+        "Esa no es su función. El artículo 26 del COMF lo define como persona jurídica de derecho público, parte de la Función Ejecutiva, y el artículo 27 le encarga instrumentar la política monetaria."
+      ],
+      [
+        "Instrumenta la política monetaria que formula la Junta de Política y Regulación Financiera y Monetaria.",
+        "Su función principal es instrumentar la política monetaria formulada por la Junta (artículo 27 del COMF). Eso lo distingue de los bancos y de los organismos de control."
+      ],
+      [
+        "Controla a las cooperativas de ahorro y crédito.",
+        "El control de las cooperativas corresponde a la Superintendencia de Economía Popular y Solidaria, no al Banco Central. Confundir estas funciones es un error frecuente."
+      ],
+      [
+        "Dicta las reglas de los sectores privado y popular, y es dueño de los bancos.",
+        "Dictar reglas generales corresponde a la Junta de Política y Regulación Financiera y Monetaria. Mezclar regulación con propiedad es un error: quién es dueño de un banco depende de su constitución, no de la regulación."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "Una junta reguladora fija una norma general sobre cómo deben reportar los bancos. Un banco no la cumple, y la Superintendencia de Bancos lo sanciona. ¿Qué afirmación describe correctamente a cada organismo?",
+    "c": 2,
+    "o": [
+      [
+        "La Superintendencia de Bancos regula, y la junta controla.",
+        "Están al revés. La junta fija la norma general; la Superintendencia verifica que el banco la cumpla y aplica sanciones cuando no lo hace."
+      ],
+      [
+        "La Superintendencia de Bancos hace ambas cosas, porque sanciona.",
+        "Sancionar es parte del control, pero la norma general la fija la junta. Confundir regular con controlar es el error que queremos evitar."
+      ],
+      [
+        "La junta regula al sistema en general, y la Superintendencia de Bancos controla al banco.",
+        "La junta fija reglas generales para el sistema; la Superintendencia verifica que el banco las cumpla y aplica sanciones cuando no lo hace."
+      ],
+      [
+        "La Superintendencia de Economía Popular y Solidaria controla al banco, porque es un organismo estatal.",
+        "Ser organismo estatal no basta. Cada superintendencia tiene su sector: el control de los bancos corresponde a la Superintendencia de Bancos."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué distingue la regulación del control en el sistema financiero?",
+    "c": 2,
+    "o": [
+      [
+        "Son sinónimos, porque ambas palabras se usan para supervisar.",
+        "No son sinónimos. Regular fija reglas generales; controlar verifica que cada entidad las cumpla y sanciona si no lo hace."
+      ],
+      [
+        "Controlar significa dictar normas generales para todo el sistema.",
+        "Eso es regular. Controlar es verificar, en cada entidad de su sector, que se cumplan las reglas."
+      ],
+      [
+        "Regular fija reglas generales, y controlar verifica que la entidad las cumpla.",
+        "La distinción te servirá durante toda la carrera: la junta regula, y las superintendencias controlan en su sector."
+      ],
+      [
+        "Solo los bancos pueden ser regulados, y las cooperativas solo se controlan.",
+        "Tanto los bancos como las cooperativas se rigen por un marco de regulación y control. El error está en suponer que la regulación es exclusiva de un sector."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "La Cooperativa Ejemplo de Ahorro y Crédito afirma: «Como atendemos a personas de la comunidad y tenemos socios, somos del sector público». ¿Qué conclusión se sostiene?",
+    "c": 3,
+    "o": [
+      [
+        "Tiene razón, porque sirve a la comunidad, y eso define el sector público.",
+        "Servir a la comunidad es un propósito social, pero no define el sector público. Este sector se refiere a entidades creadas y controladas por el Estado."
+      ],
+      [
+        "Tiene razón, porque no tiene accionistas, así que no puede ser privada.",
+        "Que no tenga accionistas la aleja del sector privado, pero no la lleva al sector público. Su propiedad corresponde a sus socios, que es un rasgo del sector popular y solidario."
+      ],
+      [
+        "No puede clasificarse, porque tiene socios y realiza actividad financiera.",
+        "Sí puede clasificarse con los criterios de la sección 5: naturaleza, propiedad y marco legal. Tener socios y realizar actividad financiera es lo que ayuda a ubicarla."
+      ],
+      [
+        "La afirmación no se sostiene: sus socios y su marco legal la ubican en el sector popular y solidario.",
+        "El argumento se apoya en el servicio a la comunidad, pero el criterio es la naturaleza de la entidad, su propiedad por socios y su marco de economía popular y solidaria."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué hace que una entidad pertenezca a un sector del sistema financiero?",
+    "c": 3,
+    "o": [
+      [
+        "El monto de dinero que maneja cada año.",
+        "El monto no define el sector. Una entidad se ubica por su naturaleza jurídica, su propiedad y el marco que la rige, no solo por su tamaño."
+      ],
+      [
+        "La actividad que realiza, porque bancos y cooperativas hacen lo mismo.",
+        "Bancos y cooperativas comparten actividades, por eso la actividad no basta para clasificarlas. Lo que separa los sectores es la naturaleza y la propiedad."
+      ],
+      [
+        "Recibir o entregar dinero, porque eso lo hacen todas las entidades.",
+        "Recibir o entregar dinero es común a muchas organizaciones que no pertenecen al sistema financiero. No basta para definir el sector."
+      ],
+      [
+        "Su naturaleza, su propiedad y el marco legal que la rige.",
+        "Estos tres criterios permiten ubicar una entidad en el sector público, privado o popular y solidario, y luego identificar su organismo de control."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "Un compañero escribe: «Si el Banco Didáctico del Litoral quebrara, la moneda dejaría de existir, porque el banco guarda el dinero de todos». ¿Qué observación es la correcta?",
+    "c": 0,
+    "o": [
+      [
+        "La afirmación confunde los dos sistemas: la moneda la organiza el sistema monetario, y el fallo de una entidad no la elimina.",
+        "Un banco recibe y coloca recursos dentro del sistema financiero; la moneda la organiza el sistema monetario. El fallo de una entidad afecta a sus clientes y a la intermediación, pero no a la existencia de la moneda."
+      ],
+      [
+        "La afirmación es correcta, porque el banco es el único lugar donde existe el dinero.",
+        "El dinero no existe solo en un banco: circula por el sistema monetario y se mueve entre personas, empresas y entidades."
+      ],
+      [
+        "La afirmación es correcta, porque los depósitos son aportes de capital del banco.",
+        "Los depósitos de clientes no son aportes de capital del banco; son recursos que el banco debe a quien los depositó."
+      ],
+      [
+        "La afirmación es incorrecta, porque el sistema financiero no existe en el Ecuador.",
+        "El sistema financiero sí existe y lo organiza el COMF. El problema de la afirmación es otro: confunde los dos sistemas."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Por qué la Superintendencia de Bancos no controla a la Cooperativa Ejemplo de Ahorro y Crédito?",
+    "c": 1,
+    "o": [
+      [
+        "Porque la cooperativa es más pequeña que cualquier banco.",
+        "El tamaño no define el organismo de control. Las superintendencias se dividen por sector."
+      ],
+      [
+        "Porque cada superintendencia tiene asignado un sector, y la cooperativa pertenece al sector popular y solidario.",
+        "La Superintendencia de Bancos vigila y controla los sectores público y privado; la de Economía Popular y Solidaria controla el sector popular y solidario."
+      ],
+      [
+        "Porque la Superintendencia de Bancos no tiene facultades para controlar a ninguna entidad.",
+        "Sí tiene facultades, pero para los sectores público y privado. Decir que no tiene ninguna es una mala lectura de la Tabla 2."
+      ],
+      [
+        "Porque la junta regula a las cooperativas, y por eso nadie las controla.",
+        "La junta regula, y el control corresponde a las superintendencias. Que la junta regule no significa que nadie controle."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "Un estudiante escribe sobre el Banco Didáctico del Litoral S. A.: «Como el BDL capta depósitos y concede créditos, pertenece al sector popular y solidario». ¿Qué afirmación es correcta?",
+    "c": 2,
+    "o": [
+      [
+        "El BDL pertenece al sector popular y solidario, porque capta depósitos y concede créditos.",
+        "Captar depósitos y conceder créditos lo comparte con las cooperativas, pero esa actividad no basta para cambiar el sector."
+      ],
+      [
+        "El BDL pertenece al sector popular y solidario, porque la actividad determina el sector.",
+        "La actividad no determina el sector. Por eso el BDL y la cooperativa pueden hacer lo mismo y pertenecer a sectores distintos."
+      ],
+      [
+        "El BDL pertenece al sector privado, porque tiene accionistas privados y se rige como banco.",
+        "El criterio es la naturaleza, la propiedad y el marco legal. El BDL es una sociedad anónima de accionistas privados que se rige como banco, lo que lo ubica en el sector privado."
+      ],
+      [
+        "El BDL no puede clasificarse, porque no aparece en la Tabla 1.",
+        "La tabla es una orientación. Con los criterios de la sección 5 sí podemos clasificar al BDL: su propiedad privada lo ubica en el sector privado."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué significa captar recursos del público?",
+    "c": 0,
+    "o": [
+      [
+        "Recibir dinero de personas que lo depositan en la entidad, y asumir una obligación de devolverlo según las condiciones pactadas.",
+        "Captar es recibir recursos del público, y la entidad asume frente a quien deposita una obligación según el producto. Esa obligación es lo que distingue captar de un simple movimiento de dinero."
+      ],
+      [
+        "Guardar los recursos en una caja fuerte sin usarlos.",
+        "Guardar el dinero sin usarlo no es colocar. Colocar es entregar recursos a terceros, por ejemplo mediante créditos o inversiones; captar, en cambio, es recibirlos del público."
+      ],
+      [
+        "Cobrar intereses a los clientes por sus créditos.",
+        "Cobrar intereses es una operación de colocación, no de captación. Captar es recibir recursos del público."
+      ],
+      [
+        "Captar y colocar son sinónimos, porque ambas operaciones mueven dinero.",
+        "Mover dinero no las hace iguales. Captar es recibir del público; colocar es entregar a terceros. Son operaciones de sentido opuesto dentro de la intermediación."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "Supongamos que el Banco Estatal Ejemplo afirma: «Como somos del Estado, no nos controla nadie». ¿Qué conclusión se sostiene con la información disponible?",
+    "c": 0,
+    "o": [
+      [
+        "La afirmación no se sostiene, aunque para precisar cómo se aplica el control falta revisar la norma de creación de la entidad.",
+        "Ser estatal no elimina la supervisión. Para afirmar cómo se aplica a esa entidad concreta hay que revisar su norma de creación y el texto vigente."
+      ],
+      [
+        "La afirmación es correcta, porque ser del Estado excluye la supervisión.",
+        "Ser del Estado no quita la supervisión. Que una entidad sea pública cambia su sector y su propiedad, pero no la exime del control."
+      ],
+      [
+        "La entidad pertenece al sector privado, porque es un banco.",
+        "Ser banco no la ubica en el sector privado; ser estatal la ubica en el sector público. Esta es la confusión que queremos evitar."
+      ],
+      [
+        "No se puede concluir nada sobre el control, porque no sabemos nada de la entidad.",
+        "Sí sabemos bastante: es un banco, es estatal, y el COMF asigna a la Superintendencia de Bancos el control de los sectores público y privado. Falta precisar detalles, no descartar toda conclusión."
+      ]
+    ]
+  },
+  {
+    "tipo": "Teórica",
+    "t": "¿Qué significa que el Banco Didáctico del Litoral S. A. sea una sociedad anónima de accionistas privados?",
+    "c": 1,
+    "o": [
+      [
+        "Que sus dueños son sus clientes, porque los clientes son socios.",
+        "En una sociedad anónima los dueños son accionistas, no los clientes por el hecho de depositar. Confundir clientes con accionistas es un error frecuente."
+      ],
+      [
+        "Que su propiedad está en manos de accionistas privados, y por eso se ubica en el sector privado.",
+        "La propiedad privada, junto con su marco de banco, es lo que sostiene la ubicación del BDL en el sector privado."
+      ],
+      [
+        "Que pertenece al Estado, porque está constituida conforme a la ley.",
+        "Estar constituida conforme a la ley no la convierte en estatal. Lo que define la propiedad es quién tiene las acciones."
+      ],
+      [
+        "Que no puede captar depósitos del público.",
+        "Una sociedad anónima de accionistas privados puede ser un banco que capta depósitos. Su forma jurídica no le impide esa actividad."
+      ]
+    ]
+  },
+  {
+    "tipo": "Análisis",
+    "t": "La Asociación de Productores Ejemplo compra la cosecha de sus socios y la vende. No recibe depósitos del público ni concede créditos. ¿Qué conclusión se sostiene?",
+    "c": 3,
+    "o": [
+      [
+        "Pertenece al sistema financiero, porque es una organización de socios.",
+        "Ser una organización de socios no basta. Pertenecer al sistema financiero depende de captar y colocar recursos del público; ser socios describe la forma de organización."
+      ],
+      [
+        "Debe controlarla la Superintendencia de Bancos, porque mueve dinero de sus socios.",
+        "Mover dinero no es captar ni colocar recursos del público. Antes de decidir quién la controla, hay que confirmar si pertenece al sistema financiero."
+      ],
+      [
+        "Pertenece al sector público, porque vende la producción.",
+        "Vender no define el sector público, que se refiere a entidades creadas y controladas por el Estado. Esta asociación se describe como organización de socios."
+      ],
+      [
+        "Con esa información no puede afirmarse que pertenezca al sistema financiero, porque no capta ni coloca recursos del público.",
+        "Esa es la razón principal para no clasificarla como intermediaria financiera. Aun así, debes revisar su marco para saber qué norma le corresponde."
+      ]
+    ]
+  }
+];
+
+/* ============================================================
+   3. Motor de la evaluación
+   ============================================================ */
+(function () {
+  const N = PREGUNTAS.length;
+  let respuestas = Array(N).fill(null);
+  const cont = document.getElementById('preguntas');
+  const elContador = document.getElementById('contador');
+  const elAciertos = document.getElementById('aciertos');
+  const elCalif = document.getElementById('calificacion');
+  const elProgreso = document.getElementById('progreso');
+  const elResultado = document.getElementById('resultado');
+  const btnReintentar = document.getElementById('btn-reintentar');
+  const btnReiniciar = document.getElementById('btn-reiniciar');
+
+  /* 3.1 Construcción de las preguntas */
+  function construir() {
+    cont.innerHTML = '';
+    PREGUNTAS.forEach((q, i) => {
+      const art = document.createElement('article');
+      art.className = 'pregunta';
+      art.setAttribute('aria-labelledby', 'q' + i);
+
+      const enun = document.createElement('p');
+      const insig = document.createElement('span');
+      insig.className = 'insignia' + (q.tipo === 'Análisis' ? ' analisis' : '');
+      insig.textContent = '[' + q.tipo + ']';
+      enun.appendChild(insig);
+      enun.appendChild(document.createTextNode(' '));
+      const num = document.createElement('strong');
+      num.id = 'q' + i;
+      num.textContent = (i + 1) + '. ';
+      enun.appendChild(num);
+      enun.appendChild(document.createTextNode(q.t));
+      art.appendChild(enun);
+
+      const grupo = document.createElement('div');
+      grupo.className = 'opciones';
+      grupo.setAttribute('role', 'group');
+      grupo.setAttribute('aria-labelledby', 'q' + i);
+
+      q.o.forEach((op, j) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.dataset.q = i;
+        b.dataset.o = j;
+        b.setAttribute('aria-pressed', 'false');
+        b.textContent = String.fromCharCode(97 + j) + ') ' + op[0];
+        b.addEventListener('click', () => elegir(i, j));
+        grupo.appendChild(b);
+      });
+      art.appendChild(grupo);
+
+      const fb = document.createElement('div');
+      fb.className = 'fb';
+      fb.id = 'fb' + i;
+      fb.setAttribute('aria-live', 'polite');
+      art.appendChild(fb);
+
+      cont.appendChild(art);
+    });
+  }
+
+  /* 3.2 Selección de una opción: se puede cambiar mientras la evaluación no esté completa */
+  function elegir(i, j) {
+    if (completo()) return;
+    respuestas[i] = j;
+    const q = PREGUNTAS[i];
+    const botones = cont.querySelectorAll('button[data-q="' + i + '"]');
+    botones.forEach((b, k) => b.setAttribute('aria-pressed', k === j ? 'true' : 'false'));
+
+    const fb = document.getElementById('fb' + i);
+    const correcta = j === q.c;
+    const texto = q.o[j][1].replace(/^Incorrecto\.\s*/, '');
+    fb.className = 'fb ' + (correcta ? 'ok' : 'mal');
+    fb.textContent = (correcta ? 'CORRECTO. ' : 'Incorrecto. ') + texto;
+
+    actualizar();
+    if (completo()) mostrarResultado();
+  }
+
+  function completo() {
+    return respuestas.every(r => r !== null);
+  }
+
+  function aciertos() {
+    return respuestas.reduce((s, r, i) => s + (r === PREGUNTAS[i].c ? 1 : 0), 0);
+  }
+
+  /* 3.3 Marcador */
+  function actualizar() {
+    const resp = respuestas.filter(r => r !== null).length;
+    const ac = aciertos();
+    elContador.textContent = 'Respondidas: ' + resp + ' de ' + N;
+    elAciertos.textContent = 'Aciertos: ' + ac;
+    const nota = (ac / N) * 10;
+    elCalif.textContent = 'Calificación de práctica: ' + (resp === N ? nota.toFixed(1).replace('.', ',') + ' / 10' : '—');
+    elProgreso.style.width = (resp / N * 100) + '%';
+  }
+
+  /* 3.4 Resultado final */
+  function mostrarResultado() {
+    const ac = aciertos();
+    const porcentaje = Math.round(ac / N * 100);
+    const nota = (ac / N * 10).toFixed(1).replace('.', ',');
+    let msg = '<h3>Resultado de práctica</h3>';
+    msg += '<p>Respondiste las ' + N + ' preguntas. Aciertos: <strong>' + ac + ' de ' + N + '</strong> (' + porcentaje + ' %). Calificación de práctica: <strong>' + nota + ' / 10</strong>.</p>';
+    if (ac === N) {
+      msg += '<p>No tuviste errores en esta evaluación. Recuerda que este puntaje es de práctica y no es la nota oficial del parcial.</p>';
+      btnReintentar.hidden = true;
+    } else {
+      msg += '<p>Revisa las preguntas con retroalimentación incorrecta. Puedes volver a la sección correspondiente de la Sesión 01 y reintentar cuando lo consideres oportuno.</p>';
+      btnReintentar.hidden = false;
+    }
+    elResultado.innerHTML = msg;
+    elResultado.hidden = false;
+    elResultado.setAttribute('tabindex', '-1');
+    elResultado.focus();
+  }
+
+  /* 3.5 Reinicio y reintento: el reintento conserva el mismo orden de preguntas */
+  function reiniciar() {
+    respuestas = Array(N).fill(null);
+    construir();
+    elResultado.hidden = true;
+    elResultado.innerHTML = '';
+    btnReintentar.hidden = true;
+    actualizar();
+  }
+
+  btnReintentar.addEventListener('click', reiniciar);
+  btnReiniciar.addEventListener('click', reiniciar);
+
+  construir();
+  actualizar();
+})();
+</script>
+
+</body>
+</html>

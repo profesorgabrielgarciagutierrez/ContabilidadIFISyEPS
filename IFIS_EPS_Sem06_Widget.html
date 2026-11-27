@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contabilidad IFIS y EPS · Semana 06</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Estilos base ---------- */
+:root {
+  --azul: #003366;
+  --celeste: #87CEEB;
+  --ejemplo: #E8F4FD;
+  --texto: #1d1d1d;
+  --fondo: #ffffff;
+  --gris: #555555;
+  --ok: #1d6b34;
+  --mal: #9a1c1c;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body {
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.05rem; line-height: 1.6; color: var(--texto); background: var(--fondo);
+}
+h1, h2, h3, h4 { font-family: Lora, Georgia, serif; color: var(--azul); line-height: 1.25; }
+h2 { font-size: 1.5rem; margin-top: 1.8rem; }
+h3 { font-size: 1.2rem; margin-top: 1.4rem; }
+p { margin: 0.8rem 0; max-width: 72ch; }
+
+/* ---------- Encabezado y menú ---------- */
+header.cabecera { background: var(--azul); color: #fff; padding: 1rem 1.1rem; }
+header.cabecera h1 { color: #fff; font-size: 1.35rem; margin: 0; }
+header.cabecera p { margin: 0.2rem 0 0; font-size: 0.95rem; max-width: none; }
+nav.menu { background: var(--celeste); overflow-x: auto; white-space: nowrap; }
+nav.menu ul { list-style: none; margin: 0; padding: 0.3rem 0.5rem; display: flex; gap: 0.25rem; }
+nav.menu button {
+  font: inherit; color: #000; background: transparent; border: 2px solid transparent;
+  border-radius: 6px; padding: 0.45rem 0.8rem; cursor: pointer;
+}
+nav.menu button:hover { background: rgba(255,255,255,0.45); }
+nav.menu button[aria-selected="true"] { background: #fff; color: var(--azul); font-weight: 700; }
+nav.menu button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+main { padding: 0.6rem 1rem 3rem; max-width: 860px; margin: 0 auto; }
+section.panel[hidden] { display: none; }
+
+/* ---------- Bloques ---------- */
+.nota-lateral { border-left: 5px solid var(--azul); background: #f4f8fb; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.nota-lateral h3 { margin-top: 0; }
+.concepto { border-left: 4px solid var(--azul); padding: 0.1rem 0 0.1rem 1rem; margin: 1.1rem 0; }
+.ejemplo { background: var(--ejemplo); padding: 0.8rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.ejemplo strong { color: var(--azul); }
+.tabla-wrap { overflow-x: auto; margin: 1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.97rem; min-width: 420px; }
+caption { text-align: left; font-weight: 700; color: var(--azul); padding-bottom: 0.4rem; font-family: Lora, Georgia, serif; }
+th, td { border: 1px solid #c9d6e2; padding: 0.4rem 0.55rem; vertical-align: top; text-align: left; }
+th { background: #eaf2f9; }
+.calculo { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.9rem 1rem; margin: 1.1rem 0; }
+.calculo h4 { margin: 0 0 0.4rem; }
+.calculo ol { padding-left: 1.2rem; }
+.calculo li { margin: 0.3rem 0; }
+.asiento { overflow-x: auto; margin: 1rem 0; }
+.asiento table { min-width: 560px; }
+.formula { font-weight: 600; background: #f3f6f9; padding: 0.15rem 0.4rem; border-radius: 4px; white-space: nowrap; }
+.pendiente { border-left: 4px solid #8a6d00; background: #fff8e1; padding: 0.6rem 0.9rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.pendiente strong { color: #5c4700; }
+
+/* ---------- Ejercicios ---------- */
+.ejercicio { border-top: 2px solid #d7e3ee; margin-top: 1.6rem; padding-top: 0.8rem; }
+.ejercicio .tiempo { color: var(--gris); font-size: 0.95rem; }
+details { margin: 0.6rem 0; border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.4rem 0.8rem; background: #fbfcfd; }
+details summary { cursor: pointer; font-weight: 700; color: var(--azul); padding: 0.3rem 0; }
+details summary:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+details[open] summary { margin-bottom: 0.4rem; }
+details > *:last-child { margin-bottom: 0.4rem; }
+.comprobacion { font-style: italic; color: var(--gris); }
+
+/* ---------- Evaluación ---------- */
+.estado-eval {
+  position: sticky; top: 0; background: #fff; border: 1px solid #c9d6e2; border-radius: 6px;
+  padding: 0.6rem 0.8rem; margin: 0.8rem 0; z-index: 2;
+}
+.progreso { height: 10px; background: #e3ebf3; border-radius: 6px; overflow: hidden; margin-top: 0.4rem; }
+.progreso div { height: 100%; width: 0; background: var(--azul); transition: width 0.3s; }
+fieldset.pregunta { border: 1px solid #c9d6e2; border-radius: 6px; padding: 0.8rem 1rem; margin: 1rem 0; min-width: 0; }
+fieldset.pregunta legend { font-weight: 700; color: var(--azul); padding: 0 0.3rem; font-family: Lora, Georgia, serif; }
+.badge { display: inline-block; font-family: "Source Sans 3", system-ui, sans-serif; font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--azul); border-radius: 4px; padding: 0.05rem 0.4rem; margin-right: 0.3rem; }
+.badge.analisis { background: #3d5a80; }
+.opcion { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.45rem 0; }
+.opcion input { margin-top: 0.35rem; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+.opcion label { cursor: pointer; }
+.fb { margin-top: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 6px; font-size: 0.97rem; display: none; }
+.fb.visible { display: block; }
+.fb.ok { background: #e7f5ec; border-left: 4px solid var(--ok); color: #123d21; }
+.fb.mal { background: #fbeaea; border-left: 4px solid var(--mal); color: #4a1010; }
+.fb .ruta { margin-top: 0.35rem; font-size: 0.92rem; color: var(--gris); }
+.resultado { border: 2px solid var(--azul); border-radius: 6px; padding: 0.9rem 1rem; margin: 1.2rem 0; display: none; }
+.resultado.visible { display: block; }
+button.boton {
+  font: inherit; font-weight: 700; color: #fff; background: var(--azul); border: none; border-radius: 6px;
+  padding: 0.55rem 1rem; margin: 0.4rem 0.4rem 0.4rem 0; cursor: pointer;
+}
+button.boton.secundario { background: #fff; color: var(--azul); border: 2px solid var(--azul); }
+button.boton:focus-visible, input[type="radio"]:focus-visible { outline: 3px solid #f0a500; outline-offset: 2px; }
+
+/* ---------- Teléfono ---------- */
+@media (max-width: 420px) {
+  body { font-size: 1rem; }
+  nav.menu button { padding: 0.4rem 0.6rem; font-size: 0.95rem; }
+  main { padding: 0.5rem 0.8rem 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <h1>Contabilidad IFIS y EPS · Semana 06</h1>
+  <p>Unidad 2 · Cuentas corrientes: abrir, registrar y pagar, y lo que todavía no podemos registrar</p>
+</header>
+
+<nav class="menu" aria-label="Secciones de la semana">
+  <ul role="tablist">
+    <li><button role="tab" data-tab="repaso" aria-selected="false" aria-controls="p-repaso">Repaso</button></li>
+    <li><button role="tab" data-tab="sesion" aria-selected="true" aria-controls="p-sesion">Sesión 01</button></li>
+    <li><button role="tab" data-tab="evaluacion" aria-selected="false" aria-controls="p-evaluacion">Evaluación</button></li>
+    <li><button role="tab" data-tab="reflexion" aria-selected="false" aria-controls="p-reflexion">Reflexión</button></li>
+    <li><button role="tab" data-tab="ia" aria-selected="false" aria-controls="p-ia">Actividad con IA</button></li>
+    <li><button role="tab" data-tab="bibliografia" aria-selected="false" aria-controls="p-bibliografia">Bibliografía</button></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ============ REPASO ============ -->
+<section class="panel" id="p-repaso" role="tabpanel" hidden>
+  <h2>Repaso: el dinero del cliente es una obligación del banco</h2>
+  <p>Antes de registrar cualquier movimiento de una cuenta, necesitas una idea de la semana 04 y de la semana 05. Cuando un cliente deposita dinero en el banco, el banco recibe efectivo y asume una obligación frente a ese cliente, porque debe devolverle ese dinero según las condiciones del producto. En los libros del banco, esa obligación se muestra en el grupo de las obligaciones con el público. En los libros del cliente, el mismo depósito es un derecho frente al banco.</p>
+  <p>En la semana 05 viste el cheque. Un cheque es una orden para que el banco pague con cargo al depósito del cliente. Pagarlo no produce un ingreso para el banco: reduce la obligación que ya tenía con el cliente. Esa idea es la que hoy aplicaremos a los movimientos de la cuenta corriente.</p>
+  <p>Recuerda también la diferencia entre el efectivo que entra a la caja y la cuenta contable que explica de quién es ese dinero. Cuando el banco recibe 500,00 dólares en efectivo de un cliente, la caja aumenta, y la obligación con ese cliente también aumenta en la misma cantidad. Esa doble anotación es la que vamos a practicar.</p>
+</section>
+
+<!-- ============ SESIÓN 01 ============ -->
+<section class="panel" id="p-sesion" role="tabpanel">
+
+  <h2>Sesión 01 · Cuentas corrientes: abrir, registrar y pagar</h2>
+  <p class="comprobacion">Unidad 2 · Operaciones pasivas. Duración orientativa: 120 minutos de trabajo acompañado, con cinco ejercicios y una evaluación de 15 preguntas.</p>
+
+  <div class="nota-lateral" role="note">
+    <h3>Antes de empezar</h3>
+    <p>Ana Pérez es clienta del Banco Didáctico del Litoral S. A. (BDL), una entidad privada ficticia controlada por la Superintendencia de Bancos. Ya conoces a Ana: en la semana 05 gira un cheque de 300,00 dólares a su proveedor, y su saldo baja de 1.000,00 a 700,00 dólares. Esta semana aparece Carmen Salas, una clienta nueva, también ficticia, que abre una cuenta corriente en el mismo banco con 500,00 dólares en efectivo.</p>
+    <p>La pregunta de esta sesión es sencilla de formular y difícil de contestar del todo: cuando el banco recibe dinero para una cuenta corriente, o cuando paga un cheque o vende un cheque de gerencia, ¿qué debe anotar en sus libros, y qué anotaciones todavía no podemos hacer porque dependen de normas que aún no hemos verificado?</p>
+    <p>Al terminar podrás registrar en los libros del banco la apertura de una cuenta y un depósito, el pago de un cheque y la emisión de un cheque de gerencia, con su asiento y su explicación. También podrás decidir cuándo una pregunta no tiene respuesta con lo que tenemos y explicar qué información falta. Usaremos los nombres de las cuentas que ya conoces del catálogo: 1101 Caja, 1103 Bancos y otras instituciones financieras, y el grupo 21 Obligaciones con el público.</p>
+    <p>Antes de leer la explicación, escribe tu respuesta a esta pregunta: si Carmen entrega 500,00 dólares en efectivo para abrir su cuenta, ¿qué aumenta en el banco y qué aumenta en la obligación del banco con Carmen? Guarda tu respuesta y compárala al final de la sección 1.</p>
+  </div>
+
+  <h3>1. Abrir una cuenta: el efectivo entra y la obligación nace</h3>
+  <p>Piensa en tu propia cuenta del banco. Cuando depositas dinero, el banco lo recibe y tú puedes usarlo después. El banco no es dueño de ese dinero: lo guarda para devolvértelo. Por eso, al abrir una cuenta corriente, el banco registra dos cosas a la vez: entra efectivo a su caja, y aparece una deuda con el cliente por ese mismo monto.</p>
+  <div class="concepto">
+    <p>Una <strong>cuenta corriente</strong> es una cuenta de depósito a la vista de la que el cliente es titular y desde la que puede ordenar pagos con cheques. Lo importante para el registro es esto: el saldo de la cuenta es lo que el banco debe al cliente, y se registra en el grupo 21, Obligaciones con el público. La cuenta del depósito a la vista es la 2101, dentro de ese grupo, según el plan de cuentas de la Superintendencia de Bancos (versión de 2021; su vigencia a la fecha de uso debe confirmarse).</p>
+  </div>
+
+  <div class="ejemplo">
+    <p><strong>Ejemplo razonado: la apertura de Carmen.</strong> Carmen abre su cuenta con 500,00 dólares en efectivo. Desde los libros del BDL, la caja aumenta en 500,00, porque entró dinero. La obligación con Carmen también aumenta en 500,00, porque el banco debe devolverle ese dinero cuando lo pida, según las condiciones de la cuenta. Las dos partes del registro suben el mismo monto, y eso permite comprobar que la anotación está completa.</p>
+    <p>Fíjate en lo que no pasa: el banco no ganó 500,00 dólares. Recibir dinero no es un ingreso. Lo que el banco obtiene del cliente son comisiones y otros cobros que se registran por separado, y esos todavía no los estudiamos aquí.</p>
+  </div>
+
+  <p class="comprobacion">Pausa de razonamiento: si Carmen deposita después otros 200,00 dólares en efectivo, ¿qué cuentas se mueven, y en qué cantidad? Escribe el cambio en la caja y el cambio en la obligación antes de seguir.</p>
+  <p>La respuesta correcta es que la caja sube 200,00 y la obligación con Carmen sube 200,00. Si tu respuesta dice que el banco tiene un ingreso de 200,00, revisa la diferencia entre recibir y ganar: el depósito cambia lo que el banco debe, no su resultado.</p>
+
+  <div class="asiento">
+    <table>
+      <caption>Tabla 1 · Asiento de la apertura de Carmen Salas (libros del BDL)</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Fecha de apertura (supuesto)</td><td>1101</td><td>Caja. Entra el efectivo que Carmen entrega.</td><td>500,00</td><td></td></tr>
+        <tr><td></td><td>2101 Depósitos a la vista</td><td>Obligaciones con el público. El banco debe a Carmen el saldo de su cuenta.</td><td></td><td>500,00</td></tr>
+        <tr><td></td><td></td><td><strong>Totales</strong></td><td><strong>500,00</strong></td><td><strong>500,00</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Este asiento usa el cuadre de débito y crédito para mostrar que la entrada y la obligación coinciden. Pero recuerda lo que vimos en la semana 03: que un asiento cuadre no demuestra por sí solo que el registro sea correcto. Aquí la comprobación es conceptual: el efectivo entra y la deuda con Carmen existe. La subcuenta exacta del depósito queda pendiente de verificación, y eso lo indicamos en la tabla.</p>
+
+  <div class="pendiente">
+    <p><strong>Qué queda pendiente en la apertura.</strong> Las condiciones para abrir la cuenta, los documentos que debe presentar el cliente y el contrato que regula la cuenta corriente dependen de normas de la Junta y de los contratos con el cliente. El COMF que usamos regula el cheque, pero no detalla la apertura. Por eso no afirmamos requisitos de apertura en esta sesión.</p>
+  </div>
+
+  <h3>2. Depósitos posteriores: la misma lógica, otra vez</h3>
+  <p>Cada depósito posterior repite el patrón de la apertura. La caja sube por el monto recibido, y la obligación con el cliente sube por ese mismo monto. Lo que cambia es el saldo acumulado, no la regla. Por eso el saldo de la cuenta de un cliente es simplemente la obligación del banco con ese cliente en un momento dado.</p>
+  <p>Aquí aparece un error frecuente: pensar que el saldo de una cuenta es dinero del banco. El saldo es dinero del cliente que el banco custodia y debe devolver. Si el banco usara ese dinero para prestar a otro cliente, el banco tendría un activo, pero seguiría debiendo el mismo monto al cliente original. Esa es una operación de intermediación que estudiaremos en la unidad 3, y que hoy solo mencionamos para no confundir el saldo con un patrimonio.</p>
+
+  <h3>3. Pagar un cheque: la obligación baja, no sube un ingreso</h3>
+  <p>Volvamos a Ana. Su saldo era de 1.000,00 dólares y el cheque de 300,00 dólares se paga con cargo a su cuenta. Desde los libros de Ana, su derecho frente al banco baja a 700,00 dólares, porque el banco le pagó parte de lo que le debía. Desde los libros del BDL, la obligación con Ana baja en 300,00 dólares, porque el banco cumplió la orden de pago con su dinero depositado.</p>
+  <p class="comprobacion">Pausa de razonamiento: antes de ver el asiento, responde. Cuando el BDL paga el cheque de Ana, ¿la obligación con Ana sube, baja o no cambia? Y ¿el banco registra un ingreso por ese pago? Escribe una respuesta corta.</p>
+  <p>La obligación baja y el banco no registra ingreso. Pagar un cheque libera parte de una deuda que ya existía. Si tu respuesta fue que el banco ganó 300,00 dólares, recuerda la regla de la semana 05: el cheque ordena usar dinero que el banco ya debe, no crea dinero nuevo.</p>
+  <p>Para registrar el pago necesitamos saber de dónde sale el dinero que el BDL entrega. Cuando el proveedor deposita el cheque en su propio banco, el dinero viaja entre bancos por el sistema de compensación. Aquí hacemos una simplificación didáctica: suponemos que la salida de dinero del BDL se registra como una disminución de su cuenta en 1103, Bancos y otras instituciones financieras. El mecanismo real de la cámara de compensación, y la cuenta exacta que lo refleja, no los hemos verificado, así que esta parte del asiento es un supuesto para aprender la lógica, no una receta contable.</p>
+
+  <div class="asiento">
+    <table>
+      <caption>Tabla 2 · Asiento del pago del cheque de Ana (libros del BDL, supuesto de liquidación)</caption>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Fecha de pago (supuesto)</td><td>2101 Depósitos a la vista</td><td>Obligaciones con el público. Baja la deuda del banco con Ana.</td><td>300,00</td><td></td></tr>
+        <tr><td></td><td>1103</td><td>Bancos y otras instituciones financieras. Sale el dinero para liquidar el cheque (simplificación).</td><td></td><td>300,00</td></tr>
+        <tr><td></td><td></td><td><strong>Totales</strong></td><td><strong>300,00</strong></td><td><strong>300,00</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Fíjate en la dirección de cada movimiento. La obligación con Ana, que es un pasivo del banco, disminuye por el débito. El banco disminuye su saldo en 1103, que es un activo, por el crédito. Ningún movimiento toca una cuenta de ingresos. Por eso concluimos que el pago no produce resultado para el banco en esta anotación.</p>
+
+  <h3>4. El cheque de gerencia: el banco es quien gira el cheque</h3>
+  <p>No todo cheque nace de una cuenta corriente del cliente. Un cheque de gerencia es un cheque que el propio banco emite a nombre de la persona que lo solicita, después de que esa persona le entrega el dinero. Así, el cliente no necesita tener cuenta en el banco para pagar con un documento que el banco garantiza con sus propios recursos. La práctica es habitual en el sistema financiero, pero la regla que la regula no la hemos verificado en las fuentes oficiales. Por eso aquí solo describimos la lógica del registro y señalamos qué falta.</p>
+  <p>Imagina que Carmen quiere pagar 500,00 dólares a un proveedor de su negocio y no tiene cuenta en el BDL. Entrega 500,00 dólares en efectivo y el banco le emite un cheque de gerencia por el mismo monto. Antes de registrar, pregúntate: ¿qué obligación tiene el banco con el beneficiario? La respuesta es que el banco debe pagar ese cheque cuando se presente. Esa obligación no es de Carmen: es del banco.</p>
+  <p>La primera anotación registra que el efectivo entró y que nació una obligación. La segunda anotación registra el pago cuando el proveedor cobra el cheque. El cuadro siguiente muestra la lógica. La cuenta concreta que recoge la obligación por cheques de gerencia emitidos no está verificada en el catálogo, por lo que la tabla la nombra por su función.</p>
+
+  <div class="asiento">
+    <table>
+      <caption>Tabla 3 · Asientos del cheque de gerencia de Carmen Salas (lógica, con cuenta por verificar)</caption>
+      <thead><tr><th scope="col">Momento</th><th scope="col">Código</th><th scope="col">Cuenta y explicación</th><th scope="col">Debe</th><th scope="col">Haber</th></tr></thead>
+      <tbody>
+        <tr><td>Emisión del cheque (supuesto)</td><td>1101</td><td>Caja. Entra el efectivo que Carmen paga.</td><td>500,00</td><td></td></tr>
+        <tr><td></td><td>25 Cuentas por pagar (subcuenta por verificar)</td><td>Obligación por cheques de gerencia emitidos. El banco debe pagar el cheque al beneficiario.</td><td></td><td>500,00</td></tr>
+        <tr><td>Cobro del proveedor (supuesto)</td><td>25 Cuentas por pagar (subcuenta por verificar)</td><td>Obligación por cheques de gerencia emitidos. Se cancela la obligación al pagar.</td><td>500,00</td><td></td></tr>
+        <tr><td></td><td>1103</td><td>Bancos y otras instituciones financieras. Sale el dinero para liquidar el cheque (simplificación).</td><td></td><td>500,00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pendiente">
+    <p><strong>Qué no podemos cerrar todavía.</strong> No hemos verificado ni la cuenta que recoge los cheques de gerencia emitidos, ni si el banco cobra una comisión por su emisión, ni cómo se registra esa comisión. Tampoco sabemos si la emisión sigue un régimen específico en la norma de la Junta. Si alguien te pide el asiento definitivo, la respuesta correcta es que las dos cuentas por verificar faltan, y que la lógica de la tabla vale mientras no se confirmen.</p>
+  </div>
+
+  <h3>5. Cheques certificados: el banco se compromete antes del cobro</h3>
+  <p>La semana 05 estudiaste el cheque certificado. Recuerda el artículo 503 del COMF: la palabra «certificado», escrita, fechada y firmada por el girado, obliga al banco a pagar el cheque cuando se presente, y libera al girador de la responsabilidad del pago. En esta sesión no cambiamos esa regla. Lo que nos interesa es lo que pasa con el dinero: al certificar, el banco asume un compromiso firme de pagar, pero el texto del COMF no nos dice cómo se registra ese compromiso en los libros. Por eso aquí solo describimos la función de la certificación.</p>
+  <p>Una confusión frecuente es pensar que certificar un cheque equivale a pagarlo. No es así. Certificar es prometer el pago con firmeza; pagar es cumplir la promesa. Mientras el cheque no se cobra, el dinero sigue en la cuenta del girador, y el banco tiene la obligación de pagar cuando se presente.</p>
+
+  <h3>6. Sobregiros: cuando el banco paga más de lo que tiene el cliente</h3>
+  <p>Ahora hacemos una pregunta más difícil. Ana tiene 700,00 dólares después del cheque de 300,00 dólares. Si ahora gira un cheque de 800,00 dólares, ¿qué hace el banco? Si lo paga, paga 100,00 dólares más de los que tiene disponibles. Ese exceso se llama sobregiro.</p>
+  <div class="concepto">
+    <p>Un <strong>sobregiro</strong> es un pago que el banco hace por encima del saldo disponible del cliente. Si el banco lo paga, el exceso se convierte en una deuda del cliente con el banco, y el banco lo registra como un derecho frente a ese cliente. Como el exceso se origina en un pago que el banco hace, la pregunta de si el banco debe o no pagar depende de las condiciones del contrato y de las normas de la Junta sobre sobregiros, que no hemos verificado.</p>
+  </div>
+  <p>Aquí está el límite central de la sesión. Sabemos calcular el exceso: 800,00 − 700,00 = 100,00 dólares. No sabemos si el banco está obligado a pagar el cheque ni si puede cobrar intereses o comisiones por ese exceso. El COMF que estudiamos regula el cheque, pero no el sobregiro de la cuenta corriente, y la regulación de la Junta sobre ese punto no la hemos revisado. Por eso la conclusión correcta, con lo que tenemos, es que el exceso es de 100,00 dólares, y que el resto depende de información que falta.</p>
+
+  <div class="calculo">
+    <h4>Cálculo 1 · El exceso de Ana si el cheque se paga</h4>
+    <ol>
+      <li><strong>Situación.</strong> Ana tiene 700,00 dólares en su cuenta después del pago del cheque de 300,00 dólares de la semana 05. Gira un cheque de 800,00 dólares.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos que el banco paga el cheque. El cálculo sirve para medir cuánto se pagaría por encima del saldo, no para decidir si el banco debe pagarlo.</li>
+      <li><strong>Qué buscamos.</strong> El exceso del pago sobre el saldo disponible.</li>
+      <li><strong>Datos y origen.</strong> Saldo disponible: 700,00 dólares (cálculo de la sección 1 de la semana 05 y del caso). Valor del cheque: 800,00 dólares (supuesto del caso).</li>
+      <li><strong>Por qué esta operación.</strong> El exceso es la parte del cheque que no está cubierta por el saldo. Por eso se resta el saldo del valor del cheque.</li>
+      <li><strong>Operación.</strong> 800,00 − 700,00 = 100,00 dólares.</li>
+      <li><strong>Resultado.</strong> El exceso es de 100,00 dólares.</li>
+      <li><strong>Comprobación.</strong> Si el saldo cubriera el cheque, el exceso sería cero. Como el saldo es menor, el exceso debe ser positivo. Se cumple: 700,00 + 100,00 = 800,00.</li>
+      <li><strong>Interpretación y límites.</strong> El cálculo no dice si el banco paga, rechaza el cheque o cobra algo por el exceso. Eso depende del contrato y de la norma sobre sobregiros, que hoy no podemos afirmar. El error que evita es decir que el cheque «ya está pagado» o que el banco «perdió» los 100,00 dólares sin haber verificado la regla.</li>
+    </ol>
+  </div>
+
+  <h3>7. Comisiones y multas: separar lo que es del banco de lo que es de terceros</h3>
+  <p>Hay dos tipos de cobros que suelen confundirse. El primero es la comisión que el banco cobra por un servicio de su cuenta, como emitir un cheque de gerencia o mantener la cuenta. Esa comisión es un ingreso del banco, pero su cuenta contable y su régimen dependen de normas que no hemos verificado. El segundo es un valor que el banco recibe y debe entregar a otra persona o institución. En ese caso el dinero no es del banco aunque pase por su caja, y la regla de registro depende de la disposición que lo establezca.</p>
+  <p>La multa del artículo 499 del COMF es un caso del segundo tipo, pero el texto no dice en qué cuenta contable del banco se registra mientras el dinero está en el banco. Sí dice a dónde va: se debita de la cuenta del girador hasta el monto en depósito, y se transfiere a la Cuenta Única del Tesoro Nacional. Esa frase permite describir el movimiento de dinero, pero no basta para decidir si la entidad lo registra como ingreso propio, como valor recaudado para terceros o de otra forma. En la semana 05 dejamos esa pregunta abierta, y en esta sesión la mantenemos abierta.</p>
+  <div class="concepto">
+    <p>Una <strong>comisión propia</strong> es un ingreso que el banco gana por un servicio. Un <strong>valor recaudado para terceros</strong> es dinero que el banco cobra en nombre de otra persona o institución y que debe entregar a ella. La diferencia no depende de que el dinero pase por la caja. Depende de quién es el dueño del valor y de la regla que lo asigna.</p>
+  </div>
+
+  <div class="calculo">
+    <h4>Cálculo 2 · La multa del caso de cierre de la semana 05</h4>
+    <ol>
+      <li><strong>Situación.</strong> Otro cliente del BDL gira un cheque de 800,00 dólares que se protesta por insuficiencia de fondos. Su saldo disponible es de 500,00 dólares. Este es el caso de cierre de la semana 05.</li>
+      <li><strong>Supuesto y propósito.</strong> Supongamos que el protesto cumple el artículo 504. El cálculo sirve para separar el valor de la multa del monto que el banco puede debitar.</li>
+      <li><strong>Qué buscamos.</strong> El valor de la multa y el monto que el banco puede debitar de la cuenta.</li>
+      <li><strong>Datos y origen.</strong> Valor del cheque protestado: 800,00 dólares (supuesto del caso). Porcentaje de la multa: 10 %, artículo 499 del COMF del proyecto (pendiente de comprobar en el Registro Oficial). Saldo en depósito: 500,00 dólares (supuesto).</li>
+      <li><strong>Por qué esta operación.</strong> La multa se calcula sobre el valor del cheque. El débito tiene como límite el monto en depósito, según el mismo artículo.</li>
+      <li><strong>Operación.</strong> Multa: 10 % × 800,00 = 800,00 × 10 ÷ 100 = 80,00 dólares. Monto debitable: como 80,00 es menor que 500,00, el débito puede hacerse completo.</li>
+      <li><strong>Resultado.</strong> La multa es de 80,00 dólares y puede debitarse completa de la cuenta.</li>
+      <li><strong>Comprobación.</strong> Dividir 80,00 entre 800,00 da 0,10, es decir, el 10 %. Y 80,00 es menor que 500,00, así que el límite no se activa.</li>
+      <li><strong>Interpretación y límites.</strong> El cálculo describe el movimiento de dinero, pero no dice en qué cuenta contable del banco se registra mientras el dinero se transfiere a la Cuenta Única del Tesoro Nacional. Esa clasificación queda pendiente: exige verificar el catálogo y la disposición que la regule. El error que evita es registrar la multa como ingreso propio del banco solo porque el banco la debita.</li>
+    </ol>
+  </div>
+
+  <h3>8. Tabla resumen: qué sí podemos registrar y qué no</h3>
+  <p>La Tabla 4 resume las operaciones de la sesión. La última columna es importante: te dice si el registro está completo con lo verificado o si depende de información que todavía falta. No se trata de memorizar la tabla, sino de reconocer cuándo una operación pertenece a cada grupo.</p>
+  <div class="tabla-wrap">
+    <table>
+      <caption>Tabla 4 · Operaciones de la cuenta corriente y estado de su registro</caption>
+      <thead><tr><th scope="col">Operación</th><th scope="col">Efecto sobre la obligación con el cliente</th><th scope="col">Estado del registro</th></tr></thead>
+      <tbody>
+        <tr><td>Apertura con efectivo (Carmen)</td><td>Aumenta la obligación por el monto entregado</td><td>Lógica completa; cuenta 2101 Depósitos a la vista</td></tr>
+        <tr><td>Depósito posterior</td><td>Aumenta la obligación por el monto depositado</td><td>Lógica completa; cuenta 2101 Depósitos a la vista</td></tr>
+        <tr><td>Pago de un cheque (Ana, 300,00)</td><td>Disminuye la obligación por el monto pagado; no es ingreso</td><td>Lógica completa; mecanismo de liquidación en supuesto</td></tr>
+        <tr><td>Cheque de gerencia emitido (Carmen, 500,00)</td><td>Entrega de efectivo y nacimiento de una obligación del banco con el beneficiario</td><td>Incompleto: cuenta del pasivo por verificar</td></tr>
+        <tr><td>Cheque certificado</td><td>Compromiso firme de pagar al presentarse (art. 503)</td><td>Incompleto: registro no verificado</td></tr>
+        <tr><td>Sobregiro (Ana, exceso de 100,00)</td><td>Pago por encima del saldo; el exceso se calcula</td><td>Incompleto: régimen del contrato y de la Junta no verificado</td></tr>
+        <tr><td>Comisión por servicio</td><td>Ingreso propio del banco, si la regla lo confirma</td><td>Incompleto: régimen y cuenta por verificar</td></tr>
+        <tr><td>Multa del artículo 499 (80,00)</td><td>Se debita de la cuenta y se transfiere al Tesoro</td><td>Incompleto: clasificación en los libros pendiente</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>9. Errores previsibles y cómo corregirlos</h3>
+  <p>El primer error es registrar el depósito como ingreso. Si lo hiciste, revisa que el dinero recibido genera una obligación con el cliente. Un ingreso aumenta el resultado del banco; un depósito aumenta lo que el banco debe. Si la obligación no aparece en tu asiento, el registro está incompleto aunque cuadre.</p>
+  <p>El segundo error es pensar que el pago de un cheque produce un gasto. El pago reduce una obligación que ya existía. Si tu asiento tiene una cuenta de gasto, revisa la pregunta de la sección 3: ¿qué deuda se cancela cuando el banco paga?</p>
+  <p>El tercer error es completar un asiento de sobregiro, de comisión o de multa como si la regla estuviera verificada. Si lo hiciste, pregúntate qué norma sustenta cada cuenta. Si la respuesta es que no tienes una fuente verificada, el asiento debe marcarse como pendiente y no como definitivo. Un registro que se presenta como completo sin serlo puede llevar a conclusiones falsas sobre la posición del banco.</p>
+  <p>El cuarto error es confundir el saldo de la cuenta con dinero del banco. El saldo es lo que el banco debe devolver. Si el banco usa ese dinero para prestar, sigue debiendo lo mismo al cliente, y ese detalle se estudia cuando veamos operaciones activas.</p>
+  <p>Si el error persiste, sigue esta ruta: identifica primero la operación, después decide si cambia el dinero que el banco tiene, después decide si cambia la obligación con el cliente, y por último revisa si la cuenta y la regla están verificadas. Solo cuando las cuatro respuestas están claras puedes escribir el asiento.</p>
+
+  <h3>10. Cierre y transferencia</h3>
+  <p>Volvamos a Carmen y a Ana. Carmen abrió su cuenta con 500,00 dólares y después compró un cheque de gerencia por el mismo monto. Ana tiene 700,00 dólares y se pregunta si el banco pagaría un cheque de 800,00. La respuesta honesta es que sabemos cuánto sería el exceso, 100,00 dólares, pero no sabemos si el banco paga, porque esa regla todavía no está verificada.</p>
+  <p>Como tarea de transferencia, imagina un cliente nuevo que abre una cuenta con 1.200,00 dólares en efectivo, deposita 300,00 dólares más y, al mes, paga un cheque de 900,00 dólares a un proveedor. Escribe el asiento de cada movimiento, indica cuánto debe el banco al cliente al final, y di qué parte de los asientos quedaría pendiente de verificar. Tu respuesta será correcta si separas lo que registras con lo verificado de lo que no puedes afirmar todavía.</p>
+  <p>Sabrás que aprendiste esta sesión cuando puedas explicar por qué la apertura y el depósito aumentan la obligación con el cliente, por qué el pago del cheque la disminuye sin producir un ingreso, y por qué el sobregiro, las comisiones y la multa no se cierran con lo que tenemos. Si una de esas partes te cuesta, vuelve a la sección correspondiente antes de la evaluación.</p>
+
+  <div class="nota-lateral">
+    <h3>Glosario breve</h3>
+    <p><strong>Cuenta corriente:</strong> cuenta de depósito a la vista de la que el cliente puede ordenar pagos con cheques.</p>
+    <p><strong>Obligaciones con el público:</strong> grupo de cuentas en el que el banco registra lo que debe a sus clientes por sus depósitos.</p>
+    <p><strong>Cheque de gerencia:</strong> cheque que emite el propio banco a solicitud de una persona, con dinero que esa persona le entrega. Su régimen debe verificarse.</p>
+    <p><strong>Cheque certificado:</strong> cheque en el que el banco se compromete a pagar al presentarse (art. 503).</p>
+    <p><strong>Sobregiro:</strong> pago por encima del saldo disponible del cliente.</p>
+    <p><strong>Comisión propia:</strong> ingreso del banco por un servicio prestado.</p>
+    <p><strong>Valor recaudado para terceros:</strong> dinero que el banco cobra y debe entregar a otra persona o institución.</p>
+    <p><strong>Cuenta Única del Tesoro Nacional:</strong> cuenta del Estado a la que se transfieren las multas por cheques protestados (art. 499).</p>
+  </div>
+
+  <h2>Ejercicios guiados</h2>
+  <p>Trabaja cada ejercicio por escrito antes de abrir su solución. Las soluciones están en los desplegables.</p>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 1 · Registrar la apertura de una cuenta</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad registrarás la apertura de una cuenta corriente desde los libros del banco y justificarás cada cuenta que uses.</p>
+    <p><strong>Enunciado.</strong> Diego Ortiz, cliente ficticio del BDL, abre una cuenta corriente con 750,00 dólares en efectivo. Registra el asiento en los libros del BDL. Indica qué cuenta se debita, qué cuenta se acredita y por qué. Después, indica si el banco obtuvo un ingreso por ese movimiento.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Pregúntate primero qué entra a la caja del banco. Después pregúntate qué deuda aparece con Diego. El asiento debe tener la misma cantidad en el debe y en el haber, y la pregunta del ingreso se responde mirando si el resultado del banco cambia.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>Debe: 1101 Caja, 750,00 dólares, porque entra el efectivo. Haber: 2101 Depósitos a la vista, dentro del grupo 21, Obligaciones con el público, 750,00 dólares, porque el banco debe a Diego ese saldo. No hay ingreso: el dinero recibido aumenta la deuda del banco con Diego y no su resultado.</p>
+      <p class="comprobacion">Comprobación: el debe y el haber suman 750,00 cada uno, y el saldo que el banco debe a Diego es igual al efectivo recibido. Esta es una comprobación de la lógica, no del código exacto de la subcuenta.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si registraste el efectivo como ingreso, revisa que el banco tiene una obligación nueva con Diego. Si pusiste la obligación en el debe, recuerda que el depósito es un aumento de lo que el banco debe, y esa cuenta se acredita.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio te enseña a separar lo que entra al banco de lo que el banco le debe al cliente. Esa separación evita pensar que cada depósito mejora el resultado de la institución.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 2 · Registrar el pago del cheque de Ana</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad registrarás el pago de un cheque y explicarás qué obligación del banco cambia y cuál no.</p>
+    <p><strong>Enunciado.</strong> Ana tiene 700,00 dólares en su cuenta corriente del BDL. Un proveedor presenta para cobro un cheque de Ana por 200,00 dólares, y el BDL lo paga. (a) Escribe el asiento del pago en los libros del BDL, usando la lógica del supuesto de liquidación de la sección 3. (b) Di cuánto le debe el banco a Ana después del pago. (c) Indica si el banco registra algún ingreso.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Repite la lógica de la Tabla 2 cambiando el monto. Recuerda que la obligación con Ana baja, y que la salida de dinero se registra en 1103 por la simplificación del texto.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) Debe: 2101 Depósitos a la vista, obligación con Ana, 200,00 dólares. Haber: 1103, Bancos y otras instituciones financieras (supuesto de liquidación), 200,00 dólares. (b) Antes del pago, el banco le debía 700,00 dólares. Después, 700,00 − 200,00 = 500,00 dólares. (c) No hay ingreso, porque el pago cancela una obligación que ya existía y no produce resultado para el banco.</p>
+      <p class="comprobacion">Comprobación: el asiento cuadra en 200,00 dólares, y el saldo final es la diferencia entre el saldo inicial y el pago, 700,00 − 200,00 = 500,00.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si el saldo de Ana te dio 900,00, sumaste el pago en lugar de restarlo. Si escribiste una cuenta de gasto, revisa la pregunta de la sección 3: ¿qué deuda se cancela cuando el banco paga?</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>El ejercicio muestra que un pago puede modificar el saldo del cliente sin modificar el resultado del banco. Esa distinción es la base para leer después un estado de resultados.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 3 · El cheque de gerencia y lo que falta</h3>
+    <p class="tiempo">Tiempo orientativo: 12 minutos · Trabajo individual</p>
+    <p>En esta actividad describirás los dos asientos de un cheque de gerencia y dirás qué partes no puedes cerrar con la información verificada.</p>
+    <p><strong>Enunciado.</strong> Eduardo Mora, cliente ficticio sin cuenta en el BDL, paga 400,00 dólares en efectivo por un cheque de gerencia a favor de un proveedor. Días después, el proveedor presenta el cheque para su cobro y el BDL lo paga. (a) Escribe el asiento de la emisión. (b) Escribe el asiento del pago. (c) Indica qué cuentas no puedes cerrar todavía y por qué.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Usa la lógica de la Tabla 3. En la emisión, el efectivo entra y nace una obligación del banco con el beneficiario. En el pago, esa obligación se cancela. Para la parte (c), revisa la sección 4 y el cuadro de pendientes.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) Debe: 1101 Caja, 400,00 dólares. Haber: obligación por cheques de gerencia emitidos (cuenta por verificar), 400,00 dólares. (b) Debe: obligación por cheques de gerencia emitidos (cuenta por verificar), 400,00 dólares. Haber: 1103, Bancos y otras instituciones financieras (supuesto de liquidación), 400,00 dólares. (c) No puedes cerrar la cuenta que recoge la obligación por cheques de gerencia emitidos, porque no está verificada en el catálogo, ni la comisión, si la hay, ni el régimen de emisión en la norma de la Junta. El asiento queda como lógica válida, pendiente de confirmación.</p>
+      <p class="comprobacion">Comprobación: en cada asiento el debe y el haber suman 400,00 dólares, y al final la obligación del banco vuelve a cero después del pago.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si registraste el cheque de gerencia como una obligación de Eduardo, revisa quién debe pagar el cheque: es el banco, no el cliente. Si cerraste la cuenta por verificar con un nombre de cuenta que no conoces, marca esa parte como pendiente.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio te obliga a separar lo que sí podemos registrar de lo que todavía depende de una fuente. Aceptar un asiento completo sin verificar la cuenta sería afirmar algo que no sabemos.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 4 · Un cheque que supera el saldo</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás el exceso de un cheque sobre el saldo y dirás qué conclusiones permite el dato.</p>
+    <p><strong>Enunciado.</strong> Ana tiene 700,00 dólares y gira un cheque de 950,00 dólares. (a) Calcula el exceso del cheque sobre el saldo, suponiendo que el banco lo paga. (b) Indica si con esos datos puedes afirmar que el banco debe pagarlo. (c) Indica qué información necesitarías para decidir cuánto puede cobrar el banco por ese exceso.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Usa el Cálculo 1 como modelo. Para la parte (b), pregúntate si el dato del exceso basta para saber qué dice el contrato o la norma. Para la parte (c), revisa la sección 6.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) 950,00 − 700,00 = 250,00 dólares de exceso. (b) No puedes afirmar que el banco esté obligado a pagar. El COMF que estudiamos regula el cheque, pero el sobregiro de la cuenta corriente depende del contrato y de la norma de la Junta, y no los hemos verificado. (c) Necesitarías el contrato de la cuenta, la norma de la Junta sobre sobregiros, las condiciones de cobro de intereses o comisiones y el monto autorizado, si existe. Sin esos datos, la conclusión correcta es que el exceso es de 250,00 dólares y que la decisión del banco queda pendiente.</p>
+      <p class="comprobacion">Comprobación: 700,00 + 250,00 = 950,00. El exceso es el resto que el saldo no cubre.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si escribiste que el banco debe pagar porque el cheque es válido, recuerda que la validez del cheque no decide si el banco paga un exceso. Si calculaste 950,00 como exceso, olvidaste restar el saldo.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio separa un cálculo, que sí podemos hacer, de una decisión, que depende de reglas que no hemos verificado. Esa diferencia es central en cualquier análisis bancario.</p>
+    </details>
+  </div>
+
+  <div class="ejercicio">
+    <h3>Ejercicio 5 · La multa del caso de cierre y su clasificación</h3>
+    <p class="tiempo">Tiempo orientativo: 10 minutos · Trabajo individual</p>
+    <p>En esta actividad calcularás la multa de un cheque protestado, dirás cuánto puede debitarse y explicarás por qué la clasificación en los libros queda pendiente.</p>
+    <p><strong>Enunciado.</strong> Un cheque de 1.200,00 dólares se protesta por insuficiencia de fondos. El saldo en depósito del girador es de 900,00 dólares. (a) Calcula la multa del artículo 499. (b) Indica cuánto puede debitar el banco de la cuenta. (c) Indica en qué cuenta contable del banco debe registrarse la multa, y explica por qué no puedes contestar con lo verificado.</p>
+    <details>
+      <summary>Ayuda para empezar</summary>
+      <p>Usa el Cálculo 2 como modelo. Para la parte (c), revisa el cuadro de pendientes de la sección 7 y la pregunta de la clasificación que dejamos abierta en la semana 05.</p>
+    </details>
+    <details>
+      <summary>Solución razonada</summary>
+      <p>(a) Multa: 10 % × 1.200,00 = 120,00 dólares. (b) Como 120,00 es menor que 900,00, el banco puede debitar la multa completa, 120,00 dólares. (c) El texto del artículo 499 dice que la multa se transfiere a la Cuenta Única del Tesoro Nacional, pero no dice en qué cuenta del banco se registra mientras tanto. Para contestar hay que verificar el catálogo de cuentas aplicable a bancos y la disposición que regule esa clasificación. Con lo que tenemos, la respuesta correcta es que la cuenta falta.</p>
+      <p class="comprobacion">Comprobación: 120,00 es el 10 % de 1.200,00, y es menor que el saldo, por lo que el límite del débito no se activa.</p>
+    </details>
+    <details>
+      <summary>Orientación según tus errores</summary>
+      <p>Si escribiste que la multa es ingreso propio del banco, recuerda que el texto la dirige a un tercero, el Estado, y que la clasificación todavía no está verificada. Si calculaste la multa sobre el saldo, revisa la base del porcentaje.</p>
+    </details>
+    <details>
+      <summary>Cómo entender este ejercicio</summary>
+      <p>Este ejercicio te muestra la diferencia entre describir el movimiento de dinero y decidir su registro. Lo primero se puede hacer con el texto; lo segundo exige una fuente que todavía no tenemos.</p>
+    </details>
+  </div>
+
+  <h3>Presupuesto de tiempo de la sesión</h3>
+  <p>La sesión se estima en 120 minutos de trabajo acompañado: apertura 5 minutos, explicación con pausas 40 minutos, cinco ejercicios 50 minutos, evaluación y revisión 20 minutos, y cierre 5 minutos. El tiempo es orientativo y no garantiza una duración igual para todos.</p>
+
+</section>
+
+<!-- ============ EVALUACIÓN ============ -->
+<section class="panel" id="p-evaluacion" role="tabpanel" hidden>
+  <h2>Evaluación de la Sesión 01</h2>
+  <p>El cuestionario tiene 15 preguntas de opción múltiple, con cuatro opciones y una sola respuesta correcta. Las preguntas marcadas como <span class="badge">Teórica</span> se responden con lo estudiado; las marcadas como <span class="badge analisis">Análisis</span> presentan un caso breve. Al elegir una opción verás de inmediato su retroalimentación.</p>
+  <p>El puntaje es de práctica y no es una nota oficial. Los reintentos no demuestran por sí solos que dominas el tema: las explicaciones, los asientos y los ejercicios también son evidencia de aprendizaje.</p>
+
+  <div class="estado-eval" aria-live="polite">
+    <p id="estado-texto" style="margin:0;">Preguntas respondidas: 0 de 15 · Aciertos: 0</p>
+    <div class="progreso" aria-hidden="true"><div id="barra"></div></div>
+  </div>
+
+  <form id="quiz" onsubmit="return false;"></form>
+
+  <div class="resultado" id="resultado" role="status">
+    <h3>Resultado de práctica</h3>
+    <p id="resultado-texto"></p>
+    <button type="button" class="boton" id="btn-reintentar" hidden>Intentar nuevamente</button>
+    <button type="button" class="boton secundario" id="btn-reiniciar">Reiniciar cuestionario</button>
+  </div>
+  <p style="margin-top:0.5rem;"><button type="button" class="boton secundario" id="btn-reiniciar-fin">Reiniciar cuestionario</button></p>
+</section>
+
+<!-- ============ REFLEXIÓN ============ -->
+<section class="panel" id="p-reflexion" role="tabpanel" hidden>
+  <h2>Reflexión</h2>
+  <p>Estas reflexiones no tienen respuesta correcta ni calificación. Te invitan a pensar qué significa que una institución guarde el dinero de otras personas y prometa devolverlo.</p>
+
+  <h3>Un saldo que no es del banco</h3>
+  <p>Cuando dejas dinero en una cuenta, sientes que es tuyo, y en un sentido sí lo es: puedes pedirlo cuando quieras. Pero en los libros del banco ese mismo dinero aparece como una deuda. Esa diferencia entre sentirlo como propio y verlo como obligación es el corazón de la intermediación.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué cambiaría en tu confianza hacia un banco si supieras que el saldo de tu cuenta es, para el banco, una deuda y no un activo?</p>
+
+  <h3>Pagar sin ganar</h3>
+  <p>Cuando el banco paga un cheque, no gana nada en esa operación. Aun así, el pago es un servicio que la gente espera de manera inmediata. Lo que el banco obtiene de la cuenta llega por otras vías, y el registro debe mostrar cada cosa en su lugar.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿qué información necesitarías para decidir si un banco cobra bien por sus servicios, y por qué no basta con mirar si el pago se realizó?</p>
+
+  <h3>Lo que todavía no sabemos</h3>
+  <p>En esta sesión hubo preguntas que no pudimos responder: el régimen del sobregiro, las comisiones y la clasificación de la multa. Reconocer que falta información es una forma de rigor, no de debilidad. Una respuesta que dice «aún no» con razones es más útil que una que se inventa.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿cómo distingues, en tu propio trabajo, un dato que comprobaste de uno que solo supusiste?</p>
+
+  <h3>Un cheque de gerencia y la confianza</h3>
+  <p>El cheque de gerencia se usa cuando una persona necesita que su pago sea garantizado por el banco, sin tener una cuenta. La confianza se traslada del cliente al banco. Ese traslado tiene un costo y una responsabilidad.</p>
+  <p><strong>Pregunta para pensar:</strong> ¿por qué el beneficiario de un cheque de gerencia confía más en el banco que en la persona que lo entrega, y qué consecuencia tiene eso para quien emite el cheque?</p>
+</section>
+
+<!-- ============ ACTIVIDAD CON IA ============ -->
+<section class="panel" id="p-ia" role="tabpanel" hidden>
+  <h2>Actividad con IA</h2>
+  <p>Esta actividad es formativa e individual. Su propósito es verificar una explicación de apoyo, no reemplazar tu trabajo.</p>
+
+  <h3>Paso 1 · Trabajo inicial propio</h3>
+  <p>Antes de consultar cualquier herramienta, escribe en un párrafo por qué el depósito de un cliente aumenta la obligación del banco y por qué el pago de un cheque no produce un ingreso.</p>
+
+  <h3>Paso 2 · Prompt</h3>
+  <p>Usa exactamente este texto: «Explica, en un párrafo y con lenguaje sencillo, cómo se registra en los libros de un banco la apertura de una cuenta corriente con efectivo y el pago posterior de un cheque. Indica qué cuenta sube o baja en cada caso, y qué parte del registro depende de normas de la Junta o del catálogo oficial.»</p>
+
+  <h3>Paso 3 · Contraste con el material</h3>
+  <p>Compara la respuesta con la sección 1 y con la sección 3 de esta sesión. Marca cada afirmación que coincida con el material y cada una que no aparezca en él.</p>
+
+  <h3>Paso 4 · Verificación</h3>
+  <p>Verifica en el catálogo de cuentas de la Superintendencia de Bancos si la respuesta menciona una cuenta concreta del grupo 21, y en el COMF, Libro I, Título III, Capítulo 1, si menciona el artículo 499 o el artículo 503. Si la herramienta da un código de cuenta o una regla de sobregiro, anótalo y busca la fuente. Si no la encuentras, márcala como no verificada. No aceptes una cuenta solo porque la explicación sea coherente.</p>
+
+  <h3>Paso 5 · Justificación</h3>
+  <p>Escribe un párrafo que explique qué aceptaste, qué corregiste y qué rechazaste, y por qué. La respuesta de la herramienta no es una fuente verificada por sí sola.</p>
+
+  <h3>Lista de autoevaluación</h3>
+  <ul>
+    <li>Escribí mi trabajo inicial antes de consultar la herramienta.</li>
+    <li>Contrasté la respuesta con la sección 1 y con la sección 3.</li>
+    <li>Verifiqué al menos una cuenta o un artículo en su fuente y registré el resultado.</li>
+    <li>Justifiqué qué acepté, corregí o rechacé.</li>
+    <li>No compartí datos personales, tributarios ni bancarios reales.</li>
+  </ul>
+</section>
+
+<!-- ============ BIBLIOGRAFÍA ============ -->
+<section class="panel" id="p-bibliografia" role="tabpanel" hidden>
+  <h2>Bibliografía</h2>
+  <p>Las referencias se ordenan alfabéticamente y siguen el formato APA 7. Cada una indica qué se comprobó y qué queda pendiente.</p>
+  <ul>
+    <li>Código Orgánico Monetario y Financiero. (2014). Libro I, Título III, Capítulo 1, artículos 478 a 520, y Capítulo 2 (derogatorias). Registro Oficial, Suplemento 332, 12 de septiembre de 2014. Texto del proyecto de la asignatura, con notas de reforma hasta 2025. Verificado en el texto del proyecto para el cheque. Pendiente: confirmación del texto vigente en el Registro Oficial.</li>
+    <li>Superintendencia de Bancos. (s. f.). Catálogo único de cuentas para uso de las entidades de los sectores financieros público y privado. Existencia verificada en la búsqueda de esta sesión. En ese plan de 2021 aparecen 2101 Depósitos a la vista (grupo 21) y 25 Cuentas por pagar, con 250105 como referencia. Pendiente: confirmar la vigencia del plan a la fecha de uso y la cuenta de registro del cheque de gerencia, que no se ha verificado.</li>
+    <li>Junta de Política y Regulación Monetaria y Financiera. (2017). Codificación de Resoluciones Monetarias, Financieras, de Valores y Seguros, Libro I, Sistema Monetario y Financiero (Resolución 385-2017-A). Existencia verificada en la búsqueda de esta sesión. Pendiente: revisar el contenido sobre cuenta corriente, sobregiros y comisiones, que no se ha leído, y verificar si la codificación vigente sigue siendo esa.</li>
+  </ul>
+  <p>La norma de la cuenta corriente, las comisiones permitidas, el régimen del sobregiro y la clasificación de la multa del artículo 499 no se han verificado en esta sesión. Deben consultarse en la codificación vigente de la Junta y en el catálogo oficial antes de usarse en una evaluación.</p>
+  <p>Te recomendamos verificar cada referencia en Google Scholar (scholar.google.com) o en el repositorio institucional antes de citarla en un trabajo académico. La vigencia de las normas se comprueba en el Registro Oficial y en las fuentes de los organismos de control, no en el buscador académico.</p>
+</section>
+
+</main>
+
+<script>
+/* ===== 1. Pestañas ===== */
+(function () {
+  const botones = Array.from(document.querySelectorAll('nav.menu [role="tab"]'));
+  function mostrar(id) {
+    botones.forEach(b => {
+      const activo = b.dataset.tab === id;
+      b.setAttribute('aria-selected', activo ? 'true' : 'false');
+      document.getElementById('p-' + b.dataset.tab).hidden = !activo;
+    });
+  }
+  botones.forEach((b, i) => {
+    b.addEventListener('click', () => mostrar(b.dataset.tab));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const d = e.key === 'ArrowRight' ? 1 : -1;
+        const n = botones[(i + d + botones.length) % botones.length];
+        n.focus(); mostrar(n.dataset.tab);
+      }
+    });
+  });
+  mostrar('sesion');
+})();
+
+/* ===== 2. Evaluación ===== */
+const PREGUNTAS = [
+ {
+  "tipo": "Teórica",
+  "enunciado": "Carmen abre una cuenta corriente en el BDL con 500,00 dólares en efectivo. ¿Qué registra el banco en sus propios libros?",
+  "opciones": [
+   {
+    "t": "Un ingreso de 500,00 dólares, porque entró efectivo a la caja",
+    "ok": false,
+    "fb": "Recibir el depósito no es un ingreso. El banco aumenta su caja, pero también aumenta lo que debe a Carmen, y su resultado no cambia por el depósito."
+   },
+   {
+    "t": "Un débito a la caja por 500,00 dólares y un crédito a la obligación con Carmen por el mismo monto",
+    "ok": true,
+    "fb": "Entra el efectivo, y el banco queda obligado a devolver ese saldo a Carmen. Las dos partes del asiento suben 500,00 dólares, y eso permite comprobar que la anotación está completa."
+   },
+   {
+    "t": "Un débito a la obligación con Carmen y un crédito a la caja por 500,00 dólares",
+    "ok": false,
+    "fb": "Ese es el asiento invertido: disminuiría la deuda y sacaría efectivo. En una apertura con efectivo, la caja sube y la obligación con el cliente también sube."
+   },
+   {
+    "t": "Solo un aumento de la caja, porque el banco todavía no ha pagado nada a Carmen",
+    "ok": false,
+    "fb": "El asiento queda incompleto. Mientras Carmen tenga saldo en su cuenta, el banco debe devolverle ese dinero, y esa obligación también debe registrarse."
+   }
+  ],
+  "gen": "Revise la sección 1 de la Sesión 01 y la Tabla 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Por qué el depósito de un cliente en una cuenta corriente no se registra como ingreso del banco?",
+  "opciones": [
+   {
+    "t": "Porque el banco presta el dinero de inmediato y nunca lo conserva en sus cuentas",
+    "ok": false,
+    "fb": "Aunque el banco use parte de sus fondos en otras operaciones, la cuenta del cliente sigue representando lo que el banco le debe. Lo que el banco usa no convierte el depósito en ingreso."
+   },
+   {
+    "t": "Porque ese dinero pertenece a los socios del banco y no al cliente",
+    "ok": false,
+    "fb": "El dinero depositado es del cliente, que puede retirarlo según las condiciones de la cuenta. Confundirlo con el capital de los socios es un error de separación patrimonial."
+   },
+   {
+    "t": "Porque el banco mantiene activos mayores sin asumir ninguna obligación",
+    "ok": false,
+    "fb": "Un depósito sí aumenta los activos del banco, pero también aumenta una obligación. Por eso el depósito no mejora el resultado de la institución."
+   },
+   {
+    "t": "Porque el banco asume una obligación de devolver ese dinero al cliente según las condiciones del producto, y recibirlo no cambia su resultado",
+    "ok": true,
+    "fb": "El depósito aumenta lo que el banco debe. Lo que el banco gana con la cuenta llega por otros cobros, como comisiones, y se registra aparte."
+   }
+  ],
+  "gen": "Revise la sección 1 y la sección 2 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Ana tiene 700,00 dólares en su cuenta del BDL. Un proveedor presenta para cobro un cheque de Ana por 200,00 dólares y el banco lo paga, con el supuesto de liquidación de la sesión. ¿Cuál es el asiento correcto en los libros del BDL?",
+  "opciones": [
+   {
+    "t": "Debe: obligación con Ana, 200,00. Haber: 1103 Bancos y otras instituciones financieras, 200,00",
+    "ok": true,
+    "fb": "El pago reduce la deuda del banco con Ana, que baja a 500,00 dólares, y la salida de dinero se registra como disminución de la cuenta del banco en 1103. No hay ingreso ni gasto en esta anotación."
+   },
+   {
+    "t": "Debe: 1103 Bancos y otras instituciones financieras, 200,00. Haber: ingreso por cheques pagados, 200,00",
+    "ok": false,
+    "fb": "Pagar un cheque no genera un ingreso. El banco no gana por cumplir la orden de pago de su cliente. La cuenta de ingreso está mal usada en este asiento."
+   },
+   {
+    "t": "Debe: gasto por pagos a proveedores, 200,00. Haber: obligación con Ana, 200,00",
+    "ok": false,
+    "fb": "Ese asiento aumentaría la obligación con Ana, cuando el pago debía reducirla. Además, el pago no es un gasto del banco: cancela una deuda que ya existía."
+   },
+   {
+    "t": "Debe: 1101 Caja, 200,00. Haber: obligación con Ana, 200,00",
+    "ok": false,
+    "fb": "Ese asiento describe un depósito, no un pago. En el pago del cheque no entra efectivo al banco, sino que sale dinero y baja la obligación con el cliente."
+   }
+  ],
+  "gen": "Revise la sección 3 de la Sesión 01 y la Tabla 2."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "En un cheque de gerencia, ¿quién tiene la obligación de pagar el cheque al beneficiario?",
+  "opciones": [
+   {
+    "t": "El cliente que pagó el cheque en efectivo, porque entregó el dinero",
+    "ok": false,
+    "fb": "El cliente entregó el dinero, pero la obligación de pagar el cheque la asume el banco que lo emitió. Confundir quién entrega el dinero con quién debe pagar es un error frecuente."
+   },
+   {
+    "t": "La Superintendencia de Bancos, que autoriza la emisión de cada cheque",
+    "ok": false,
+    "fb": "La Superintendencia controla a las entidades, pero no es la parte que paga el cheque al beneficiario. Las obligaciones de pago las asume la entidad que emite el documento."
+   },
+   {
+    "t": "El banco que emitió el cheque, con su propio compromiso frente al beneficiario",
+    "ok": true,
+    "fb": "En el cheque de gerencia, el banco es quien libra el documento y responde por el pago con sus propios recursos. Por eso el cliente no necesita tener cuenta en el banco."
+   },
+   {
+    "t": "El beneficiario, que debe cobrarlo a la persona que pidió el cheque",
+    "ok": false,
+    "fb": "El beneficiario recibe el cheque, pero no es quien debe pagarlo. Cobrar al cliente que lo pidió no está previsto en este esquema, y el banco es el obligado."
+   }
+  ],
+  "gen": "Revise la sección 4 de la Sesión 01 y la Tabla 3."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Eduardo Mora paga 400,00 dólares en efectivo por un cheque de gerencia. ¿Cuál de las siguientes afirmaciones sobre el registro es la más sólida con lo verificado en la sesión?",
+  "opciones": [
+   {
+    "t": "La cuenta que recoge la obligación por cheques de gerencia emitidos ya está confirmada en el catálogo oficial",
+    "ok": false,
+    "fb": "Esa cuenta no está verificada en el catálogo. La sesión la presenta como pendiente, sin código confirmado, y no puede darse por confirmada sin consultarla."
+   },
+   {
+    "t": "La caja aumenta en 400,00 y nace una obligación del banco de pagar el cheque; la cuenta exacta de esa obligación debe verificarse",
+    "ok": true,
+    "fb": "El efectivo entra y el banco queda obligado frente al beneficiario. Esa lógica se sostiene, pero el nombre y el código de la cuenta de la obligación quedan pendientes de confirmación."
+   },
+   {
+    "t": "El banco registra un ingreso de 400,00 dólares porque vendió un documento de pago",
+    "ok": false,
+    "fb": "Vender un cheque de gerencia no es un ingreso por sí mismo. El dinero recibido crea una obligación de pago, y el registro del cobro de un servicio depende de una regla que aún no hemos verificado."
+   },
+   {
+    "t": "La comisión de emisión se registra siempre en la cuenta 1103, porque es dinero del banco en otra institución",
+    "ok": false,
+    "fb": "La comisión no tiene una regla verificada en la sesión. Asignarla a 1103 sin fuente es una suposición. Si el banco cobra una comisión, su cuenta y su régimen deben confirmarse."
+   }
+  ],
+  "gen": "Revise la sección 4 de la Sesión 01 y el cuadro de pendientes de esa sección."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Según el artículo 503 del COMF, ¿qué efecto tiene la palabra «certificado» escrita, fechada y firmada por el girado en un cheque?",
+  "opciones": [
+   {
+    "t": "Convierte el cheque en un documento a plazo de noventa días",
+    "ok": false,
+    "fb": "La certificación no cambia el plazo de presentación. Noventa días corresponde a un cheque girado en el exterior y pagadero en Ecuador, según el artículo 493."
+   },
+   {
+    "t": "Autoriza al girado a pagar el cheque en cuotas mensuales",
+    "ok": false,
+    "fb": "El pago en cuotas no está previsto en el artículo 503. La certificación no fracciona el pago; lo que hace es obligar al banco a pagar al presentarse."
+   },
+   {
+    "t": "Cancela el cheque y libera al beneficiario de la obligación de cobrarlo",
+    "ok": false,
+    "fb": "La certificación no cancela el cheque. Un cheque cancelado ya no sirve para cobrar, y el artículo 503 se refiere a un compromiso de pago firme que sigue vigente."
+   },
+   {
+    "t": "Obliga al girado a pagar el cheque cuando se presente y libera al girador de la responsabilidad del pago",
+    "ok": true,
+    "fb": "La certificación fija el compromiso firme del banco de pagar al presentarse, y libera al girador. Certificar no equivale a pagar: el pago sigue siendo un acto posterior."
+   }
+  ],
+  "gen": "Revise la sección 5 de la Sesión 01 y el repaso de la semana 05 sobre el artículo 503."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Ana tiene 700,00 dólares en su cuenta y gira un cheque de 800,00 dólares. Supongamos que el banco paga el cheque. ¿Qué conclusión es correcta con los datos y las fuentes verificadas?",
+  "opciones": [
+   {
+    "t": "El exceso es de 100,00 dólares; con lo verificado no puede afirmarse si el banco debe pagarlo ni cuánto puede cobrar por ese exceso",
+    "ok": true,
+    "fb": "El cálculo del exceso es 800,00 − 700,00 = 100,00 dólares. Si el banco debe pagar el exceso, o si cobra intereses o comisiones, depende del contrato y de la norma de la Junta sobre sobregiros, que todavía no hemos verificado."
+   },
+   {
+    "t": "El exceso es de 800,00 dólares, porque ese es el valor total del cheque",
+    "ok": false,
+    "fb": "El exceso es la parte del cheque que el saldo no cubre. Si el saldo cubre 700,00, el exceso es el resto, es decir 100,00 dólares, y no el valor total."
+   },
+   {
+    "t": "El banco debe pagar el cheque completo porque la validez del documento lo obliga",
+    "ok": false,
+    "fb": "La validez del cheque y la obligación de pagar un exceso son cuestiones distintas. Que el documento cumpla los requisitos no decide si el banco paga por encima del saldo."
+   },
+   {
+    "t": "El banco debe rechazar el cheque, y el exceso es cero porque el saldo ya no importa",
+    "ok": false,
+    "fb": "El exceso no es cero: el saldo de 700,00 no cubre los 800,00. Tampoco podemos afirmar que el banco deba rechazar el cheque, porque esa decisión depende de una regla no verificada."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y el Cálculo 1."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué distingue una comisión propia del banco de un valor recaudado para terceros?",
+  "opciones": [
+   {
+    "t": "Que la comisión pasa por la caja del banco y el valor recaudado no pasa por ella",
+    "ok": false,
+    "fb": "El dinero puede pasar por la caja en ambos casos. Que pase por la caja no decide su clasificación, y confundirlo con el criterio de registro es un error frecuente."
+   },
+   {
+    "t": "Que ambos son ingresos del banco, solo que uno es mayor que el otro",
+    "ok": false,
+    "fb": "El valor recaudado no es ingreso propio cuando debe entregarse a otra persona o institución. Tamaño y clasificación son criterios distintos."
+   },
+   {
+    "t": "Que el valor recaudado siempre es ingreso propio del banco, porque lo cobra el banco",
+    "ok": false,
+    "fb": "Cobrar un valor no lo convierte en ingreso propio. Si el banco debe entregarlo a un tercero, el dinero no es del banco, y el registro depende de la regla que lo asigna."
+   },
+   {
+    "t": "Que la diferencia está en quién es dueño del valor y en la regla que lo asigna",
+    "ok": true,
+    "fb": "La comisión por un servicio es ingreso del banco, si la regla lo confirma. El valor recaudado para un tercero pertenece a ese tercero, y el banco solo lo administra mientras lo entrega."
+   }
+  ],
+  "gen": "Revise la sección 7 de la Sesión 01 y el concepto de la sección 7."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Un cheque de 1.000,00 dólares se protesta por insuficiencia de fondos. El saldo en depósito del girador es de 60,00 dólares. Según el artículo 499, ¿qué afirmación es correcta?",
+  "opciones": [
+   {
+    "t": "La multa es de 100,00 dólares y se registra como ingreso propio del banco en la cuenta 1101",
+    "ok": false,
+    "fb": "La multa es de 100,00 dólares, pero el texto no dice que sea ingreso propio. La cuenta 1101 es Caja y no corresponde a la clasificación de la multa. La clasificación sigue pendiente."
+   },
+   {
+    "t": "La multa es de 100,00 dólares; el débito tiene como límite el monto en depósito, y la cuenta contable donde se registra debe verificarse",
+    "ok": true,
+    "fb": "El 10 % de 1.000,00 es 100,00 dólares. El artículo 499 limita el débito al saldo en depósito, de 60,00 dólares. La cuenta contable de registro no está verificada, por lo que no debe completarse por suposición."
+   },
+   {
+    "t": "La multa es de 50,00 dólares, porque el texto vigente fija el 5 %",
+    "ok": false,
+    "fb": "El 5 % proviene de la Ley de Cheques, que el COMF derogó. El artículo 499 fija el 10 %, y ese porcentaje debe confirmarse en el Registro Oficial."
+   },
+   {
+    "t": "La multa se paga completa al beneficiario del cheque protestado",
+    "ok": false,
+    "fb": "El artículo 499 no entrega la multa al beneficiario. Dice que se transfiere a la Cuenta Única del Tesoro Nacional, y que el débito se limita al monto en depósito."
+   }
+  ],
+  "gen": "Revise el Cálculo 2 y la sección 7 de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "El BDL protesta un cheque de 800,00 dólares y el saldo en depósito del girador es de 500,00 dólares. Según el artículo 499, ¿cuánto puede debitar el banco de la cuenta por la multa?",
+  "opciones": [
+   {
+    "t": "500,00 dólares, porque el banco debita todo el saldo en depósito",
+    "ok": false,
+    "fb": "El banco no debita más de lo que corresponde a la multa. La multa es de 80,00 dólares, y el débito llega hasta ese monto, no hasta el saldo completo."
+   },
+   {
+    "t": "0 dólares, porque la multa no se debita, sino que se cobra después por otra vía",
+    "ok": false,
+    "fb": "El artículo 499 sí permite el débito hasta el monto en depósito. Que el saldo cubra la multa significa que el débito puede hacerse completo."
+   },
+   {
+    "t": "8,00 dólares, porque la multa es el 1 % del cheque",
+    "ok": false,
+    "fb": "El 1 % de 800,00 es 8,00 dólares, pero el artículo 499 fija el 10 %. Confundir los porcentajes es un error de cálculo frecuente."
+   },
+   {
+    "t": "80,00 dólares, porque el saldo de 500,00 dólares cubre la multa completa",
+    "ok": true,
+    "fb": "El 10 % de 800,00 es 80,00 dólares. Como el saldo de 500,00 dólares es mayor que 80,00, el débito puede hacerse completo. El límite del saldo no se activa en este caso."
+   }
+  ],
+  "gen": "Revise el Cálculo 2 y el ejercicio 5 de la Sesión 01."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "¿Qué es un sobregiro en una cuenta corriente?",
+  "opciones": [
+   {
+    "t": "Un pago que el banco hace por encima del saldo disponible del cliente",
+    "ok": true,
+    "fb": "Un sobregiro es un pago por encima del saldo disponible. Si el banco lo paga, el exceso queda como una posición frente al cliente. Si el banco debe o no pagarlo depende del contrato y de la norma, que aún no hemos verificado."
+   },
+   {
+    "t": "Un retiro que el cliente hace en ventanilla sin usar cheque",
+    "ok": false,
+    "fb": "Un retiro en ventanilla puede reducir el saldo, pero no es un sobregiro por sí mismo. El sobregiro aparece cuando el pago supera lo disponible."
+   },
+   {
+    "t": "Un cheque certificado por el banco, con un compromiso firme de pago",
+    "ok": false,
+    "fb": "El cheque certificado tiene su propio efecto, regulado en el artículo 503. No es un sobregiro, porque el sobregiro se refiere al exceso de un pago sobre el saldo."
+   },
+   {
+    "t": "Una comisión que el banco cobra por mantener la cuenta abierta",
+    "ok": false,
+    "fb": "Las comisiones de mantenimiento son otro tipo de cobro, y su régimen no está verificado en esta sesión. El sobregiro es el exceso de un pago sobre el saldo disponible."
+   }
+  ],
+  "gen": "Revise la sección 6 de la Sesión 01 y el concepto de sobregiro."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Carmen abre su cuenta con 500,00 dólares en efectivo y, después, deposita otros 200,00 dólares en efectivo. Ese mismo día compra un cheque de gerencia por 500,00 dólares, pagado también en efectivo. ¿Cuál es la obligación del banco con Carmen en su cuenta al final del día?",
+  "opciones": [
+   {
+    "t": "500,00 dólares, porque solo cuenta la apertura",
+    "ok": false,
+    "fb": "El depósito posterior de 200,00 dólares también aumenta la obligación con Carmen. Ignorarlo deja fuera un movimiento que sí cambia el saldo."
+   },
+   {
+    "t": "700,00 dólares, porque el cheque de gerencia se pagó en efectivo y no afecta el saldo de su cuenta",
+    "ok": true,
+    "fb": "La apertura y el depósito suman 700,00 dólares. La compra del cheque de gerencia se pagó en efectivo, no con la cuenta de Carmen, así que no reduce ese saldo. Su obligación queda en 700,00 dólares."
+   },
+   {
+    "t": "1.200,00 dólares, porque el cheque de gerencia aumenta la obligación con Carmen",
+    "ok": false,
+    "fb": "El cheque de gerencia crea una obligación del banco con el beneficiario, no con Carmen. Sumarlo a la cuenta de Carmen confunde a quien debe pagar."
+   },
+   {
+    "t": "200,00 dólares, porque el depósito es el único movimiento que cuenta",
+    "ok": false,
+    "fb": "La apertura de 500,00 dólares también aumenta la obligación con Carmen. Mirar solo el último movimiento hace que el saldo se calcule mal."
+   }
+  ],
+  "gen": "Revise la sección 1, la sección 2 y el cuadro de la Tabla 4."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "El BDL paga un cheque de gerencia emitido a favor de un proveedor. ¿Cuál de los siguientes asientos describe la lógica del pago según la sesión?",
+  "opciones": [
+   {
+    "t": "Debe: 1101 Caja. Haber: ingreso por cheques de gerencia pagados",
+    "ok": false,
+    "fb": "El pago de un cheque de gerencia no es un ingreso, y la caja no aumenta en el pago. El dinero sale del banco y la obligación se cancela."
+   },
+   {
+    "t": "Debe: gasto por pagos a proveedores. Haber: 1101 Caja",
+    "ok": false,
+    "fb": "El pago no es un gasto del banco. Cancela una obligación que el banco ya tenía con el beneficiario."
+   },
+   {
+    "t": "Debe: 1103 Bancos y otras instituciones financieras. Haber: obligación con el cliente que compró el cheque",
+    "ok": false,
+    "fb": "El cliente que compró el cheque ya pagó en efectivo. Al cobrarse el cheque, la obligación es con el beneficiario, y el asiento no vuelve a la cuenta de quien lo compró."
+   },
+   {
+    "t": "Debe: obligación por cheques de gerencia emitidos, cuenta por verificar. Haber: 1103, para liquidar el pago",
+    "ok": true,
+    "fb": "La obligación del banco baja cuando paga el cheque, y la salida de dinero se refleja en 1103 con el supuesto de liquidación. La cuenta de la obligación sigue pendiente de verificación."
+   }
+  ],
+  "gen": "Revise la sección 4 de la Sesión 01 y la Tabla 3."
+ },
+ {
+  "tipo": "Teórica",
+  "enunciado": "Cuando una cuenta del catálogo o una norma no están verificadas, ¿qué debe hacer un registro contable?",
+  "opciones": [
+   {
+    "t": "Completarla con la cuenta más parecida, para que el asiento quede cerrado",
+    "ok": false,
+    "fb": "Asignar una cuenta parecida sin fuente es una suposición que puede afectar el saldo del banco y las conclusiones que se saquen de él."
+   },
+   {
+    "t": "Omitir la operación sin explicación, para no tener que decidir nada",
+    "ok": false,
+    "fb": "Omitir la operación oculta un movimiento real. Lo correcto es registrar la lógica que sí se sostiene y señalar lo que falta."
+   },
+   {
+    "t": "Marcarla como pendiente, explicar qué falta y no completarla por suposición",
+    "ok": true,
+    "fb": "Así se mantiene la honestidad del registro: la parte verificada se usa, y la parte no verificada se señala con su motivo y con lo necesario para confirmarla."
+   },
+   {
+    "t": "Usar la cifra o la regla de la norma antigua que todavía se recuerda",
+    "ok": false,
+    "fb": "Una norma antigua puede estar derogada o reemplazada. Usarla sin comprobar su vigencia lleva a conclusiones incorrectas, como ocurre con el 5 % de la Ley de Cheques."
+   }
+  ],
+  "gen": "Revise la sección 3 del cierre y el cuadro de pendientes de la Sesión 01."
+ },
+ {
+  "tipo": "Análisis",
+  "enunciado": "Ana tiene 700,00 dólares de saldo en el BDL. El banco usa parte de sus fondos para prestar a otro cliente. Con esos datos, ¿qué es cierto desde los libros del banco?",
+  "opciones": [
+   {
+    "t": "Ana dejó de tener derecho frente al banco, porque el banco usó ese dinero",
+    "ok": false,
+    "fb": "Usar fondos en otra operación no cancela la obligación con Ana. El derecho de Ana sigue vigente, según las condiciones de su cuenta."
+   },
+   {
+    "t": "Ana pasó a ser deudora del banco por 700,00 dólares",
+    "ok": false,
+    "fb": "Ana tiene un saldo a su favor, no una deuda. El banco le debe ese dinero. Invertir la posición de las partes es un error de perspectiva."
+   },
+   {
+    "t": "El banco sigue debiendo 700,00 dólares a Ana; el préstamo a otro cliente es una operación distinta, que se estudia en la unidad 3",
+    "ok": true,
+    "fb": "La obligación con Ana no cambia por lo que el banco haga con sus fondos. El préstamo tiene su propio registro, como activo del banco, y se estudiará cuando veamos operaciones activas."
+   },
+   {
+    "t": "Ese saldo pasa a ser patrimonio de los socios del banco, porque el banco ya lo usa",
+    "ok": false,
+    "fb": "El saldo de un cliente no se convierte en patrimonio de los socios por usarse en un préstamo. El patrimonio es otra cuenta y no recoge depósitos de clientes."
+   }
+  ],
+  "gen": "Revise la sección 2 de la Sesión 01 y el error frecuente sobre el saldo de la cuenta."
+ }
+];
+
+(function () {
+  const formulario = document.getElementById('quiz');
+  const textoEstado = document.getElementById('estado-texto');
+  const barra = document.getElementById('barra');
+  const resultado = document.getElementById('resultado');
+  const resultadoTexto = document.getElementById('resultado-texto');
+  const btnReintentar = document.getElementById('btn-reintentar');
+  let respuestas = [];
+
+  function actualizar() {
+    const total = PREGUNTAS.length;
+    const respondidas = respuestas.filter(r => r !== null).length;
+    const aciertos = respuestas.filter((r, i) => r !== null && PREGUNTAS[i].opciones[r].ok).length;
+    textoEstado.textContent = 'Preguntas respondidas: ' + respondidas + ' de ' + total + ' · Aciertos: ' + aciertos;
+    barra.style.width = (respondidas / total * 100) + '%';
+
+    if (respondidas === total) {
+      formulario.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+      const errores = total - aciertos;
+      const nota = (aciertos / total * 10).toFixed(1).replace('.', ',');
+      const pct = Math.round(aciertos / total * 100);
+      resultadoTexto.textContent = 'Aciertos: ' + aciertos + ' de ' + total + '. Calificación de práctica: ' + nota + ' sobre 10 (' + pct + ' %).' +
+        (errores > 0
+          ? ' Revisa las rutas indicadas en cada retroalimentación y, si lo deseas, intenta nuevamente con las mismas preguntas.'
+          : ' No hubo errores en esta práctica.');
+      btnReintentar.hidden = errores === 0;
+      resultado.classList.add('visible');
+    }
+  }
+
+  function reiniciar() {
+    respuestas = PREGUNTAS.map(() => null);
+    formulario.innerHTML = '';
+    PREGUNTAS.forEach((p, i) => {
+      const fs = document.createElement('fieldset');
+      fs.className = 'pregunta';
+      const lg = document.createElement('legend');
+      const insignia = document.createElement('span');
+      insignia.className = 'badge' + (p.tipo === 'Análisis' ? ' analisis' : '');
+      insignia.textContent = p.tipo;
+      lg.appendChild(insignia);
+      lg.appendChild(document.createTextNode(' ' + (i + 1) + '. ' + p.enunciado));
+      fs.appendChild(lg);
+
+      p.opciones.forEach((o, j) => {
+        const fila = document.createElement('div');
+        fila.className = 'opcion';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + i;
+        radio.id = 'q' + i + '-' + j;
+        radio.value = String(j);
+        const etiqueta = document.createElement('label');
+        etiqueta.htmlFor = radio.id;
+        etiqueta.textContent = String.fromCharCode(97 + j) + ') ' + o.t;
+        fila.appendChild(radio);
+        fila.appendChild(etiqueta);
+        fs.appendChild(fila);
+      });
+
+      const fb = document.createElement('div');
+      fb.className = 'fb';
+      fb.id = 'fb' + i;
+      fb.setAttribute('aria-live', 'polite');
+      fs.appendChild(fb);
+
+      fs.addEventListener('change', e => {
+        if (e.target.name !== 'q' + i) return;
+        const j = parseInt(e.target.value, 10);
+        respuestas[i] = j;
+        const op = p.opciones[j];
+        fb.className = 'fb visible ' + (op.ok ? 'ok' : 'mal');
+        fb.innerHTML = '';
+        const titulo = document.createElement('div');
+        titulo.textContent = (op.ok ? 'CORRECTO. ' : 'Incorrecto. ') + op.fb;
+        fb.appendChild(titulo);
+        if (!op.ok) {
+          const ruta = document.createElement('div');
+          ruta.className = 'ruta';
+          ruta.textContent = 'Ruta de revisión: ' + p.gen;
+          fb.appendChild(ruta);
+        }
+        actualizar();
+      });
+
+      formulario.appendChild(fs);
+    });
+    resultado.classList.remove('visible');
+    btnReintentar.hidden = true;
+    actualizar();
+  }
+
+  document.getElementById('btn-reintentar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar').addEventListener('click', reiniciar);
+  document.getElementById('btn-reiniciar-fin').addEventListener('click', reiniciar);
+  reiniciar();
+})();
+</script>
+</body>
+</html>
